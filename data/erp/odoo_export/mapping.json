@@ -1,0 +1,63 @@
+{
+ "name": "Odoo 17 export (Export screen, field labels as headers)",
+ "files": {
+  "suppliers": "vendors.csv",
+  "order_lines": "purchase_order_lines.csv",
+  "receipts": "purchase_order_lines.csv",
+  "billed": "purchase_order_lines.csv",
+  "returns": "returns.csv"
+ },
+ "receipts_net_of_returns": true,
+ "columns": {
+  "suppliers": {
+   "id": "Reference",
+   "name": "Name",
+   "tax_id": "Tax ID",
+   "email": "Email",
+   "bank_account": "Banks / acc_number",
+   "region": "Country / code"
+  },
+  "order_lines": {
+   "po_id": "Order Reference / name",
+   "supplier": "Partner",
+   "date": "Order Date",
+   "item": {
+    "column": "Product",
+    "transform": "bracket_code"
+   },
+   "description": "Description",
+   "qty": "Quantity",
+   "price": "Unit Price"
+  },
+  "receipts": {
+   "po_id": "Order Reference / name",
+   "item": {
+    "column": "Product",
+    "transform": "bracket_code"
+   },
+   "qty": "Received Qty"
+  },
+  "billed": {
+   "po_id": "Order Reference / name",
+   "item": {
+    "column": "Product",
+    "transform": "bracket_code"
+   },
+   "qty": "Billed Qty"
+  },
+  "returns": {
+   "po_id": "Purchase Order Line / order_id",
+   "supplier": "Destination Address",
+   "item": {
+    "column": "Product",
+    "transform": "bracket_code"
+   },
+   "qty": "Quantity",
+   "date": "Date Scheduled"
+  }
+ },
+ "date_formats": [
+  "%Y-%m-%d %H:%M:%S",
+  "%Y-%m-%d"
+ ]
+}

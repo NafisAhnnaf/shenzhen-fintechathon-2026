@@ -1,0 +1,28 @@
+# Odoo Community 17 with PostgreSQL 16: the demo company's real ERP.
+#   docker compose -f erp/odoo/docker-compose.yml up -d
+# Odoo listens on http://127.0.0.1:8069 (loopback only). Database: payables. Admin login is set by the seed script.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    volumes:
+      - odoo-db:/var/lib/postgresql/data
+    restart: unless-stopped
+  odoo:
+    image: odoo:17.0
+    depends_on: [db]
+    ports:
+      - "127.0.0.1:8069:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      - odoo-data:/var/lib/odoo
+    restart: unless-stopped
+volumes:
+  odoo-db:
+  odoo-data:

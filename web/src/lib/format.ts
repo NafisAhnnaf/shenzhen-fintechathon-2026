@@ -115,6 +115,12 @@ export function describe(l: LogLine, supplierName: (id?: string) => string): str
       return `The ${d.bundle} setting is active on-chain`;
     case "anchor":
       return "Anchored today's log on-chain";
+    case "erp_sync":
+      return `Read ${d.orders} orders and ${d.suppliers} suppliers from ${d.source === "odoo" ? "Odoo" : d.source.toUpperCase()}`;
+    case "erp_payment":
+      return `Recorded the payment in ${d.erp === "odoo" ? "Odoo" : d.erp}: ${String(d.ref).replace(/^\w+:/, "")}`;
+    case "erp_payment_failed":
+      return `Could not record the payment in ${d.erp}; needs reconciliation`;
     case "hold":
       return `Held: ${d.reason}`;
     case "answer":

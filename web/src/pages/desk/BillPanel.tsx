@@ -246,6 +246,7 @@ function Details({ b }: { b: Bill }) {
         <p className="text-muted">
           The amount is computed from our orders and goods receipts and can only be lowered by the bill ({money(b.erp_bound)} at most).
         </p>
+        {b.erp_ref && <p>Recorded in the company's ERP as {b.erp_ref.replace(/^(\w+):/, (_, k) => (k === "odoo" ? "Odoo " : `${k} `))}.</p>}
         {b.offsets.map((o) => (
           <p key={o.against}>
             Recovered {money(o.amount)} owed from an earlier bill <Hash h={o.tx} />

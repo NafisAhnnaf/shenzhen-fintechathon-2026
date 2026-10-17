@@ -1,0 +1,13 @@
+Reference,Name,Tax ID,Email,Banks / acc_number,Country / code
+ACME,Acme Metals (HK) Ltd,HK53464097,accounts@acme-hk.com,0x4c123b1612dd272d1371c17149d439536b3216fd,HK
+GANJIANG,"Ganjiang Copper Products Co., Ltd.",CN76262352,accounts@ganjiang.cn,HSBC 323-905550-394,CN
+HARBOURLUBE,Harbour Lubricants Supply,HK30106149,accounts@harbour-hk.com,0x54f31af3176813e02ea68ef786e4d3cea27d2693,HK
+KAITAK,Kai Tak Fasteners Ltd,HK63128543,accounts@kai-hk.com,0xec255404e4fb440034d6608697a8d41bed440e50,HK
+KWONGFAT,Kwong Fat Plastics Co.,HK55641228,accounts@kwong-hk.com,0x13043b026c48bbf33feff9243a8f506b40928b5b,HK
+LIONROCK,Lion Rock Copper Trading Ltd,HK72492024,accounts@lion-hk.com,0xeb975729fae923d5a4fd12aabfe228f219e9cb0e,HK
+MONGKOKWIRE,Mong Kok Solder & Wire,HK12437810,accounts@mong-hk.com,0x81006f7e3dfc967a64cb14028d512c9791e558e0,HK
+PEARLDELTA,Pearl Delta Alloys Ltd,CN18354761,accounts@pearl.cn,BOC 168-318904-551,CN
+SHATINPCB,Shatin Circuit Boards Ltd,HK30729474,accounts@shatin-hk.com,0xb484e73cf575dcad6ba2b0aee0ca923732881584,HK
+SUNKEE,Sun Kee Packaging,HK81483341,accounts@sun-hk.com,0xa767c76fb008f86bebb2737f6a6f0fb23c6f5da2,HK
+TSUENWAN,Tsuen Wan Aluminium Works,HK43234300,accounts@tsuen-hk.com,0xccf25ec84d8dbc74254770f58904dba41ecccc3f,HK
+VICPLATING,Victoria Plating Supplies,HK44709914,accounts@victoria-hk.com,0xc4fa2815d2802827283e0ad84173581569969e58,HK

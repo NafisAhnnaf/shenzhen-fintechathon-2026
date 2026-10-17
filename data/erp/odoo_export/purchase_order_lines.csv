@@ -1,0 +1,594 @@
+Order Reference / name,Partner,Order Date,Product,Description,Quantity,Unit Price,Received Qty,Billed Qty
+PO-26639,Acme Metals (HK) Ltd,2025-09-30 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,11444.51,0.2,0.2
+PO-26636,"Ganjiang Copper Products Co., Ltd.",2025-09-30 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,12728.21,0.1,0.1
+PO-26636,"Ganjiang Copper Products Co., Ltd.",2025-09-30 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.7,1850.0,0.7,0.7
+PO-26636,"Ganjiang Copper Products Co., Ltd.",2025-09-30 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2050.0,0.62,2050.0,2050.0
+PO-26636,"Ganjiang Copper Products Co., Ltd.",2025-09-30 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,52.0,24.5,52.0,52.0
+PO-26636,"Ganjiang Copper Products Co., Ltd.",2025-09-30 09:00:00,[PCB] PCB blanks,PCB blanks,350.0,3.4,350.0,350.0
+PO-26633,Lion Rock Copper Trading Ltd,2025-09-29 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,11723.69,0.15,0.15
+PO-26633,Lion Rock Copper Trading Ltd,2025-09-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,50.0,38.96,50.0,50.0
+PO-26619,Victoria Plating Supplies,2025-09-27 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.4,19984.86,0.4,0.4
+PO-26618,Shatin Circuit Boards Ltd,2025-09-27 09:00:00,[PCB] PCB blanks,PCB blanks,650.0,4.32,650.0,650.0
+PO-26614,Kwong Fat Plastics Co.,2025-09-26 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.85,2024.89,1.85,1.85
+PO-26613,Tsuen Wan Aluminium Works,2025-09-26 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.95,3716.09,1.95,1.95
+PO-26602,Kwong Fat Plastics Co.,2025-09-24 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,6.3,2024.89,6.3,6.3
+PO-26596,Harbour Lubricants Supply,2025-09-23 09:00:00,[LUBE] Machine lubricant,Machine lubricant,10.0,272.13,10.0,10.0
+PO-26582,Mong Kok Solder & Wire,2025-09-21 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,375.0,42.51,375.0,375.0
+PO-26574,Acme Metals (HK) Ltd,2025-09-19 09:00:00,[CU-ROD] Copper rod,Copper rod,0.5,11444.51,0.5,0.5
+PO-26570,Pearl Delta Alloys Ltd,2025-09-19 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.3,3694.42,1.3,1.3
+PO-26561,Lion Rock Copper Trading Ltd,2025-09-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.3,11591.69,0.3,0.3
+PO-26561,Lion Rock Copper Trading Ltd,2025-09-17 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,90.0,38.96,90.0,90.0
+PO-26548,Kai Tak Fasteners Ltd,2025-09-15 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,309.0,26.62,309.0,309.0
+PO-26542,Sun Kee Packaging,2025-09-14 09:00:00,[CARTON] Shipping cartons,Shipping cartons,9950.0,0.7,9950.0,9950.0
+PO-26520,"Ganjiang Copper Products Co., Ltd.",2025-09-10 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,12728.21,0.25,0.25
+PO-26509,Victoria Plating Supplies,2025-09-08 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.05,19984.86,0.05,0.05
+PO-26502,Mong Kok Solder & Wire,2025-09-07 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,65.0,42.51,65.0,65.0
+PO-26501,Tsuen Wan Aluminium Works,2025-09-07 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.4,3716.09,1.4,1.4
+PO-26495,Acme Metals (HK) Ltd,2025-09-06 09:00:00,[CU-ROD] Copper rod,Copper rod,1.0,11444.51,1.0,1.0
+PO-26493,Pearl Delta Alloys Ltd,2025-09-06 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.25,3694.42,0.65,0.65
+PO-26492,Victoria Plating Supplies,2025-09-05 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.3,19984.86,0.3,0.3
+PO-26486,Kai Tak Fasteners Ltd,2025-09-05 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,156.0,26.62,156.0,156.0
+PO-26456,"Ganjiang Copper Products Co., Ltd.",2025-08-31 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,12728.21,0.35,0.35
+PO-26454,Sun Kee Packaging,2025-08-30 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1150.0,0.7,1150.0,1150.0
+PO-26440,Shatin Circuit Boards Ltd,2025-08-28 09:00:00,[PCB] PCB blanks,PCB blanks,1000.0,4.32,1000.0,1000.0
+PO-26438,Kai Tak Fasteners Ltd,2025-08-27 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,142.0,26.62,142.0,142.0
+PO-26430,Kai Tak Fasteners Ltd,2025-08-26 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,399.0,26.62,399.0,399.0
+PO-26418,Tsuen Wan Aluminium Works,2025-08-24 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.5,3716.09,1.5,1.5
+PO-26389,Kwong Fat Plastics Co.,2025-08-19 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.4,2024.89,1.4,1.4
+PO-26363,Acme Metals (HK) Ltd,2025-08-15 09:00:00,[CU-ROD] Copper rod,Copper rod,0.45,11444.51,0.45,0.45
+PO-26349,"Ganjiang Copper Products Co., Ltd.",2025-08-13 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,12862.79,0.2,0.2
+PO-26348,Kai Tak Fasteners Ltd,2025-08-13 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,229.0,26.62,229.0,229.0
+PO-26345,Shatin Circuit Boards Ltd,2025-08-12 09:00:00,[PCB] PCB blanks,PCB blanks,1300.0,4.44,1300.0,1300.0
+PO-26340,Shatin Circuit Boards Ltd,2025-08-11 09:00:00,[PCB] PCB blanks,PCB blanks,550.0,4.44,550.0,550.0
+PO-26333,Mong Kok Solder & Wire,2025-08-10 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,95.0,42.51,95.0,95.0
+PO-26329,Victoria Plating Supplies,2025-08-09 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17965.39,0.1,0.1
+PO-26329,Victoria Plating Supplies,2025-08-09 09:00:00,[CARTON] Shipping cartons,Shipping cartons,3150.0,0.62,3150.0,3150.0
+PO-26329,Victoria Plating Supplies,2025-08-09 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.05,1850.0,1.05,1.05
+PO-26329,Victoria Plating Supplies,2025-08-09 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,80.0,24.5,80.0,80.0
+PO-26329,Victoria Plating Supplies,2025-08-09 09:00:00,[PCB] PCB blanks,PCB blanks,600.0,3.4,600.0,600.0
+PO-26285,Kai Tak Fasteners Ltd,2025-08-03 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,406.0,26.62,406.0,406.0
+PO-26283,"Ganjiang Copper Products Co., Ltd.",2025-08-02 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,12862.79,0.2,0.2
+PO-26273,Harbour Lubricants Supply,2025-08-01 09:00:00,[LUBE] Machine lubricant,Machine lubricant,23.0,272.13,23.0,23.0
+PO-26270,Shatin Circuit Boards Ltd,2025-07-31 09:00:00,[PCB] PCB blanks,PCB blanks,6700.0,4.17,6700.0,6700.0
+PO-26264,Mong Kok Solder & Wire,2025-07-30 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,75.0,42.51,75.0,75.0
+PO-26257,Mong Kok Solder & Wire,2025-07-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,140.0,42.51,140.0,140.0
+PO-26247,"Ganjiang Copper Products Co., Ltd.",2025-07-27 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,12862.79,0.2,0.2
+PO-26246,Kwong Fat Plastics Co.,2025-07-27 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.25,1955.32,0.25,0.25
+PO-26241,Kwong Fat Plastics Co.,2025-07-26 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.2,1955.32,1.2,1.2
+PO-26228,Shatin Circuit Boards Ltd,2025-07-24 09:00:00,[PCB] PCB blanks,PCB blanks,1550.0,4.17,1550.0,1550.0
+PO-26210,Shatin Circuit Boards Ltd,2025-07-21 09:00:00,[PCB] PCB blanks,PCB blanks,850.0,4.47,850.0,850.0
+PO-26206,Mong Kok Solder & Wire,2025-07-21 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,100.0,42.51,100.0,100.0
+PO-26197,Victoria Plating Supplies,2025-07-19 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17965.39,0.1,0.1
+PO-26194,Tsuen Wan Aluminium Works,2025-07-18 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.85,3532.72,0.85,0.85
+PO-26190,Lion Rock Copper Trading Ltd,2025-07-18 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,11591.69,0.25,0.25
+PO-26190,Lion Rock Copper Trading Ltd,2025-07-18 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,80.0,38.96,80.0,80.0
+PO-26189,Mong Kok Solder & Wire,2025-07-18 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,5.0,42.51,5.0,5.0
+PO-26189,Mong Kok Solder & Wire,2025-07-18 09:00:00,[LUBE] Machine lubricant,Machine lubricant,1.0,185.0,1.0,1.0
+PO-26189,Mong Kok Solder & Wire,2025-07-18 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,3.0,24.5,3.0,3.0
+PO-26189,Mong Kok Solder & Wire,2025-07-18 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.05,1850.0,0.05,0.05
+PO-26189,Mong Kok Solder & Wire,2025-07-18 09:00:00,[PCB] PCB blanks,PCB blanks,50.0,3.4,50.0,50.0
+PO-26187,Acme Metals (HK) Ltd,2025-07-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.4,11444.51,0.4,0.4
+PO-26186,Pearl Delta Alloys Ltd,2025-07-17 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.2,3562.89,0.2,0.2
+PO-26184,Tsuen Wan Aluminium Works,2025-07-17 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.55,3532.72,0.55,0.55
+PO-26184,Tsuen Wan Aluminium Works,2025-07-17 09:00:00,[CARTON] Shipping cartons,Shipping cartons,3100.0,0.62,3100.0,3100.0
+PO-26184,Tsuen Wan Aluminium Works,2025-07-17 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,78.0,24.5,78.0,78.0
+PO-26184,Tsuen Wan Aluminium Works,2025-07-17 09:00:00,[PCB] PCB blanks,PCB blanks,550.0,3.4,500.0,500.0
+PO-26168,Mong Kok Solder & Wire,2025-07-14 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,65.0,42.51,65.0,65.0
+PO-26161,Kai Tak Fasteners Ltd,2025-07-13 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,46.0,26.62,46.0,46.0
+PO-26159,Tsuen Wan Aluminium Works,2025-07-13 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.0,3532.72,1.1,1.1
+PO-26158,Pearl Delta Alloys Ltd,2025-07-13 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.45,3290.05,1.45,1.45
+PO-26145,"Ganjiang Copper Products Co., Ltd.",2025-07-11 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,12862.79,0.35,0.35
+PO-26142,Victoria Plating Supplies,2025-07-10 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17965.39,0.1,0.1
+PO-26141,"Ganjiang Copper Products Co., Ltd.",2025-07-10 09:00:00,[CU-ROD] Copper rod,Copper rod,1.05,12118.74,1.05,1.05
+PO-26139,Acme Metals (HK) Ltd,2025-07-10 09:00:00,[CU-ROD] Copper rod,Copper rod,0.7,11444.51,0.5,0.5
+PO-26133,Sun Kee Packaging,2025-07-09 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2600.0,0.7,2600.0,2600.0
+PO-26129,Lion Rock Copper Trading Ltd,2025-07-08 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,11591.69,0.1,0.1
+PO-26129,Lion Rock Copper Trading Ltd,2025-07-08 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,35.0,38.96,35.0,35.0
+PO-26124,Harbour Lubricants Supply,2025-07-08 09:00:00,[LUBE] Machine lubricant,Machine lubricant,31.0,264.33,31.0,31.0
+PO-26120,Acme Metals (HK) Ltd,2025-07-07 09:00:00,[CU-ROD] Copper rod,Copper rod,0.85,10611.24,0.85,0.85
+PO-26092,Shatin Circuit Boards Ltd,2025-07-02 09:00:00,[PCB] PCB blanks,PCB blanks,600.0,4.47,600.0,600.0
+PO-26091,Sun Kee Packaging,2025-07-02 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2450.0,0.67,2450.0,2450.0
+PO-26077,Mong Kok Solder & Wire,2025-06-30 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,20.0,42.51,20.0,20.0
+PO-26077,Mong Kok Solder & Wire,2025-06-30 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.45,1850.0,0.45,0.45
+PO-26077,Mong Kok Solder & Wire,2025-06-30 09:00:00,[PCB] PCB blanks,PCB blanks,250.0,3.4,250.0,250.0
+PO-26077,Mong Kok Solder & Wire,2025-06-30 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,35.0,24.5,35.0,35.0
+PO-26077,Mong Kok Solder & Wire,2025-06-30 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1400.0,0.62,1400.0,1400.0
+PO-26076,Kwong Fat Plastics Co.,2025-06-30 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,2.2,1955.32,2.2,2.2
+PO-26071,Mong Kok Solder & Wire,2025-06-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,100.0,42.51,100.0,100.0
+PO-26066,Kai Tak Fasteners Ltd,2025-06-28 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,22.0,26.62,22.0,22.0
+PO-26066,Kai Tak Fasteners Ltd,2025-06-28 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.3,1850.0,0.3,0.3
+PO-26066,Kai Tak Fasteners Ltd,2025-06-28 09:00:00,[CARTON] Shipping cartons,Shipping cartons,900.0,0.62,900.0,900.0
+PO-26066,Kai Tak Fasteners Ltd,2025-06-28 09:00:00,[PCB] PCB blanks,PCB blanks,150.0,3.4,150.0,150.0
+PO-26066,Kai Tak Fasteners Ltd,2025-06-28 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-26064,Sun Kee Packaging,2025-06-28 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1200.0,0.67,1200.0,1200.0
+PO-26064,Sun Kee Packaging,2025-06-28 09:00:00,[LUBE] Machine lubricant,Machine lubricant,4.0,185.0,4.0,4.0
+PO-26064,Sun Kee Packaging,2025-06-28 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.45,1850.0,0.45,0.45
+PO-26064,Sun Kee Packaging,2025-06-28 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,33.0,24.5,33.0,33.0
+PO-26059,Shatin Circuit Boards Ltd,2025-06-27 09:00:00,[PCB] PCB blanks,PCB blanks,1750.0,4.47,1750.0,1750.0
+PO-26057,Acme Metals (HK) Ltd,2025-06-26 09:00:00,[CU-ROD] Copper rod,Copper rod,0.5,10611.24,0.5,0.5
+PO-26047,Kai Tak Fasteners Ltd,2025-06-25 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,46.0,26.62,46.0,46.0
+PO-26037,"Ganjiang Copper Products Co., Ltd.",2025-06-23 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,12118.74,0.25,0.25
+PO-26025,Lion Rock Copper Trading Ltd,2025-06-21 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,11591.69,0.1,0.1
+PO-26025,Lion Rock Copper Trading Ltd,2025-06-21 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,25.0,38.96,25.0,25.0
+PO-26019,Kai Tak Fasteners Ltd,2025-06-20 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,15.0,26.62,15.0,15.0
+PO-26019,Kai Tak Fasteners Ltd,2025-06-20 09:00:00,[CARTON] Shipping cartons,Shipping cartons,650.0,0.62,500.0,500.0
+PO-26019,Kai Tak Fasteners Ltd,2025-06-20 09:00:00,[LUBE] Machine lubricant,Machine lubricant,2.0,185.0,2.0,2.0
+PO-26019,Kai Tak Fasteners Ltd,2025-06-20 09:00:00,[PCB] PCB blanks,PCB blanks,100.0,3.4,100.0,100.0
+PO-26019,Kai Tak Fasteners Ltd,2025-06-20 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.2,1850.0,0.2,0.2
+PO-25993,Pearl Delta Alloys Ltd,2025-06-16 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.15,3290.05,0.15,0.15
+PO-25993,Pearl Delta Alloys Ltd,2025-06-16 09:00:00,[CARTON] Shipping cartons,Shipping cartons,950.0,0.62,950.0,950.0
+PO-25993,Pearl Delta Alloys Ltd,2025-06-16 09:00:00,[PCB] PCB blanks,PCB blanks,150.0,3.4,150.0,150.0
+PO-25993,Pearl Delta Alloys Ltd,2025-06-16 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.3,1850.0,0.3,0.3
+PO-25989,Acme Metals (HK) Ltd,2025-06-15 09:00:00,[CU-ROD] Copper rod,Copper rod,0.6,10611.24,0.6,0.6
+PO-25986,Mong Kok Solder & Wire,2025-06-15 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,150.0,42.51,150.0,150.0
+PO-25983,Kai Tak Fasteners Ltd,2025-06-14 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,261.0,26.62,261.0,261.0
+PO-25982,Pearl Delta Alloys Ltd,2025-06-14 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.8,3290.05,1.8,1.8
+PO-25976,Kwong Fat Plastics Co.,2025-06-13 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.4,1955.32,0.4,0.4
+PO-25976,Kwong Fat Plastics Co.,2025-06-13 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,32.0,24.5,32.0,32.0
+PO-25976,Kwong Fat Plastics Co.,2025-06-13 09:00:00,[LUBE] Machine lubricant,Machine lubricant,4.0,185.0,4.0,4.0
+PO-25976,Kwong Fat Plastics Co.,2025-06-13 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1250.0,0.62,1250.0,1250.0
+PO-25969,Tsuen Wan Aluminium Works,2025-06-12 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.95,3532.72,0.95,0.95
+PO-25959,Acme Metals (HK) Ltd,2025-06-10 09:00:00,[CU-ROD] Copper rod,Copper rod,1.35,10611.24,1.35,1.35
+PO-25958,Tsuen Wan Aluminium Works,2025-06-10 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.45,3558.38,1.45,1.45
+PO-25954,Sun Kee Packaging,2025-06-09 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2150.0,0.67,2150.0,2150.0
+PO-25950,Lion Rock Copper Trading Ltd,2025-06-09 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,11591.69,0.1,0.1
+PO-25950,Lion Rock Copper Trading Ltd,2025-06-09 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,30.0,38.96,30.0,30.0
+PO-25948,Mong Kok Solder & Wire,2025-06-08 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,65.0,42.51,65.0,65.0
+PO-25944,Kai Tak Fasteners Ltd,2025-06-08 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,93.0,26.62,52.0,52.0
+PO-25937,Kwong Fat Plastics Co.,2025-06-06 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.1,1955.32,1.1,1.1
+PO-25931,Pearl Delta Alloys Ltd,2025-06-05 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.0,3290.05,1.0,1.0
+PO-25917,Shatin Circuit Boards Ltd,2025-06-03 09:00:00,[PCB] PCB blanks,PCB blanks,750.0,4.3,750.0,750.0
+PO-25912,Tsuen Wan Aluminium Works,2025-06-02 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.45,3558.38,1.45,1.45
+PO-25902,Lion Rock Copper Trading Ltd,2025-05-31 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,11591.69,0.35,0.35
+PO-25902,Lion Rock Copper Trading Ltd,2025-05-31 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,100.0,38.96,100.0,100.0
+PO-25897,Pearl Delta Alloys Ltd,2025-05-31 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,5.15,3290.05,5.15,5.15
+PO-25896,Kwong Fat Plastics Co.,2025-05-30 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.95,1955.32,1.95,1.95
+PO-25889,Kai Tak Fasteners Ltd,2025-05-29 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,182.0,24.96,182.0,182.0
+PO-25882,Tsuen Wan Aluminium Works,2025-05-28 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.1,3484.24,1.1,1.1
+PO-25878,Harbour Lubricants Supply,2025-05-27 09:00:00,[LUBE] Machine lubricant,Machine lubricant,29.0,258.61,29.0,29.0
+PO-25874,Acme Metals (HK) Ltd,2025-05-27 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,10611.24,0.15,0.15
+PO-25861,Tsuen Wan Aluminium Works,2025-05-24 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.3,3484.24,0.3,0.3
+PO-25854,Shatin Circuit Boards Ltd,2025-05-23 09:00:00,[PCB] PCB blanks,PCB blanks,400.0,4.3,400.0,400.0
+PO-25853,Mong Kok Solder & Wire,2025-05-23 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,5.0,39.9,5.0,5.0
+PO-25853,Mong Kok Solder & Wire,2025-05-23 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.1,1850.0,0.1,0.1
+PO-25853,Mong Kok Solder & Wire,2025-05-23 09:00:00,[PCB] PCB blanks,PCB blanks,50.0,3.4,50.0,50.0
+PO-25853,Mong Kok Solder & Wire,2025-05-23 09:00:00,[CARTON] Shipping cartons,Shipping cartons,300.0,0.62,300.0,300.0
+PO-25853,Mong Kok Solder & Wire,2025-05-23 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,7.0,24.5,7.0,7.0
+PO-25844,Kai Tak Fasteners Ltd,2025-05-22 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,106.0,24.96,106.0,106.0
+PO-25840,Sun Kee Packaging,2025-05-21 09:00:00,[CARTON] Shipping cartons,Shipping cartons,26800.0,0.67,26800.0,26800.0
+PO-25836,Sun Kee Packaging,2025-05-20 09:00:00,[CARTON] Shipping cartons,Shipping cartons,4000.0,0.67,4000.0,4000.0
+PO-25833,Harbour Lubricants Supply,2025-05-20 09:00:00,[LUBE] Machine lubricant,Machine lubricant,33.0,258.61,33.0,33.0
+PO-25828,"Ganjiang Copper Products Co., Ltd.",2025-05-19 09:00:00,[CU-ROD] Copper rod,Copper rod,0.55,12118.74,0.55,0.55
+PO-25826,Acme Metals (HK) Ltd,2025-05-19 09:00:00,[CU-ROD] Copper rod,Copper rod,0.85,10611.24,0.85,0.85
+PO-25809,Tsuen Wan Aluminium Works,2025-05-16 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.1,3484.24,0.1,0.1
+PO-25809,Tsuen Wan Aluminium Works,2025-05-16 09:00:00,[PCB] PCB blanks,PCB blanks,100.0,3.4,100.0,100.0
+PO-25809,Tsuen Wan Aluminium Works,2025-05-16 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.2,1850.0,0.2,0.2
+PO-25809,Tsuen Wan Aluminium Works,2025-05-16 09:00:00,[LUBE] Machine lubricant,Machine lubricant,2.0,185.0,1.0,1.0
+PO-25809,Tsuen Wan Aluminium Works,2025-05-16 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,14.0,24.5,14.0,14.0
+PO-25803,"Ganjiang Copper Products Co., Ltd.",2025-05-15 09:00:00,[CU-ROD] Copper rod,Copper rod,0.75,12118.74,0.75,0.75
+PO-25792,"Ganjiang Copper Products Co., Ltd.",2025-05-13 09:00:00,[CU-ROD] Copper rod,Copper rod,0.6,12118.74,0.6,0.6
+PO-25790,Sun Kee Packaging,2025-05-13 09:00:00,[CARTON] Shipping cartons,Shipping cartons,3000.0,0.67,3000.0,3000.0
+PO-25787,Tsuen Wan Aluminium Works,2025-05-13 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.3,3484.24,0.3,0.3
+PO-25785,Mong Kok Solder & Wire,2025-05-12 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,130.0,39.9,130.0,130.0
+PO-25769,Mong Kok Solder & Wire,2025-05-10 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,40.0,39.9,40.0,40.0
+PO-25763,Tsuen Wan Aluminium Works,2025-05-09 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.15,3484.24,2.15,2.15
+PO-25756,Tsuen Wan Aluminium Works,2025-05-07 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.5,3445.1,0.5,0.5
+PO-25753,Tsuen Wan Aluminium Works,2025-05-07 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.0,3445.1,1.0,1.0
+PO-25742,"Ganjiang Copper Products Co., Ltd.",2025-05-05 09:00:00,[CU-ROD] Copper rod,Copper rod,0.45,12635.67,0.45,0.45
+PO-25728,Kai Tak Fasteners Ltd,2025-05-03 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,99.0,24.96,99.0,99.0
+PO-25720,Pearl Delta Alloys Ltd,2025-05-02 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.2,3563.88,1.2,1.2
+PO-25716,Shatin Circuit Boards Ltd,2025-05-01 09:00:00,[PCB] PCB blanks,PCB blanks,1300.0,4.3,1300.0,1300.0
+PO-25712,Shatin Circuit Boards Ltd,2025-04-30 09:00:00,[PCB] PCB blanks,PCB blanks,950.0,4.1,950.0,950.0
+PO-25710,Harbour Lubricants Supply,2025-04-30 09:00:00,[LUBE] Machine lubricant,Machine lubricant,35.0,258.61,35.0,35.0
+PO-25698,Kwong Fat Plastics Co.,2025-04-28 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.55,1955.32,1.55,1.55
+PO-25696,Lion Rock Copper Trading Ltd,2025-04-28 09:00:00,[CU-ROD] Copper rod,Copper rod,0.4,11591.69,0.4,0.4
+PO-25696,Lion Rock Copper Trading Ltd,2025-04-28 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,125.0,38.96,125.0,125.0
+PO-25687,Lion Rock Copper Trading Ltd,2025-04-26 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,11591.69,0.35,0.35
+PO-25687,Lion Rock Copper Trading Ltd,2025-04-26 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,105.0,38.96,105.0,105.0
+PO-25676,Sun Kee Packaging,2025-04-24 09:00:00,[CARTON] Shipping cartons,Shipping cartons,7200.0,0.67,7200.0,7200.0
+PO-25670,"Ganjiang Copper Products Co., Ltd.",2025-04-23 09:00:00,[CU-ROD] Copper rod,Copper rod,0.45,12635.67,0.45,0.45
+PO-25668,"Ganjiang Copper Products Co., Ltd.",2025-04-23 09:00:00,[CU-ROD] Copper rod,Copper rod,0.45,12635.67,0.45,0.45
+PO-25661,Pearl Delta Alloys Ltd,2025-04-22 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.55,3563.88,0.55,0.55
+PO-25659,Victoria Plating Supplies,2025-04-21 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.2,16856.97,0.15,0.15
+PO-25658,Mong Kok Solder & Wire,2025-04-21 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,170.0,39.9,170.0,170.0
+PO-25657,Acme Metals (HK) Ltd,2025-04-21 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,10611.24,0.25,0.25
+PO-25655,Tsuen Wan Aluminium Works,2025-04-21 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.15,3479.14,2.15,2.15
+PO-25651,"Ganjiang Copper Products Co., Ltd.",2025-04-20 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,12635.67,0.05,0.05
+PO-25650,Mong Kok Solder & Wire,2025-04-20 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,160.0,39.9,160.0,160.0
+PO-25648,Shatin Circuit Boards Ltd,2025-04-20 09:00:00,[PCB] PCB blanks,PCB blanks,1700.0,4.1,1700.0,1700.0
+PO-25645,Victoria Plating Supplies,2025-04-19 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.35,16856.97,0.35,0.35
+PO-25642,Tsuen Wan Aluminium Works,2025-04-19 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.95,3479.14,0.95,0.95
+PO-25636,Lion Rock Copper Trading Ltd,2025-04-18 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,11031.55,0.05,0.05
+PO-25636,Lion Rock Copper Trading Ltd,2025-04-18 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,15.0,38.96,15.0,15.0
+PO-25629,Victoria Plating Supplies,2025-04-16 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.45,16856.97,0.25,0.25
+PO-25626,Kwong Fat Plastics Co.,2025-04-16 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.55,1955.32,1.55,1.55
+PO-25625,Lion Rock Copper Trading Ltd,2025-04-16 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,11031.55,0.15,0.15
+PO-25625,Lion Rock Copper Trading Ltd,2025-04-16 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,35.0,38.96,35.0,35.0
+PO-25600,Tsuen Wan Aluminium Works,2025-04-11 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.15,3479.14,0.15,0.15
+PO-25600,Tsuen Wan Aluminium Works,2025-04-11 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.25,1850.0,0.25,0.25
+PO-25600,Tsuen Wan Aluminium Works,2025-04-11 09:00:00,[LUBE] Machine lubricant,Machine lubricant,2.0,185.0,2.0,2.0
+PO-25600,Tsuen Wan Aluminium Works,2025-04-11 09:00:00,[CARTON] Shipping cartons,Shipping cartons,700.0,0.62,700.0,700.0
+PO-25600,Tsuen Wan Aluminium Works,2025-04-11 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,18.0,24.5,18.0,18.0
+PO-25588,Acme Metals (HK) Ltd,2025-04-10 09:00:00,[CU-ROD] Copper rod,Copper rod,0.5,10611.24,0.5,0.5
+PO-25585,Harbour Lubricants Supply,2025-04-09 09:00:00,[LUBE] Machine lubricant,Machine lubricant,39.0,258.61,39.0,39.0
+PO-25582,Shatin Circuit Boards Ltd,2025-04-09 09:00:00,[PCB] PCB blanks,PCB blanks,1300.0,3.84,1300.0,1300.0
+PO-25582,Shatin Circuit Boards Ltd,2025-04-09 09:00:00,[CARTON] Shipping cartons,Shipping cartons,7950.0,0.62,7950.0,7950.0
+PO-25582,Shatin Circuit Boards Ltd,2025-04-09 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,201.0,24.5,201.0,201.0
+PO-25582,Shatin Circuit Boards Ltd,2025-04-09 09:00:00,[LUBE] Machine lubricant,Machine lubricant,27.0,185.0,27.0,27.0
+PO-25581,Mong Kok Solder & Wire,2025-04-09 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,140.0,39.9,140.0,140.0
+PO-25578,Lion Rock Copper Trading Ltd,2025-04-08 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,11031.55,0.25,0.25
+PO-25578,Lion Rock Copper Trading Ltd,2025-04-08 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,75.0,38.96,75.0,75.0
+PO-25577,Shatin Circuit Boards Ltd,2025-04-08 09:00:00,[PCB] PCB blanks,PCB blanks,300.0,3.84,300.0,300.0
+PO-25576,Pearl Delta Alloys Ltd,2025-04-08 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,2.25,3563.88,2.25,2.25
+PO-25573,Victoria Plating Supplies,2025-04-07 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.3,16856.97,0.3,0.3
+PO-25571,Harbour Lubricants Supply,2025-04-07 09:00:00,[LUBE] Machine lubricant,Machine lubricant,8.0,258.61,8.0,8.0
+PO-25568,Victoria Plating Supplies,2025-04-06 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.15,16856.97,0.15,0.15
+PO-25564,Lion Rock Copper Trading Ltd,2025-04-06 09:00:00,[CU-ROD] Copper rod,Copper rod,0.75,11031.55,0.75,0.75
+PO-25564,Lion Rock Copper Trading Ltd,2025-04-06 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,215.0,38.96,215.0,215.0
+PO-25563,Shatin Circuit Boards Ltd,2025-04-06 09:00:00,[PCB] PCB blanks,PCB blanks,850.0,3.84,850.0,850.0
+PO-25554,Kwong Fat Plastics Co.,2025-04-04 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.05,2015.93,1.05,1.05
+PO-25553,Lion Rock Copper Trading Ltd,2025-04-04 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,11031.55,0.05,0.05
+PO-25553,Lion Rock Copper Trading Ltd,2025-04-04 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,15.0,38.96,15.0,15.0
+PO-25551,Mong Kok Solder & Wire,2025-04-04 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,215.0,39.9,215.0,215.0
+PO-25549,Kwong Fat Plastics Co.,2025-04-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.7,2015.93,0.7,0.7
+PO-25541,"Ganjiang Copper Products Co., Ltd.",2025-04-02 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,12220.97,0.35,0.35
+PO-25540,Kwong Fat Plastics Co.,2025-04-02 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.4,2015.93,0.4,0.4
+PO-25537,Shatin Circuit Boards Ltd,2025-04-01 09:00:00,[PCB] PCB blanks,PCB blanks,1200.0,3.84,1200.0,1200.0
+PO-25514,Mong Kok Solder & Wire,2025-03-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,15.0,39.9,15.0,15.0
+PO-25514,Mong Kok Solder & Wire,2025-03-29 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-25514,Mong Kok Solder & Wire,2025-03-29 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.3,1850.0,0.3,0.3
+PO-25514,Mong Kok Solder & Wire,2025-03-29 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,22.0,24.5,22.0,22.0
+PO-25514,Mong Kok Solder & Wire,2025-03-29 09:00:00,[CARTON] Shipping cartons,Shipping cartons,850.0,0.62,850.0,850.0
+PO-25513,Lion Rock Copper Trading Ltd,2025-03-29 09:00:00,[CU-ROD] Copper rod,Copper rod,0.3,10572.66,0.3,0.3
+PO-25513,Lion Rock Copper Trading Ltd,2025-03-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,75.0,38.96,75.0,75.0
+PO-25510,Pearl Delta Alloys Ltd,2025-03-28 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.3,3247.11,1.3,1.3
+PO-25502,"Ganjiang Copper Products Co., Ltd.",2025-03-27 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,12220.97,0.05,0.05
+PO-25502,"Ganjiang Copper Products Co., Ltd.",2025-03-27 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,25.0,24.5,25.0,25.0
+PO-25502,"Ganjiang Copper Products Co., Ltd.",2025-03-27 09:00:00,[PCB] PCB blanks,PCB blanks,200.0,3.4,200.0,200.0
+PO-25502,"Ganjiang Copper Products Co., Ltd.",2025-03-27 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-25502,"Ganjiang Copper Products Co., Ltd.",2025-03-27 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1000.0,0.62,1000.0,1000.0
+PO-25498,Mong Kok Solder & Wire,2025-03-26 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,30.0,39.9,30.0,30.0
+PO-25492,Kwong Fat Plastics Co.,2025-03-25 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,3.05,2015.93,3.05,3.05
+PO-25488,Kai Tak Fasteners Ltd,2025-03-25 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,194.0,24.96,194.0,194.0
+PO-25483,Sun Kee Packaging,2025-03-24 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2200.0,0.67,2200.0,2200.0
+PO-25481,Kwong Fat Plastics Co.,2025-03-24 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,5.55,2015.93,5.55,5.55
+PO-25479,Kwong Fat Plastics Co.,2025-03-23 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.15,1923.15,1.15,1.15
+PO-25477,Lion Rock Copper Trading Ltd,2025-03-23 09:00:00,[CU-ROD] Copper rod,Copper rod,0.4,10572.66,0.4,0.4
+PO-25477,Lion Rock Copper Trading Ltd,2025-03-23 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,105.0,38.96,105.0,105.0
+PO-25476,Harbour Lubricants Supply,2025-03-23 09:00:00,[LUBE] Machine lubricant,Machine lubricant,19.0,241.92,19.0,19.0
+PO-25474,Kai Tak Fasteners Ltd,2025-03-22 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,130.0,24.96,130.0,130.0
+PO-25467,Victoria Plating Supplies,2025-03-21 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.4,16856.97,0.4,0.4
+PO-25466,"Ganjiang Copper Products Co., Ltd.",2025-03-21 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,12220.97,0.35,0.35
+PO-25463,Sun Kee Packaging,2025-03-21 09:00:00,[CARTON] Shipping cartons,Shipping cartons,16700.0,0.67,16700.0,16700.0
+PO-25461,Acme Metals (HK) Ltd,2025-03-20 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,10611.24,0.25,0.25
+PO-25461,Acme Metals (HK) Ltd,2025-03-20 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.35,1850.0,1.35,1.35
+PO-25461,Acme Metals (HK) Ltd,2025-03-20 09:00:00,[LUBE] Machine lubricant,Machine lubricant,13.0,185.0,13.0,13.0
+PO-25461,Acme Metals (HK) Ltd,2025-03-20 09:00:00,[CARTON] Shipping cartons,Shipping cartons,4000.0,0.62,4000.0,4000.0
+PO-25461,Acme Metals (HK) Ltd,2025-03-20 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,101.0,24.5,101.0,101.0
+PO-25458,Victoria Plating Supplies,2025-03-20 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.35,17249.54,0.35,0.35
+PO-25454,Shatin Circuit Boards Ltd,2025-03-19 09:00:00,[PCB] PCB blanks,PCB blanks,700.0,3.84,700.0,700.0
+PO-25443,Lion Rock Copper Trading Ltd,2025-03-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,10572.66,0.25,0.25
+PO-25443,Lion Rock Copper Trading Ltd,2025-03-17 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,70.0,38.96,70.0,70.0
+PO-25435,Lion Rock Copper Trading Ltd,2025-03-16 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,10572.66,0.05,0.05
+PO-25435,Lion Rock Copper Trading Ltd,2025-03-16 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,10.0,38.96,5.0,5.0
+PO-25430,Mong Kok Solder & Wire,2025-03-15 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,50.0,39.9,50.0,50.0
+PO-25428,Harbour Lubricants Supply,2025-03-15 09:00:00,[LUBE] Machine lubricant,Machine lubricant,4.0,241.92,4.0,4.0
+PO-25425,Kai Tak Fasteners Ltd,2025-03-14 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,237.0,24.96,237.0,237.0
+PO-25423,"Ganjiang Copper Products Co., Ltd.",2025-03-14 09:00:00,[CU-ROD] Copper rod,Copper rod,1.6,12220.97,1.6,1.6
+PO-25419,Kai Tak Fasteners Ltd,2025-03-13 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,261.0,24.96,261.0,261.0
+PO-25415,"Ganjiang Copper Products Co., Ltd.",2025-03-13 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,12220.97,0.15,0.0
+PO-25409,Pearl Delta Alloys Ltd,2025-03-12 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.25,3247.11,0.25,0.25
+PO-25406,Kai Tak Fasteners Ltd,2025-03-11 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,103.0,24.96,103.0,103.0
+PO-25404,Victoria Plating Supplies,2025-03-11 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25403,Kwong Fat Plastics Co.,2025-03-11 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,6.65,1923.15,6.65,6.65
+PO-25400,Mong Kok Solder & Wire,2025-03-10 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,55.0,39.9,55.0,55.0
+PO-25394,"Ganjiang Copper Products Co., Ltd.",2025-03-09 09:00:00,[CU-ROD] Copper rod,Copper rod,0.3,12005.57,0.3,0.3
+PO-25392,Lion Rock Copper Trading Ltd,2025-03-09 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9595.23,0.1,0.1
+PO-25392,Lion Rock Copper Trading Ltd,2025-03-09 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,30.0,38.96,30.0,30.0
+PO-25390,Lion Rock Copper Trading Ltd,2025-03-08 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,9595.23,0.05,0.05
+PO-25390,Lion Rock Copper Trading Ltd,2025-03-08 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,15.0,38.96,15.0,15.0
+PO-25383,Pearl Delta Alloys Ltd,2025-03-07 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.5,3293.59,0.5,0.5
+PO-25375,Shatin Circuit Boards Ltd,2025-03-06 09:00:00,[PCB] PCB blanks,PCB blanks,1600.0,3.95,1600.0,1600.0
+PO-25372,Mong Kok Solder & Wire,2025-03-05 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,120.0,39.9,120.0,120.0
+PO-25368,Pearl Delta Alloys Ltd,2025-03-05 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,3.65,3293.59,3.65,3.65
+PO-25359,Victoria Plating Supplies,2025-03-03 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.3,17249.54,0.3,0.3
+PO-25357,Victoria Plating Supplies,2025-03-03 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.25,17249.54,0.25,0.25
+PO-25355,Lion Rock Copper Trading Ltd,2025-03-03 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9595.23,0.1,0.1
+PO-25355,Lion Rock Copper Trading Ltd,2025-03-03 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,20.0,38.96,20.0,20.0
+PO-25350,Victoria Plating Supplies,2025-03-02 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.15,17249.54,0.15,0.15
+PO-25345,Pearl Delta Alloys Ltd,2025-03-01 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.9,3293.59,1.9,1.9
+PO-25342,Victoria Plating Supplies,2025-02-28 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25337,Victoria Plating Supplies,2025-02-27 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25336,Kwong Fat Plastics Co.,2025-02-27 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.45,1884.4,1.45,1.45
+PO-25334,Acme Metals (HK) Ltd,2025-02-27 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,10611.24,0.1,0.1
+PO-25331,Victoria Plating Supplies,2025-02-26 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25329,Tsuen Wan Aluminium Works,2025-02-26 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.85,3479.14,2.85,2.85
+PO-25325,Acme Metals (HK) Ltd,2025-02-26 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,10611.24,0.25,0.25
+PO-25323,"Ganjiang Copper Products Co., Ltd.",2025-02-25 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,11572.31,0.05,0.05
+PO-25321,Shatin Circuit Boards Ltd,2025-02-25 09:00:00,[PCB] PCB blanks,PCB blanks,900.0,3.79,900.0,900.0
+PO-25316,Victoria Plating Supplies,2025-02-24 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.05,17249.54,0.05,0.05
+PO-25316,Victoria Plating Supplies,2025-02-24 09:00:00,[CARTON] Shipping cartons,Shipping cartons,900.0,0.62,900.0,900.0
+PO-25316,Victoria Plating Supplies,2025-02-24 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-25316,Victoria Plating Supplies,2025-02-24 09:00:00,[PCB] PCB blanks,PCB blanks,150.0,3.4,150.0,150.0
+PO-25316,Victoria Plating Supplies,2025-02-24 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.3,1850.0,0.3,0.3
+PO-25312,Tsuen Wan Aluminium Works,2025-02-23 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.2,3479.14,1.2,1.2
+PO-25309,Pearl Delta Alloys Ltd,2025-02-23 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.15,3293.59,0.15,0.15
+PO-25309,Pearl Delta Alloys Ltd,2025-02-23 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-25309,Pearl Delta Alloys Ltd,2025-02-23 09:00:00,[CARTON] Shipping cartons,Shipping cartons,850.0,0.62,650.0,650.0
+PO-25309,Pearl Delta Alloys Ltd,2025-02-23 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.3,1850.0,0.3,0.3
+PO-25308,Sun Kee Packaging,2025-02-23 09:00:00,[CARTON] Shipping cartons,Shipping cartons,650.0,0.67,650.0,650.0
+PO-25308,Sun Kee Packaging,2025-02-23 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,17.0,24.5,17.0,17.0
+PO-25308,Sun Kee Packaging,2025-02-23 09:00:00,[LUBE] Machine lubricant,Machine lubricant,2.0,185.0,2.0,2.0
+PO-25308,Sun Kee Packaging,2025-02-23 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.25,1850.0,0.25,0.25
+PO-25308,Sun Kee Packaging,2025-02-23 09:00:00,[PCB] PCB blanks,PCB blanks,100.0,3.4,100.0,100.0
+PO-25307,Kwong Fat Plastics Co.,2025-02-23 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,5.55,1884.4,5.55,5.55
+PO-25289,Kwong Fat Plastics Co.,2025-02-20 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,2.95,1884.4,2.95,2.95
+PO-25287,Mong Kok Solder & Wire,2025-02-19 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,25.0,39.9,25.0,25.0
+PO-25284,Victoria Plating Supplies,2025-02-19 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.3,17249.54,0.3,0.3
+PO-25283,Shatin Circuit Boards Ltd,2025-02-19 09:00:00,[PCB] PCB blanks,PCB blanks,900.0,3.64,900.0,900.0
+PO-25279,Shatin Circuit Boards Ltd,2025-02-18 09:00:00,[PCB] PCB blanks,PCB blanks,250.0,3.64,250.0,250.0
+PO-25279,Shatin Circuit Boards Ltd,2025-02-18 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1350.0,0.62,1350.0,1350.0
+PO-25279,Shatin Circuit Boards Ltd,2025-02-18 09:00:00,[LUBE] Machine lubricant,Machine lubricant,5.0,185.0,5.0,5.0
+PO-25279,Shatin Circuit Boards Ltd,2025-02-18 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,34.0,24.5,34.0,34.0
+PO-25273,Acme Metals (HK) Ltd,2025-02-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,10611.24,0.15,0.15
+PO-25269,Lion Rock Copper Trading Ltd,2025-02-16 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9595.23,0.1,0.1
+PO-25269,Lion Rock Copper Trading Ltd,2025-02-16 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,20.0,38.96,20.0,20.0
+PO-25267,Shatin Circuit Boards Ltd,2025-02-16 09:00:00,[PCB] PCB blanks,PCB blanks,1400.0,3.64,1400.0,1400.0
+PO-25262,Lion Rock Copper Trading Ltd,2025-02-15 09:00:00,[CU-ROD] Copper rod,Copper rod,0.85,9595.23,0.85,0.85
+PO-25262,Lion Rock Copper Trading Ltd,2025-02-15 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,205.0,38.96,205.0,205.0
+PO-25261,Acme Metals (HK) Ltd,2025-02-15 09:00:00,[CU-ROD] Copper rod,Copper rod,0.75,10542.51,0.75,0.75
+PO-25251,Kwong Fat Plastics Co.,2025-02-13 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.65,1884.4,1.65,1.65
+PO-25250,Sun Kee Packaging,2025-02-13 09:00:00,[CARTON] Shipping cartons,Shipping cartons,3900.0,0.67,3900.0,3900.0
+PO-25250,Sun Kee Packaging,2025-02-13 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,107.0,24.5,107.0,107.0
+PO-25250,Sun Kee Packaging,2025-02-13 09:00:00,[PCB] PCB blanks,PCB blanks,750.0,3.4,750.0,750.0
+PO-25250,Sun Kee Packaging,2025-02-13 09:00:00,[LUBE] Machine lubricant,Machine lubricant,14.0,185.0,14.0,14.0
+PO-25248,Acme Metals (HK) Ltd,2025-02-13 09:00:00,[CU-ROD] Copper rod,Copper rod,0.3,10542.51,0.2,0.2
+PO-25247,Harbour Lubricants Supply,2025-02-13 09:00:00,[LUBE] Machine lubricant,Machine lubricant,11.0,234.99,11.0,11.0
+PO-25240,Sun Kee Packaging,2025-02-11 09:00:00,[CARTON] Shipping cartons,Shipping cartons,11800.0,0.67,11800.0,11800.0
+PO-25236,Victoria Plating Supplies,2025-02-11 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.3,17249.54,0.3,0.3
+PO-25233,Mong Kok Solder & Wire,2025-02-10 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,85.0,39.9,85.0,85.0
+PO-25231,"Ganjiang Copper Products Co., Ltd.",2025-02-10 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,11572.31,0.25,0.25
+PO-25229,Kai Tak Fasteners Ltd,2025-02-10 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,216.0,24.96,216.0,216.0
+PO-25227,Lion Rock Copper Trading Ltd,2025-02-09 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,9595.23,0.2,0.2
+PO-25227,Lion Rock Copper Trading Ltd,2025-02-09 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,60.0,38.96,60.0,60.0
+PO-25224,Victoria Plating Supplies,2025-02-09 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.2,17249.54,0.2,0.2
+PO-25221,Pearl Delta Alloys Ltd,2025-02-08 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.55,3293.59,1.55,1.55
+PO-25220,Harbour Lubricants Supply,2025-02-08 09:00:00,[LUBE] Machine lubricant,Machine lubricant,9.0,234.99,9.0,9.0
+PO-25218,"Ganjiang Copper Products Co., Ltd.",2025-02-08 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,10731.63,0.35,0.35
+PO-25215,Lion Rock Copper Trading Ltd,2025-02-07 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,9595.23,0.05,0.05
+PO-25215,Lion Rock Copper Trading Ltd,2025-02-07 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,5.0,38.96,5.0,5.0
+PO-25215,Lion Rock Copper Trading Ltd,2025-02-07 09:00:00,[CARTON] Shipping cartons,Shipping cartons,300.0,0.62,300.0,300.0
+PO-25215,Lion Rock Copper Trading Ltd,2025-02-07 09:00:00,[PCB] PCB blanks,PCB blanks,50.0,3.4,50.0,50.0
+PO-25215,Lion Rock Copper Trading Ltd,2025-02-07 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.1,1850.0,0.1,0.1
+PO-25214,Kai Tak Fasteners Ltd,2025-02-07 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,338.0,24.96,338.0,338.0
+PO-25213,Tsuen Wan Aluminium Works,2025-02-07 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.45,3479.14,0.45,0.45
+PO-25212,Acme Metals (HK) Ltd,2025-02-07 09:00:00,[CU-ROD] Copper rod,Copper rod,0.45,10542.51,0.45,0.45
+PO-25211,Kwong Fat Plastics Co.,2025-02-07 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,2.1,1884.4,2.1,2.1
+PO-25210,Tsuen Wan Aluminium Works,2025-02-06 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.4,3479.14,0.4,0.4
+PO-25209,Shatin Circuit Boards Ltd,2025-02-06 09:00:00,[PCB] PCB blanks,PCB blanks,400.0,3.64,400.0,400.0
+PO-25206,Harbour Lubricants Supply,2025-02-06 09:00:00,[LUBE] Machine lubricant,Machine lubricant,32.0,234.99,32.0,32.0
+PO-25205,"Ganjiang Copper Products Co., Ltd.",2025-02-06 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,10731.63,0.1,0.1
+PO-25202,Tsuen Wan Aluminium Works,2025-02-05 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,3.75,3479.14,3.75,3.75
+PO-25201,Harbour Lubricants Supply,2025-02-05 09:00:00,[LUBE] Machine lubricant,Machine lubricant,16.0,226.65,16.0,16.0
+PO-25196,Pearl Delta Alloys Ltd,2025-02-04 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.65,3293.59,0.65,0.65
+PO-25195,"Ganjiang Copper Products Co., Ltd.",2025-02-04 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,10731.63,0.05,0.05
+PO-25193,Acme Metals (HK) Ltd,2025-02-04 09:00:00,[CU-ROD] Copper rod,Copper rod,0.9,10542.51,0.9,0.9
+PO-25192,Pearl Delta Alloys Ltd,2025-02-04 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.9,3293.59,0.9,0.9
+PO-25189,Kwong Fat Plastics Co.,2025-02-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,3.1,1884.4,3.1,3.1
+PO-25187,Kwong Fat Plastics Co.,2025-02-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,2.65,1884.4,2.65,2.65
+PO-25186,"Ganjiang Copper Products Co., Ltd.",2025-02-03 09:00:00,[CU-ROD] Copper rod,Copper rod,0.7,10731.63,0.7,0.7
+PO-25185,"Ganjiang Copper Products Co., Ltd.",2025-02-03 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,10731.63,0.2,0.2
+PO-25178,"Ganjiang Copper Products Co., Ltd.",2025-02-02 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,10731.63,0.15,0.15
+PO-25177,Pearl Delta Alloys Ltd,2025-02-02 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,3.25,3293.59,3.25,3.25
+PO-25176,Shatin Circuit Boards Ltd,2025-02-01 09:00:00,[PCB] PCB blanks,PCB blanks,4150.0,3.64,4150.0,4150.0
+PO-25175,Victoria Plating Supplies,2025-02-01 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.25,17249.54,0.25,0.25
+PO-25172,Harbour Lubricants Supply,2025-02-01 09:00:00,[LUBE] Machine lubricant,Machine lubricant,17.0,213.23,17.0,17.0
+PO-25171,Tsuen Wan Aluminium Works,2025-02-01 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.5,3446.43,2.5,2.5
+PO-25169,Harbour Lubricants Supply,2025-01-31 09:00:00,[LUBE] Machine lubricant,Machine lubricant,12.0,213.23,12.0,12.0
+PO-25168,Victoria Plating Supplies,2025-01-31 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25166,Shatin Circuit Boards Ltd,2025-01-31 09:00:00,[PCB] PCB blanks,PCB blanks,3500.0,3.64,3500.0,3500.0
+PO-25165,Victoria Plating Supplies,2025-01-30 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.25,17249.54,0.25,0.25
+PO-25160,Tsuen Wan Aluminium Works,2025-01-30 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.75,3446.43,0.75,0.75
+PO-25159,Lion Rock Copper Trading Ltd,2025-01-29 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9595.23,0.1,0.1
+PO-25159,Lion Rock Copper Trading Ltd,2025-01-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,25.0,38.96,25.0,25.0
+PO-25154,Lion Rock Copper Trading Ltd,2025-01-29 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,9595.23,0.2,0.2
+PO-25154,Lion Rock Copper Trading Ltd,2025-01-29 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,50.0,38.96,50.0,50.0
+PO-25153,Victoria Plating Supplies,2025-01-29 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25151,Sun Kee Packaging,2025-01-28 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2400.0,0.67,2400.0,2400.0
+PO-25150,Mong Kok Solder & Wire,2025-01-28 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,40.0,39.9,40.0,40.0
+PO-25148,"Ganjiang Copper Products Co., Ltd.",2025-01-28 09:00:00,[CU-ROD] Copper rod,Copper rod,0.5,10616.59,0.5,0.5
+PO-25146,Pearl Delta Alloys Ltd,2025-01-27 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.8,3514.43,1.8,1.8
+PO-25143,Victoria Plating Supplies,2025-01-27 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.15,17249.54,0.15,0.15
+PO-25142,Lion Rock Copper Trading Ltd,2025-01-27 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,9595.23,0.15,0.15
+PO-25142,Lion Rock Copper Trading Ltd,2025-01-27 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,40.0,38.96,40.0,40.0
+PO-25139,Kai Tak Fasteners Ltd,2025-01-26 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,182.0,24.96,182.0,182.0
+PO-25138,Kai Tak Fasteners Ltd,2025-01-26 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,230.0,24.96,230.0,230.0
+PO-25137,Lion Rock Copper Trading Ltd,2025-01-26 09:00:00,[CU-ROD] Copper rod,Copper rod,0.35,9595.23,0.35,0.35
+PO-25137,Lion Rock Copper Trading Ltd,2025-01-26 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,85.0,38.96,85.0,85.0
+PO-25136,Sun Kee Packaging,2025-01-26 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1200.0,0.67,1200.0,1200.0
+PO-25133,Kwong Fat Plastics Co.,2025-01-25 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,3.1,1884.4,2.45,2.45
+PO-25132,Shatin Circuit Boards Ltd,2025-01-25 09:00:00,[PCB] PCB blanks,PCB blanks,1400.0,3.64,1400.0,1400.0
+PO-25130,Lion Rock Copper Trading Ltd,2025-01-25 09:00:00,[CU-ROD] Copper rod,Copper rod,0.5,9595.23,0.5,0.5
+PO-25130,Lion Rock Copper Trading Ltd,2025-01-25 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,120.0,38.96,120.0,120.0
+PO-25129,Sun Kee Packaging,2025-01-25 09:00:00,[CARTON] Shipping cartons,Shipping cartons,8100.0,0.67,8100.0,8100.0
+PO-25125,"Ganjiang Copper Products Co., Ltd.",2025-01-24 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,10068.66,0.15,0.15
+PO-25125,"Ganjiang Copper Products Co., Ltd.",2025-01-24 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.85,1850.0,0.85,0.85
+PO-25125,"Ganjiang Copper Products Co., Ltd.",2025-01-24 09:00:00,[PCB] PCB blanks,PCB blanks,450.0,3.4,450.0,450.0
+PO-25125,"Ganjiang Copper Products Co., Ltd.",2025-01-24 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,65.0,24.5,65.0,65.0
+PO-25124,Tsuen Wan Aluminium Works,2025-01-24 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.8,3446.43,0.8,0.8
+PO-25120,Mong Kok Solder & Wire,2025-01-23 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,75.0,39.9,75.0,75.0
+PO-25119,Lion Rock Copper Trading Ltd,2025-01-23 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9779.96,0.1,0.1
+PO-25119,Lion Rock Copper Trading Ltd,2025-01-23 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,30.0,38.96,30.0,30.0
+PO-25115,Harbour Lubricants Supply,2025-01-22 09:00:00,[LUBE] Machine lubricant,Machine lubricant,23.0,213.23,23.0,23.0
+PO-25114,Sun Kee Packaging,2025-01-22 09:00:00,[CARTON] Shipping cartons,Shipping cartons,4950.0,0.67,4950.0,4950.0
+PO-25113,Lion Rock Copper Trading Ltd,2025-01-22 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,9779.96,0.05,0.05
+PO-25113,Lion Rock Copper Trading Ltd,2025-01-22 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,10.0,38.96,10.0,10.0
+PO-25112,"Ganjiang Copper Products Co., Ltd.",2025-01-22 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,10068.66,0.1,0.1
+PO-25111,"Ganjiang Copper Products Co., Ltd.",2025-01-22 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,10068.66,0.15,0.15
+PO-25110,Harbour Lubricants Supply,2025-01-21 09:00:00,[LUBE] Machine lubricant,Machine lubricant,8.0,213.23,8.0,8.0
+PO-25109,Shatin Circuit Boards Ltd,2025-01-21 09:00:00,[PCB] PCB blanks,PCB blanks,1300.0,3.64,1300.0,1300.0
+PO-25106,Pearl Delta Alloys Ltd,2025-01-21 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.15,3514.43,1.15,1.15
+PO-25102,Lion Rock Copper Trading Ltd,2025-01-20 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9779.96,0.1,0.1
+PO-25102,Lion Rock Copper Trading Ltd,2025-01-20 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,25.0,38.96,25.0,25.0
+PO-25101,"Ganjiang Copper Products Co., Ltd.",2025-01-20 09:00:00,[CU-ROD] Copper rod,Copper rod,0.4,10068.66,0.4,0.4
+PO-25100,Pearl Delta Alloys Ltd,2025-01-20 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.85,3514.43,1.85,1.85
+PO-25097,Shatin Circuit Boards Ltd,2025-01-19 09:00:00,[PCB] PCB blanks,PCB blanks,550.0,3.64,550.0,550.0
+PO-25096,Tsuen Wan Aluminium Works,2025-01-19 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.2,3486.11,2.2,2.2
+PO-25095,Harbour Lubricants Supply,2025-01-19 09:00:00,[LUBE] Machine lubricant,Machine lubricant,12.0,213.23,12.0,12.0
+PO-25091,Harbour Lubricants Supply,2025-01-19 09:00:00,[LUBE] Machine lubricant,Machine lubricant,27.0,206.39,27.0,27.0
+PO-25087,Mong Kok Solder & Wire,2025-01-18 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,40.0,39.9,40.0,40.0
+PO-25086,Victoria Plating Supplies,2025-01-18 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25085,Harbour Lubricants Supply,2025-01-17 09:00:00,[LUBE] Machine lubricant,Machine lubricant,4.0,200.37,4.0,4.0
+PO-25085,Harbour Lubricants Supply,2025-01-17 09:00:00,[PCB] PCB blanks,PCB blanks,250.0,3.4,250.0,250.0
+PO-25085,Harbour Lubricants Supply,2025-01-17 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,32.0,24.5,32.0,32.0
+PO-25085,Harbour Lubricants Supply,2025-01-17 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1300.0,0.62,1300.0,1300.0
+PO-25084,Lion Rock Copper Trading Ltd,2025-01-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,9779.96,0.05,0.05
+PO-25084,Lion Rock Copper Trading Ltd,2025-01-17 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,15.0,38.96,15.0,15.0
+PO-25084,Lion Rock Copper Trading Ltd,2025-01-17 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,24.0,24.5,24.0,24.0
+PO-25084,Lion Rock Copper Trading Ltd,2025-01-17 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-25084,Lion Rock Copper Trading Ltd,2025-01-17 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.3,1850.0,0.3,0.3
+PO-25083,Tsuen Wan Aluminium Works,2025-01-17 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.5,3521.87,1.5,1.5
+PO-25082,Harbour Lubricants Supply,2025-01-17 09:00:00,[LUBE] Machine lubricant,Machine lubricant,35.0,200.37,35.0,35.0
+PO-25081,Mong Kok Solder & Wire,2025-01-17 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,40.0,40.17,40.0,40.0
+PO-25080,Pearl Delta Alloys Ltd,2025-01-17 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.7,3549.9,0.7,0.7
+PO-25079,Kwong Fat Plastics Co.,2025-01-16 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.4,1884.4,0.4,0.4
+PO-25078,Sun Kee Packaging,2025-01-16 09:00:00,[CARTON] Shipping cartons,Shipping cartons,8050.0,0.67,8050.0,8050.0
+PO-25077,Mong Kok Solder & Wire,2025-01-16 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,95.0,40.17,95.0,95.0
+PO-25076,Acme Metals (HK) Ltd,2025-01-16 09:00:00,[CU-ROD] Copper rod,Copper rod,0.45,10395.63,0.45,0.45
+PO-25074,Tsuen Wan Aluminium Works,2025-01-16 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.9,3521.87,0.9,0.9
+PO-25072,Victoria Plating Supplies,2025-01-15 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.85,17249.54,0.85,0.85
+PO-25071,Harbour Lubricants Supply,2025-01-15 09:00:00,[LUBE] Machine lubricant,Machine lubricant,26.0,189.6,26.0,26.0
+PO-25070,Lion Rock Copper Trading Ltd,2025-01-15 09:00:00,[CU-ROD] Copper rod,Copper rod,0.05,9779.96,0.05,0.05
+PO-25070,Lion Rock Copper Trading Ltd,2025-01-15 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,15.0,38.96,15.0,15.0
+PO-25070,Lion Rock Copper Trading Ltd,2025-01-15 09:00:00,[CARTON] Shipping cartons,Shipping cartons,850.0,0.62,850.0,850.0
+PO-25070,Lion Rock Copper Trading Ltd,2025-01-15 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,22.0,24.5,22.0,22.0
+PO-25070,Lion Rock Copper Trading Ltd,2025-01-15 09:00:00,[LUBE] Machine lubricant,Machine lubricant,3.0,185.0,3.0,3.0
+PO-25067,"Ganjiang Copper Products Co., Ltd.",2025-01-14 09:00:00,[CU-ROD] Copper rod,Copper rod,0.4,10003.17,0.4,0.0
+PO-25066,Mong Kok Solder & Wire,2025-01-14 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,85.0,40.17,85.0,85.0
+PO-25065,Mong Kok Solder & Wire,2025-01-14 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,200.0,40.17,200.0,200.0
+PO-25063,Kai Tak Fasteners Ltd,2025-01-14 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,106.0,24.96,106.0,106.0
+PO-25062,Kwong Fat Plastics Co.,2025-01-13 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,8.95,1884.4,5.4,5.4
+PO-25061,Tsuen Wan Aluminium Works,2025-01-13 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.1,3265.55,1.1,1.1
+PO-25060,Harbour Lubricants Supply,2025-01-13 09:00:00,[LUBE] Machine lubricant,Machine lubricant,17.0,189.6,17.0,17.0
+PO-25059,Mong Kok Solder & Wire,2025-01-13 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,35.0,40.17,35.0,35.0
+PO-25058,Mong Kok Solder & Wire,2025-01-13 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,65.0,38.29,65.0,65.0
+PO-25057,Victoria Plating Supplies,2025-01-13 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25056,Harbour Lubricants Supply,2025-01-12 09:00:00,[LUBE] Machine lubricant,Machine lubricant,13.0,189.6,13.0,13.0
+PO-25055,Acme Metals (HK) Ltd,2025-01-12 09:00:00,[CU-ROD] Copper rod,Copper rod,0.4,10395.63,0.4,0.4
+PO-25054,"Ganjiang Copper Products Co., Ltd.",2025-01-12 09:00:00,[CU-ROD] Copper rod,Copper rod,0.5,9669.14,0.5,0.5
+PO-25052,Mong Kok Solder & Wire,2025-01-12 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,185.0,38.29,185.0,185.0
+PO-25051,Pearl Delta Alloys Ltd,2025-01-12 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.4,3549.9,0.4,0.4
+PO-25050,Pearl Delta Alloys Ltd,2025-01-11 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.35,3413.77,0.35,0.35
+PO-25049,Shatin Circuit Boards Ltd,2025-01-11 09:00:00,[PCB] PCB blanks,PCB blanks,450.0,3.64,450.0,450.0
+PO-25048,"Ganjiang Copper Products Co., Ltd.",2025-01-11 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9669.14,0.1,0.1
+PO-25047,Mong Kok Solder & Wire,2025-01-11 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,260.0,38.29,260.0,260.0
+PO-25046,Sun Kee Packaging,2025-01-11 09:00:00,[CARTON] Shipping cartons,Shipping cartons,5100.0,0.67,5100.0,5100.0
+PO-25045,Shatin Circuit Boards Ltd,2025-01-11 09:00:00,[PCB] PCB blanks,PCB blanks,450.0,3.64,450.0,450.0
+PO-25044,Pearl Delta Alloys Ltd,2025-01-10 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.25,3413.77,1.25,1.25
+PO-25039,Acme Metals (HK) Ltd,2025-01-10 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,10395.63,0.2,0.2
+PO-25038,Pearl Delta Alloys Ltd,2025-01-09 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.95,3413.77,0.95,0.95
+PO-25037,Sun Kee Packaging,2025-01-09 09:00:00,[CARTON] Shipping cartons,Shipping cartons,79550.0,0.67,79550.0,79550.0
+PO-25034,Kai Tak Fasteners Ltd,2025-01-09 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,341.0,24.96,341.0,341.0
+PO-25033,Harbour Lubricants Supply,2025-01-09 09:00:00,[LUBE] Machine lubricant,Machine lubricant,18.0,189.6,18.0,18.0
+PO-25032,Lion Rock Copper Trading Ltd,2025-01-09 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9779.96,0.1,0.1
+PO-25032,Lion Rock Copper Trading Ltd,2025-01-09 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,25.0,38.96,25.0,25.0
+PO-25031,Kai Tak Fasteners Ltd,2025-01-08 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,159.0,24.96,159.0,159.0
+PO-25030,Acme Metals (HK) Ltd,2025-01-08 09:00:00,[CU-ROD] Copper rod,Copper rod,0.8,9986.67,0.8,0.8
+PO-25029,Kwong Fat Plastics Co.,2025-01-08 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.4,1884.4,1.4,1.4
+PO-25029,Kwong Fat Plastics Co.,2025-01-08 09:00:00,[PCB] PCB blanks,PCB blanks,800.0,3.4,800.0,800.0
+PO-25029,Kwong Fat Plastics Co.,2025-01-08 09:00:00,[LUBE] Machine lubricant,Machine lubricant,14.0,185.0,14.0,14.0
+PO-25029,Kwong Fat Plastics Co.,2025-01-08 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,108.0,24.5,108.0,108.0
+PO-25028,Sun Kee Packaging,2025-01-08 09:00:00,[CARTON] Shipping cartons,Shipping cartons,5300.0,0.67,5300.0,5300.0
+PO-25027,Victoria Plating Supplies,2025-01-08 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25026,Harbour Lubricants Supply,2025-01-08 09:00:00,[LUBE] Machine lubricant,Machine lubricant,19.0,189.6,19.0,19.0
+PO-25025,Shatin Circuit Boards Ltd,2025-01-07 09:00:00,[PCB] PCB blanks,PCB blanks,200.0,3.47,200.0,200.0
+PO-25024,Shatin Circuit Boards Ltd,2025-01-07 09:00:00,[PCB] PCB blanks,PCB blanks,600.0,3.47,600.0,600.0
+PO-25023,Victoria Plating Supplies,2025-01-07 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,1.2,17249.54,1.2,1.2
+PO-25022,Acme Metals (HK) Ltd,2025-01-07 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,9986.67,0.15,0.15
+PO-25021,Victoria Plating Supplies,2025-01-07 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,17249.54,0.1,0.1
+PO-25020,Kwong Fat Plastics Co.,2025-01-07 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.55,1884.4,1.55,1.55
+PO-25019,Tsuen Wan Aluminium Works,2025-01-06 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.4,3265.55,0.4,0.4
+PO-25018,Lion Rock Copper Trading Ltd,2025-01-06 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,9779.96,0.15,0.15
+PO-25018,Lion Rock Copper Trading Ltd,2025-01-06 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,35.0,38.96,35.0,35.0
+PO-25018,Lion Rock Copper Trading Ltd,2025-01-06 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,59.0,24.5,59.0,59.0
+PO-25018,Lion Rock Copper Trading Ltd,2025-01-06 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.8,1850.0,0.8,0.8
+PO-25015,Acme Metals (HK) Ltd,2025-01-06 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,9986.67,0.1,0.1
+PO-25014,Tsuen Wan Aluminium Works,2025-01-06 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,1.85,3265.55,1.85,1.85
+PO-25013,"Ganjiang Copper Products Co., Ltd.",2025-01-06 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,9669.14,0.2,0.2
+PO-25013,"Ganjiang Copper Products Co., Ltd.",2025-01-06 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2850.0,0.62,2850.0,2850.0
+PO-25013,"Ganjiang Copper Products Co., Ltd.",2025-01-06 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.95,1850.0,0.95,0.95
+PO-25013,"Ganjiang Copper Products Co., Ltd.",2025-01-06 09:00:00,[LUBE] Machine lubricant,Machine lubricant,10.0,185.0,10.0,10.0
+PO-DEC005,Shatin Circuit Boards Ltd,2025-12-08 09:00:00,[PCB] PCB blanks,PCB blanks,690.0,4.32,690.0,0.0
+PO-DEC017,Harbour Lubricants Supply,2025-12-03 09:00:00,[LUBE] Machine lubricant,Machine lubricant,4.0,272.13,4.0,0.0
+PO-DEC016,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.93,2024.89,0.93,0.0
+PO-DEC015,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.92,2024.89,0.92,0.0
+PO-DEC014,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.91,2024.89,0.91,0.0
+PO-DEC013,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.9,2024.89,0.9,0.0
+PO-DEC012,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.89,2024.89,0.89,0.0
+PO-DEC011,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.88,2024.89,0.88,0.0
+PO-DEC010,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.87,2024.89,0.87,0.0
+PO-DEC009,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.86,2024.89,0.86,0.0
+PO-DEC008,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.85,2024.89,0.85,0.0
+PO-DEC007,Kwong Fat Plastics Co.,2025-12-03 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.84,2024.89,0.84,0.0
+PO-DEC023,Acme Metals (HK) Ltd,2025-12-02 09:00:00,[CU-ROD] Copper rod,Copper rod,4.0,13450.03,4.0,0.0
+PO-DEC006,Tsuen Wan Aluminium Works,2025-12-02 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.94,3716.09,0.94,0.0
+PO-DEC003,Harbour Lubricants Supply,2025-12-02 09:00:00,[LUBE] Machine lubricant,Machine lubricant,6.0,272.13,6.0,0.0
+PO-DEC028,Kai Tak Fasteners Ltd,2025-12-01 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,41.0,26.62,41.0,0.0
+PO-DEC027,Sun Kee Packaging,2025-12-01 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1220.0,0.74,1220.0,0.0
+PO-DEC026,Pearl Delta Alloys Ltd,2025-12-01 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.48,4383.77,0.48,0.0
+PO-DEC025,Mong Kok Solder & Wire,2025-12-01 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,31.0,42.51,31.0,0.0
+PO-DEC024,Victoria Plating Supplies,2025-12-01 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.09,20120.04,0.09,0.0
+PO-DEC018,"Ganjiang Copper Products Co., Ltd.",2025-12-01 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,12728.21,0.2,0.0
+PO-DEC004,Shatin Circuit Boards Ltd,2025-12-01 09:00:00,[PCB] PCB blanks,PCB blanks,930.0,4.32,930.0,0.0
+PO-DEC002,Sun Kee Packaging,2025-12-01 09:00:00,[CARTON] Shipping cartons,Shipping cartons,3240.0,0.74,3240.0,0.0
+PO-DEC001,Kai Tak Fasteners Ltd,2025-12-01 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,68.0,26.62,68.0,0.0
+PO-DEC022,Acme Metals (HK) Ltd,2025-11-30 09:00:00,[CU-ROD] Copper rod,Copper rod,1.0,12339.48,1.0,0.0
+PO-26982,Pearl Delta Alloys Ltd,2025-11-26 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,3.3,4383.77,3.3,0.0
+PO-26979,Sun Kee Packaging,2025-11-26 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2950.0,0.74,2950.0,0.0
+PO-26976,Mong Kok Solder & Wire,2025-11-25 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,145.0,42.51,145.0,0.0
+PO-26937,Pearl Delta Alloys Ltd,2025-11-19 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.5,4146.77,0.4,0.5
+PO-26926,Tsuen Wan Aluminium Works,2025-11-17 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,2.25,3716.09,2.25,2.25
+PO-26924,Acme Metals (HK) Ltd,2025-11-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.65,11444.51,0.65,0.65
+PO-26915,Pearl Delta Alloys Ltd,2025-11-15 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.6,4146.77,0.6,0.6
+PO-26910,Victoria Plating Supplies,2025-11-14 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.25,20120.04,0.25,0.25
+PO-DEC021,Acme Metals (HK) Ltd,2025-11-12 09:00:00,[CU-ROD] Copper rod,Copper rod,0.15,11444.51,0.15,0.0
+PO-DEC020,Acme Metals (HK) Ltd,2025-11-12 09:00:00,[CU-ROD] Copper rod,Copper rod,0.13,11444.51,0.13,0.0
+PO-DEC019,Acme Metals (HK) Ltd,2025-11-12 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,11444.51,0.1,0.0
+PO-26884,Mong Kok Solder & Wire,2025-11-10 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,315.0,42.51,315.0,315.0
+PO-26877,Victoria Plating Supplies,2025-11-09 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,1.0,20120.04,1.0,1.0
+PO-26859,Kai Tak Fasteners Ltd,2025-11-06 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,402.0,26.62,402.0,402.0
+PO-26857,Pearl Delta Alloys Ltd,2025-11-05 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,2.8,4146.77,2.8,2.8
+PO-26856,Tsuen Wan Aluminium Works,2025-11-05 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.5,3716.09,0.5,0.5
+PO-26848,Shatin Circuit Boards Ltd,2025-11-04 09:00:00,[PCB] PCB blanks,PCB blanks,1150.0,4.32,1150.0,1150.0
+PO-26836,Tsuen Wan Aluminium Works,2025-11-02 09:00:00,[AL-SHEET] Aluminium sheet,Aluminium sheet,0.6,3716.09,0.6,0.6
+PO-26833,Shatin Circuit Boards Ltd,2025-11-02 09:00:00,[PCB] PCB blanks,PCB blanks,400.0,4.32,400.0,400.0
+PO-26833,Shatin Circuit Boards Ltd,2025-11-02 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,67.0,24.5,67.0,67.0
+PO-26833,Shatin Circuit Boards Ltd,2025-11-02 09:00:00,[LUBE] Machine lubricant,Machine lubricant,9.0,185.0,9.0,9.0
+PO-26833,Shatin Circuit Boards Ltd,2025-11-02 09:00:00,[CARTON] Shipping cartons,Shipping cartons,2650.0,0.62,2650.0,2650.0
+PO-26825,Kai Tak Fasteners Ltd,2025-10-31 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,202.0,26.62,180.0,180.0
+PO-26820,Victoria Plating Supplies,2025-10-30 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.4,20120.04,0.4,0.4
+PO-26818,Kai Tak Fasteners Ltd,2025-10-30 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,102.0,26.62,102.0,102.0
+PO-26808,Kai Tak Fasteners Ltd,2025-10-28 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,159.0,26.62,159.0,159.0
+PO-26804,Pearl Delta Alloys Ltd,2025-10-28 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.25,4146.77,0.25,0.25
+PO-26795,Mong Kok Solder & Wire,2025-10-26 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,35.0,42.51,35.0,35.0
+PO-26791,Acme Metals (HK) Ltd,2025-10-26 09:00:00,[CU-ROD] Copper rod,Copper rod,0.25,11444.51,0.25,0.25
+PO-26778,Pearl Delta Alloys Ltd,2025-10-23 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.4,3694.42,1.4,1.4
+PO-26770,Pearl Delta Alloys Ltd,2025-10-22 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,0.85,3694.42,0.85,0.85
+PO-26769,Sun Kee Packaging,2025-10-22 09:00:00,[CARTON] Shipping cartons,Shipping cartons,1150.0,0.72,1150.0,1150.0
+PO-26754,Pearl Delta Alloys Ltd,2025-10-19 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.25,3694.42,0.8,0.8
+PO-26750,Lion Rock Copper Trading Ltd,2025-10-19 09:00:00,[CU-ROD] Copper rod,Copper rod,0.1,11723.69,0.1,0.1
+PO-26750,Lion Rock Copper Trading Ltd,2025-10-19 09:00:00,[SN-SOLDER] Tin solder wire,Tin solder wire,35.0,38.96,35.0,35.0
+PO-26748,Harbour Lubricants Supply,2025-10-18 09:00:00,[LUBE] Machine lubricant,Machine lubricant,10.0,272.13,10.0,10.0
+PO-26737,"Ganjiang Copper Products Co., Ltd.",2025-10-17 09:00:00,[CU-ROD] Copper rod,Copper rod,0.2,12728.21,0.2,0.2
+PO-26737,"Ganjiang Copper Products Co., Ltd.",2025-10-17 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,1.25,1850.0,1.25,1.25
+PO-26737,"Ganjiang Copper Products Co., Ltd.",2025-10-17 09:00:00,[FASTENER] Stainless fasteners,Stainless fasteners,95.0,24.5,95.0,95.0
+PO-26737,"Ganjiang Copper Products Co., Ltd.",2025-10-17 09:00:00,[PCB] PCB blanks,PCB blanks,700.0,3.4,700.0,700.0
+PO-26735,Kwong Fat Plastics Co.,2025-10-16 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,0.95,2024.89,0.95,0.95
+PO-26733,Victoria Plating Supplies,2025-10-16 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.1,19984.86,0.1,0.1
+PO-26727,Shatin Circuit Boards Ltd,2025-10-15 09:00:00,[PCB] PCB blanks,PCB blanks,1050.0,4.32,1050.0,1050.0
+PO-26698,Pearl Delta Alloys Ltd,2025-10-10 09:00:00,[ZN-ALLOY] Zinc die-cast alloy,Zinc die-cast alloy,1.5,3694.42,1.5,1.5
+PO-26695,Victoria Plating Supplies,2025-10-10 09:00:00,[NI-ANODE] Nickel plating anode,Nickel plating anode,0.55,19984.86,0.55,0.55
+PO-26694,Harbour Lubricants Supply,2025-10-09 09:00:00,[LUBE] Machine lubricant,Machine lubricant,12.0,272.13,12.0,12.0
+PO-26674,Sun Kee Packaging,2025-10-06 09:00:00,[CARTON] Shipping cartons,Shipping cartons,14550.0,0.72,14550.0,14550.0
+PO-26673,Kwong Fat Plastics Co.,2025-10-06 09:00:00,[ABS-RESIN] ABS resin pellets,ABS resin pellets,2.5,2024.89,2.5,2.5
+PO-26656,Acme Metals (HK) Ltd,2025-10-03 09:00:00,[CU-ROD] Copper rod,Copper rod,0.65,11444.51,0.65,0.65

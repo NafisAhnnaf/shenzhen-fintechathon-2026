@@ -18,6 +18,7 @@ from .audit import AuditLog
 from .chain import Chain
 from .config import CHAIN_DIR, DATA_DIR
 from .domain import Ledger
+from .erp import ErpAdapter, make_adapter, merge_into
 from .intake import parse_statement, read_document
 from .intent import planner
 from .intent.router import Route, Router
@@ -33,14 +34,29 @@ def held_roles(signing: str) -> Optional[set]:
     return None if signing == "server" else SERVICE_ROLES
 
 
+def ledger_for(erp: ErpAdapter) -> Ledger:
+    """The agent's working ledger. With the demo file it is the file itself (records plus settled history). With a
+    real ERP it starts empty apart from the company settings (name, demo date, material-to-index map) and the
+    company records come from the ERP."""
+    base = Ledger.load(demo.DEMO_DIR / "ledger.json")
+    if erp.name == "file":
+        return base
+    led = Ledger(company=base.company, today=base.today, cash_usd=base.cash_usd, materials=base.materials)
+    merge_into(led, erp.fetch())
+    return led
+
+
 class Session:
     def __init__(self, network: Optional[str] = "localhost", decider=None, log_path: Optional[Path] = None,
-                 signing: str = "server"):
+                 signing: str = "server", erp: Optional[str] = None):
         self.network = network
         self.signing = signing
-        self.led = Ledger.load(demo.DEMO_DIR / "ledger.json")
+        self.erp: ErpAdapter = make_adapter(erp)
+        self.led = ledger_for(self.erp)
+        self.erp_synced = time.time()
         self.chain = Chain(network, held_roles=held_roles(signing)) if network else None
         self.agent = Agent(self.led, Calibration.load(), self.chain, log=AuditLog(log_path))
+        self.agent.erp = self.erp
         self.router = Router.load(decider)
         self.plans: dict[str, planner.Plan] = {}
         self.pending: dict[str, Route] = {}  # a question waiting for the user's answer
@@ -49,8 +65,8 @@ class Session:
 
     # ------------------------------------------------------------------ persistence
     @staticmethod
-    def state_file(network: str) -> Path:
-        return STATE_DIR / f"{network}.pkl"
+    def state_file(network: str, erp: str = "file") -> Path:
+        return STATE_DIR / f"{network}-{erp}.pkl"
 
     def save(self) -> None:
         if not self.network:
@@ -61,14 +77,17 @@ class Session:
             blob = pickle.dumps({"vault": chain.dep["contracts"]["vault"] if chain else None, "session": self})
         finally:
             self.chain = self.agent.chain = self.agent.gov.chain = chain
-        tmp = self.state_file(self.network).with_suffix(".tmp")
+        target = self.state_file(self.network, self.erp.name)
+        tmp = target.with_suffix(".tmp")
         tmp.write_bytes(blob)
-        tmp.replace(self.state_file(self.network))
+        tmp.replace(target)
 
     @staticmethod
-    def open(network: str = "localhost", log_path: Optional[Path] = None, signing: str = "client") -> "Session":
+    def open(network: str = "localhost", log_path: Optional[Path] = None, signing: str = "client",
+             erp: Optional[str] = None) -> "Session":
         """Reload saved state if it belongs to the deployed contracts; otherwise start from the demo baseline."""
-        p = Session.state_file(network)
+        erp_name = make_adapter(erp).name
+        p = Session.state_file(network, erp_name)
         chain = Chain(network, held_roles=held_roles(signing))
         if p.exists():
             d = pickle.loads(p.read_bytes())
@@ -77,9 +96,19 @@ class Session:
                 s.signing = signing
                 s.chain = s.agent.chain = s.agent.gov.chain = chain
                 return s
-        s = Session(network, log_path=log_path, signing=signing)
+        s = Session(network, log_path=log_path, signing=signing, erp=erp)
         s.save()
         return s
+
+    # ------------------------------------------------------------------ ERP
+    def sync_erp(self, max_age: float = 0.0) -> Optional[dict]:
+        """Refresh the company records from the ERP (skipped for the demo file, or if synced within max_age s)."""
+        if self.erp.name == "file" or time.time() - self.erp_synced < max_age:
+            return None
+        out = merge_into(self.led, self.erp.fetch())
+        self.erp_synced = time.time()
+        self.agent.log.add("agent", "erp_sync", out)
+        return out
 
     def consistency(self) -> dict:
         """Ledger vs chain: every bill the ledger says was paid on-chain must be used in the vault, and no open
@@ -103,6 +132,7 @@ class Session:
     def ingest_file(self, filename: str, data: bytes, process: bool = True, auto_pay: bool = True) -> dict:
         """A document as received (JSON e-invoice, PDF or image). Kept under data/state/uploads/."""
         read, kind = read_document(filename, data)
+        self.sync_erp(max_age=30)  # check the bill against the ERP as it is now
         self.uploads += 1
         keep = STATE_DIR / "uploads" / f"{self.uploads:04d}-{Path(filename).name}"
         keep.parent.mkdir(parents=True, exist_ok=True)
@@ -189,7 +219,7 @@ class Session:
 
 
 def reset(network: str = "localhost", log_path: Optional[Path] = None, allow_testnet: bool = False,
-          signing: str = "client") -> Session:
+          signing: str = "client", erp: Optional[str] = None) -> Session:
     """Redeploy the contracts and start the ledger from the demo baseline, together, so they always agree."""
     if network not in ("localhost", "fisco") and not allow_testnet:
         raise RuntimeError("redeploying on a public network costs gas; pass allow_testnet=True")
@@ -197,10 +227,13 @@ def reset(network: str = "localhost", log_path: Optional[Path] = None, allow_tes
                        capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f"deploy failed: {r.stderr[-800:]}")
-    Session.state_file(network).unlink(missing_ok=True)
+    adapter = make_adapter(erp)
+    Session.state_file(network, adapter.name).unlink(missing_ok=True)
+    if hasattr(adapter, "remove_agent_postings"):
+        adapter.remove_agent_postings()  # the ERP goes back to the state the fresh ledger expects
     if log_path and log_path.exists():
         log_path.rename(log_path.with_suffix(f".{int(time.time())}.jsonl"))
-    s = Session(network, log_path=log_path, signing=signing)
+    s = Session(network, log_path=log_path, signing=signing, erp=erp)
     if network in ("localhost", "fisco"):
         s.chain.advance(s.chain.cool_down + 1)  # payee cool-down (on FISCO this waits)
     s.save()

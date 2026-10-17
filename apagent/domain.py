@@ -167,6 +167,7 @@ class Bill:
     disputed: bool = False
     hold_reason: Optional[str] = None
     offsets: list[dict] = field(default_factory=list)
+    erp_ref: Optional[str] = None  # the payment as recorded in the ERP
 
 
 @dataclass
@@ -205,13 +206,17 @@ class Ledger:
     receivables: dict[str, Receivable] = field(default_factory=dict)
     cases: dict[str, Case] = field(default_factory=dict)
     cash_usd: float = 500_000.0
+    # Quantity already billed per order line according to the ERP ("po_id|item" -> qty), for bills the agent
+    # never saw (billed before it was connected). Bills the agent handles are counted from self.bills.
+    billed_external: dict[str, float] = field(default_factory=dict)
+    erp_source: str = "file"
 
     # ------------------------------------------------------------ ERP queries
     def received_qty(self, po_id: str, item: str) -> float:
         return sum(g.qty for g in self.receipts if g.po_id == po_id and g.item == item)
 
     def billed_qty(self, po_id: str, item: str, exclude: Optional[str] = None) -> float:
-        q = 0.0
+        q = self.billed_external.get(f"{po_id}|{item}", 0.0)
         for b in self.bills.values():
             if b.bill_id == exclude or b.status not in ("paid", "approved", "partial"):
                 continue
@@ -276,7 +281,8 @@ def _read_from(d: dict) -> Read:
 
 
 def ledger_from_dict(d: dict) -> Ledger:
-    led = Ledger(company=d["company"], today=d["today"], cash_usd=d.get("cash_usd", 0.0))
+    led = Ledger(company=d["company"], today=d["today"], cash_usd=d.get("cash_usd", 0.0),
+                 billed_external=d.get("billed_external", {}), erp_source=d.get("erp_source", "file"))
     led.materials = {k: Material(**v) for k, v in d["materials"].items()}
     led.suppliers = {k: Supplier(**v) for k, v in d["suppliers"].items()}
     led.pos = {

@@ -121,6 +121,7 @@ export interface Bill {
   mismatches: { code: string; reason: string }[];
   offsets: { against: string; amount: number; tx: string | null }[];
   premium: number | null;
+  erp_ref: string | null;
 }
 
 export interface LogLine {

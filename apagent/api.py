@@ -32,6 +32,7 @@ from .intent import planner
 from .session import Session, reset as reset_session
 
 NETWORK = os.environ.get("NETWORK", "localhost")
+ERP = os.environ.get("ERP", "file")
 SIGNING = os.environ.get("SIGNING", "client")
 LOG_PATH = DATA_DIR / "state" / f"decision_log_{NETWORK}.jsonl"
 # The RPC the browser wallet should use for this network.
@@ -52,7 +53,7 @@ def S() -> Session:
     global _session
     if _session is None:
         LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-        _session = Session.open(NETWORK, log_path=LOG_PATH, signing=SIGNING)
+        _session = Session.open(NETWORK, log_path=LOG_PATH, signing=SIGNING, erp=ERP)
     return _session
 
 
@@ -140,6 +141,7 @@ def state():
             "suppliers": {sid: {"name": sp.name, "contact": sp.contact, "frozen": sp.frozen, "probation_left": sp.probation_left,
                                 "rail": sp.rail} for sid, sp in s.led.suppliers.items() if sid in demo.DEMO_SUPPLIERS},
             "pending_settings": s.agent._pending_bundle,
+            "erp": {**s.erp.describe(), "last_sync": s.erp_synced, "orders": len(s.led.pos), "suppliers": len(s.led.suppliers)},
             "explorer": "https://sepolia.basescan.org" if NETWORK == "baseSepolia" else None,
             "open_cases": [c.__dict__ for c in s.led.cases.values() if c.status == "open"],
             "consistency": s.consistency(),
@@ -152,10 +154,25 @@ def admin_reset(confirm: str = ""):
     global _session
     with _lock:
         try:
-            _session = reset_session(NETWORK, LOG_PATH, allow_testnet=confirm == "redeploy", signing=SIGNING)
+            _session = reset_session(NETWORK, LOG_PATH, allow_testnet=confirm == "redeploy", signing=SIGNING, erp=ERP)
         except RuntimeError as e:
             raise HTTPException(400, str(e))
         return _ok({"reset": True, "contracts": _session.chain.dep["contracts"]})
+
+
+# ------------------------------------------------------------------ ERP
+@app.get("/api/erp")
+def erp_status():
+    s = S()
+    return _ok({**s.erp.describe(), "last_sync": s.erp_synced, "orders": len(s.led.pos), "suppliers": len(s.led.suppliers),
+                "receipts": len(s.led.receipts), "returns": len(s.led.returns)})
+
+
+@app.post("/api/erp/sync")
+@mutating
+def erp_sync():
+    """Pull the company records from the ERP now (it also happens before each new bill)."""
+    return S().sync_erp() or {"source": "file", "note": "the demo file does not change"}
 
 
 # ------------------------------------------------------------------ bills and documents

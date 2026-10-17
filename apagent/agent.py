@@ -34,6 +34,7 @@ class Agent:
         self.log = log or AuditLog()
         self.gov = Governor(calib, cfg, chain)
         self.cal = calib
+        self.erp = None  # set by the session: where payments are recorded back (see apagent/erp)
         self.n_bills = 0
         self.n_plans = 0
         self._pending_bundle: dict = {}
@@ -243,6 +244,25 @@ class Agent:
         ded = self.checks.get(bill.bill_id).deductions.get("open_receivable") if bill.bill_id in self.checks else None
         if ded:
             self._record_offsets(bill, ded)
+        self._post_to_erp(bill, tier, tx_hash)
+
+    def _post_to_erp(self, bill: Bill, tier: str, tx_hash: Optional[str]) -> None:
+        """Record the payment in the company's ERP. The payment has already settled on-chain, so a failure here is
+        logged and flagged for reconciliation, never undone."""
+        if self.erp is None:
+            return
+        from .erp import PaymentRecord
+
+        rec = PaymentRecord(bill.bill_id, bill.supplier_id, bill.read.inv_no, bill.read.po_id, bill.amount_usd,
+                            self.led.today, tx_hash, tier, self.chain.network if self.chain else "offline")
+        try:
+            ref = self.erp.record_payment(rec)
+            bill.erp_ref = ref
+            self.log.add("agent", "erp_payment", {"erp": self.erp.name, "ref": ref}, bill_id=bill.bill_id)
+        except Exception as e:  # noqa: BLE001 - any ERP failure must not lose the record of the payment
+            bill.erp_ref = None
+            self.log.add("agent", "erp_payment_failed", {"erp": self.erp.name, "error": str(e)[:300]},
+                         bill_id=bill.bill_id, security=False)
 
     # ================================================================== protective actions (P tier)
     def freeze_supplier(self, supplier_id: str, reason: str, trigger: Optional[str] = None) -> dict:
@@ -685,5 +705,5 @@ class Agent:
             "resolution": b.resolution, "fair_price": b.fair_price, "injection_p": b.injection_p,
             "tx_hash": b.tx_hash, "due": b.read.due_date, "terms": b.read.terms, "disputed": b.disputed,
             "mismatches": [asdict(m) for m in res.mismatches] if res else [], "offsets": b.offsets,
-            "premium": d.premium if d else None,
+            "premium": d.premium if d else None, "erp_ref": b.erp_ref,
         }

@@ -109,6 +109,28 @@ cd chain && npx hardhat test && cd ..        # 28 contract tests
 .venv/bin/python -m pytest tests             # 68 tests; the chain and API tests need the local node running
 ```
 
+## Connecting an ERP
+
+The agent reads the company's records (suppliers, purchase orders, goods receipts, returns, quantities already
+billed) through an ERP adapter, and records each payment back. Choose with `ERP=`:
+
+| `ERP=` | Source | Live? |
+| --- | --- | --- |
+| `file` (default) | The demo ledger file | No |
+| `csv` | CSV or Excel exports from any ERP, read through a column-mapping file (`ERP_CSV_DIR`, `ERP_CSV_MAPPING`) | As fresh as the export |
+| `odoo` | A live Odoo 17 over its XML-RPC API (`ODOO_URL`, `ODOO_DB`, `ODOO_USER`, `ODOO_PASSWORD`) | Yes |
+
+```bash
+docker compose -f erp/odoo/docker-compose.yml up -d    # Odoo 17 + PostgreSQL on http://127.0.0.1:8069
+.venv/bin/python -m apagent.erp.odoo_seed               # load the demo company into Odoo (about 4 minutes)
+ERP=odoo NETWORK=fisco SIGNING=client .venv/bin/uvicorn apagent.api:app --port 8000
+.venv/bin/python -m apagent.erp.export odoo data/erp/odoo_export   # what Odoo's Export screen produces, plus a mapping
+```
+
+With Odoo, each payment becomes a posted supplier bill linked to the purchase order and a registered payment whose
+memo carries the transaction hash. The agent re-reads the ERP before each new bill. Adding another ERP is one adapter
+with `fetch()` and `record_payment()`; see [docs/erp-adapters.md](docs/erp-adapters.md).
+
 ## FISCO BCOS (WeBank's chain)
 
 The contracts compile with Solidity 0.8.11 and the `london` target, the newest FISCO BCOS v3 accepts, so the same
