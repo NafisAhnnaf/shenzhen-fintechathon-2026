@@ -1,0 +1,25 @@
+{
+ "inv_no": "SUN-2512007A",
+ "supplier_name": "Sun Kee Packaging",
+ "tax_id": "HK81483341",
+ "sender_domain": "sun-hk.com",
+ "po_id": "PO-DEC002",
+ "date": "2025-12-03",
+ "due_date": "2026-01-02",
+ "terms": "2/10net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "CARTON",
+   "desc": "Shipping cartons",
+   "unit": "pcs",
+   "qty": 3240,
+   "price": 0.74
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 2397.6,
+ "bank_account": "",
+ "notes": ""
+}

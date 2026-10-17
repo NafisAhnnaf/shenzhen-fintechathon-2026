@@ -1,0 +1,25 @@
+{
+ "inv_no": "KAI-2512001",
+ "supplier_name": "Kai Tak Fasteners Ltd",
+ "tax_id": "HK63128543",
+ "sender_domain": "kai-hk.com",
+ "po_id": "PO-DEC001",
+ "date": "2025-12-04",
+ "due_date": "2026-01-03",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "FASTENER",
+   "desc": "Stainless fasteners",
+   "unit": "box",
+   "qty": 68,
+   "price": 26.62
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 1810.16,
+ "bank_account": "",
+ "notes": ""
+}

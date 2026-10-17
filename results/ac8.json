@@ -1,0 +1,127 @@
+{
+ "n_splits": 100,
+ "bundles": {
+  "careful": {
+   "beta": 0.005,
+   "mean_loss_ratio": 0.0013015307261366516,
+   "groups": {
+    "routine": {
+     "mean": 0.0023980002521006923,
+     "p90": 0.0046405550682248236,
+     "share_splits_over_beta": 0.05
+    },
+    "new_supplier": {
+     "mean": 0.0,
+     "p90": 0.0,
+     "share_splits_over_beta": 0.0
+    },
+    "price_change": {
+     "mean": 0.0,
+     "p90": 0.0,
+     "share_splits_over_beta": 0.0
+    },
+    "other": {
+     "mean": 0.0,
+     "p90": 0.0,
+     "share_splits_over_beta": 0.0
+    }
+   },
+   "t1_share_mean": 0.21928183473845253
+  },
+  "standard": {
+   "beta": 0.01,
+   "mean_loss_ratio": 0.004127689933319522,
+   "groups": {
+    "routine": {
+     "mean": 0.006630959661436389,
+     "p90": 0.009295568892270687,
+     "share_splits_over_beta": 0.03
+    },
+    "new_supplier": {
+     "mean": 0.0007397496932644665,
+     "p90": 0.0015716030001744288,
+     "share_splits_over_beta": 0.0
+    },
+    "price_change": {
+     "mean": 0.0023649507291811293,
+     "p90": 0.006246534615259355,
+     "share_splits_over_beta": 0.0
+    },
+    "other": {
+     "mean": 0.0,
+     "p90": 0.0,
+     "share_splits_over_beta": 0.0
+    }
+   },
+   "t1_share_mean": 0.5290364023583962
+  },
+  "more": {
+   "beta": 0.015,
+   "mean_loss_ratio": 0.005860088654041895,
+   "groups": {
+    "routine": {
+     "mean": 0.0072381425528663355,
+     "p90": 0.009295568892270687,
+     "share_splits_over_beta": 0.0
+    },
+    "new_supplier": {
+     "mean": 0.0047150540313795,
+     "p90": 0.009456044852696103,
+     "share_splits_over_beta": 0.01
+    },
+    "price_change": {
+     "mean": 0.004200372814976735,
+     "p90": 0.006969445050343899,
+     "share_splits_over_beta": 0.0
+    },
+    "other": {
+     "mean": 0.0037163175769955327,
+     "p90": 0.011834661055937171,
+     "share_splits_over_beta": 0.0
+    }
+   },
+   "t1_share_mean": 0.7290692183814892
+  },
+  "most": {
+   "beta": 0.02,
+   "mean_loss_ratio": 0.006772507910191363,
+   "groups": {
+    "routine": {
+     "mean": 0.0072381425528663355,
+     "p90": 0.009295568892270687,
+     "share_splits_over_beta": 0.0
+    },
+    "new_supplier": {
+     "mean": 0.007568692681811685,
+     "p90": 0.011461772026696019,
+     "share_splits_over_beta": 0.0
+    },
+    "price_change": {
+     "mean": 0.0042722526584169284,
+     "p90": 0.006969445050343899,
+     "share_splits_over_beta": 0.0
+    },
+    "other": {
+     "mean": 0.007413152883148619,
+     "p90": 0.01278261661178053,
+     "share_splits_over_beta": 0.0
+    }
+   },
+   "t1_share_mean": 0.8329033812395091
+  }
+ },
+ "baselines": {
+  "person_checks_all": {
+   "t1_share": 0.0,
+   "loss_ratio": 0.0
+  },
+  "pay_alone_under_5000": {
+   "t1_share": 0.849336455893833,
+   "loss_ratio": 0.007207759557606318
+  },
+  "confidence_over_0.95": {
+   "t1_share": 0.23809523809523808,
+   "loss_ratio": 0.000803033358064048
+  }
+ }
+}

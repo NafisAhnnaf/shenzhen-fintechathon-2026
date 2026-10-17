@@ -1,0 +1,198 @@
+{
+ "model": {
+  "mean": [
+   0.08503269754768408,
+   0.048105358764759444,
+   0.0,
+   1.0,
+   0.0004767484105358765,
+   0.0,
+   0.0,
+   0.19660245914193844,
+   0.10263396911898275,
+   3.387097604453898
+  ],
+  "scale": [
+   0.08336081375899328,
+   0.08715784681787705,
+   1.0,
+   1.0,
+   0.005211555730574861,
+   1.0,
+   1.0,
+   0.04340265522005711,
+   0.3034802094072461,
+   0.2215921885727388
+  ],
+  "coef": [
+   0.6509297111925333,
+   -0.017156844969672697,
+   0.0,
+   0.0,
+   -0.049394623395427766,
+   0.0,
+   0.0,
+   -0.16260138431717577,
+   0.2483508448266433,
+   0.19903080461037878
+  ],
+  "intercept": -0.29110406927931853
+ },
+ "bundles": [
+  {
+   "name": "careful",
+   "beta": 0.005,
+   "p_nday": 3,
+   "p_day_usd": 10000,
+   "lambdas": {
+    "routine": 0.349851673688709,
+    "new_supplier": -1.0,
+    "price_change": -1.0,
+    "other": -1.0
+   },
+   "t1_share": 0.13777089783281735,
+   "mu_bar": 0.07565980408181619,
+   "nu_bar": 0.07326705366817471,
+   "n_t1_cal": 89,
+   "K_usd": 88363.27,
+   "r_usd": 981.81,
+   "chen_usd": 300000,
+   "naive": {
+    "expected_loss_only": 1273.4898876404493,
+    "ten_pct_max_exposure": 30000.0
+   },
+   "max_exposure_usd": 300000,
+   "smallest_beta": {
+    "routine": 0.0029,
+    "new_supplier": 0.0106,
+    "price_change": 0.0081,
+    "other": 0.0108
+   },
+   "ehat": {
+    "routine": 0.00671,
+    "new_supplier": null,
+    "price_change": null,
+    "other": null
+   }
+  },
+  {
+   "name": "standard",
+   "beta": 0.01,
+   "p_nday": 5,
+   "p_day_usd": 15000,
+   "lambdas": {
+    "routine": 0.8714939458054732,
+    "new_supplier": -1.0,
+    "price_change": 0.3073708217035458,
+    "other": -1.0
+   },
+   "t1_share": 0.47523219814241485,
+   "mu_bar": 0.025430475530925076,
+   "nu_bar": 0.022403638160738933,
+   "n_t1_cal": 307,
+   "K_usd": 62240.58,
+   "r_usd": 414.94,
+   "chen_usd": 450000,
+   "naive": {
+    "expected_loss_only": 2622.3224755700326,
+    "ten_pct_max_exposure": 45000.0
+   },
+   "max_exposure_usd": 450000,
+   "smallest_beta": {
+    "routine": 0.0029,
+    "new_supplier": 0.0106,
+    "price_change": 0.0081,
+    "other": 0.0108
+   },
+   "ehat": {
+    "routine": 0.00796,
+    "new_supplier": null,
+    "price_change": 0.01423,
+    "other": null
+   }
+  },
+  {
+   "name": "more",
+   "beta": 0.015,
+   "p_nday": 8,
+   "p_day_usd": 20000,
+   "lambdas": {
+    "routine": 0.9794404916168609,
+    "new_supplier": 0.3597308368579889,
+    "price_change": 0.9849719944550304,
+    "other": 0.9909156736956213
+   },
+   "t1_share": 0.804953560371517,
+   "mu_bar": 0.0174325829299265,
+   "nu_bar": 0.013485974244708727,
+   "n_t1_cal": 520,
+   "K_usd": 63569.16,
+   "r_usd": 264.87,
+   "chen_usd": 600000,
+   "naive": {
+    "expected_loss_only": 4775.496923076923,
+    "ten_pct_max_exposure": 60000.0
+   },
+   "max_exposure_usd": 600000,
+   "smallest_beta": {
+    "routine": 0.0029,
+    "new_supplier": 0.0106,
+    "price_change": 0.0081,
+    "other": 0.0108
+   },
+   "ehat": {
+    "routine": 0.00842,
+    "new_supplier": 0.00758,
+    "price_change": 0.00879,
+    "other": 0.00454
+   }
+  },
+  {
+   "name": "most",
+   "beta": 0.02,
+   "p_nday": 10,
+   "p_day_usd": 25000,
+   "lambdas": {
+    "routine": 0.9794404916168609,
+    "new_supplier": 0.8409628108979755,
+    "price_change": 0.9849719944550304,
+    "other": 0.9909156736956213
+   },
+   "t1_share": 0.8513931888544891,
+   "mu_bar": 0.016630343011505754,
+   "nu_bar": 0.013006317904685913,
+   "n_t1_cal": 550,
+   "K_usd": 70270.15,
+   "r_usd": 234.23,
+   "chen_usd": 750000,
+   "naive": {
+    "expected_loss_only": 6264.48,
+    "ten_pct_max_exposure": 75000.0
+   },
+   "max_exposure_usd": 750000,
+   "smallest_beta": {
+    "routine": 0.0029,
+    "new_supplier": 0.0106,
+    "price_change": 0.0081,
+    "other": 0.0108
+   },
+   "ehat": {
+    "routine": 0.00842,
+    "new_supplier": 0.00978,
+    "price_change": 0.00879,
+    "other": 0.00454
+   }
+  }
+ ],
+ "groups": [
+  "routine",
+  "new_supplier",
+  "price_change",
+  "other"
+ ],
+ "eps": 0.01,
+ "delta": 0.05,
+ "n_cal": 1016,
+ "loss_rate_cal": 0.008565217583672723,
+ "eta": 0.1051
+}

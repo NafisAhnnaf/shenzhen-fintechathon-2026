@@ -1,0 +1,25 @@
+{
+ "inv_no": "GAN-2512023",
+ "supplier_name": "Ganjiang Copper Products Co., Ltd.",
+ "tax_id": "CN76262352",
+ "sender_domain": "ganjiang.cn",
+ "po_id": "PO-DEC018",
+ "date": "2025-12-04",
+ "due_date": "2026-01-03",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "CU-ROD",
+   "desc": "Copper rod",
+   "unit": "t",
+   "qty": 0.2,
+   "price": 12728.21
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 2545.64,
+ "bank_account": "",
+ "notes": ""
+}

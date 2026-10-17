@@ -1,0 +1,102 @@
+{
+  "network": "fisco",
+  "chainId": 20200,
+  "txs": {
+    "setPool": "0xc20b1a48c560e9afb696fa6774fd2998785a17df03da8bd7ba628a7603ef97a1",
+    "mintVault": "0x67cb02c6126d7f06d02a14f9caed4136dc5fe087aa7431d0f48cde575a05c0f0",
+    "mintNaive": "0xc2013b66e120fefa7a9091b0e26c2469668809c6fc2d1ff5b3772e11d4a333ac",
+    "mintUnderwriter": "0x9430fc0e3d11c12d0c3dbe8aa77cdcd20879aaa1babee0e742eb735c88173979",
+    "approvePool": "0xe6e8f1b4a3da33c901300b5500dfc512e1e936957cbee5db62cccfc882e34e78",
+    "fundPool": "0xeacba2bdc7af97c59700322b82677fb4f105168a70ddc0193e9f7b9ed39f9ba8",
+    "addPayee_ACME": "0xaf11f5d78a2d2b4c7f630d0348bd1c06fe50086f99460c7f52cbe3a30f99e393",
+    "addPayee_LIONROCK": "0xaae0ee664076b202736b888158f0581682edf2668b60afc342a7647a98c1540c",
+    "addPayee_GANJIANG": "0xa065c4a548be9e023efe5a1dcdeb216d5c24ed152a2339426f51b0209079e6e2",
+    "addPayee_TSUENWAN": "0x7a2b421084bcd2b6efd5a8d457d06e04d8b968950161f90da05cdb886ecb6004",
+    "addPayee_PEARLDELTA": "0x7e41904dee38e0e3a92f63ca300f7fbb40170aef975f1a2918b424e7ffcba39b",
+    "addPayee_KWONGFAT": "0xb44ca9b10cf632bc1488ac63c0883f6f52cf7577fb82956b0536ec816f11408d",
+    "addPayee_SUNKEE": "0xcc5e3a84a87ad25893942673f23a0c214653ff281c5ab60a5e1a5f3e26e70fcf",
+    "addPayee_KAITAK": "0x8054d72fb193bffeba9a5b9bd74047166e73adc04090166846caa3b4ca2f8304",
+    "addPayee_HARBOURLUBE": "0x833c575c6eeec8e62fd0ef266ed09479c2bee898e9a4a82f2b1108b3ba9c6db5",
+    "addPayee_SHATINPCB": "0xf70bb9ab4a2844e2cb1a39f992d264f4d66e21711b72d5528e033b65babef9fe",
+    "addPayee_VICPLATING": "0xf9923635a10e071c9eb4defc2eab5fc09eae82e978fac65013c5d48ba8ee2a3a",
+    "addPayee_MONGKOKWIRE": "0x341f82f10f878f4fc9a8fe285a6c4614faab7a3f9091c18dd2ec9834706e85f2",
+    "proposeSettings": "0x6ea547b2f57ce24936997c16fcc5b5d56c2745ca3561eda82050afb42020ebec",
+    "approveSettings": "0x213288a22194b7dae9c5d521fefa6e50a7d62a0a8306d4321877645205491263"
+  },
+  "contracts": {
+    "token": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+    "vault": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
+    "pool": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
+    "anchor": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
+    "naive": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575"
+  },
+  "roles": {
+    "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "agent": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "governor": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+    "approver": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+    "underwriter": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+    "arbiter": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "attacker": "0x9b1e4F2a7C3d5E6f708192A3b4C5d6E7f8091a2B"
+  },
+  "payees": {
+    "ACME": {
+      "wallet": "0x4c123B1612Dd272D1371c17149d439536b3216FD",
+      "rail": 0
+    },
+    "LIONROCK": {
+      "wallet": "0xeB975729FaE923d5A4Fd12aAbfe228f219e9cb0e",
+      "rail": 0
+    },
+    "GANJIANG": {
+      "wallet": "0x0000000000000000000000000000000000000000",
+      "rail": 1
+    },
+    "TSUENWAN": {
+      "wallet": "0xCcF25Ec84d8dBc74254770F58904DBA41ECCcc3F",
+      "rail": 0
+    },
+    "PEARLDELTA": {
+      "wallet": "0x0000000000000000000000000000000000000000",
+      "rail": 1
+    },
+    "KWONGFAT": {
+      "wallet": "0x13043B026c48BbF33FEfF9243a8f506B40928B5b",
+      "rail": 0
+    },
+    "SUNKEE": {
+      "wallet": "0xA767c76fB008F86bEbB2737F6a6F0fb23c6F5da2",
+      "rail": 0
+    },
+    "KAITAK": {
+      "wallet": "0xEC255404E4FB440034d6608697A8d41beD440E50",
+      "rail": 0
+    },
+    "HARBOURLUBE": {
+      "wallet": "0x54F31af3176813e02EA68Ef786E4d3ceA27d2693",
+      "rail": 0
+    },
+    "SHATINPCB": {
+      "wallet": "0xB484e73cf575Dcad6Ba2b0AeE0ca923732881584",
+      "rail": 0
+    },
+    "VICPLATING": {
+      "wallet": "0xC4FA2815d2802827283e0Ad84173581569969E58",
+      "rail": 0
+    },
+    "MONGKOKWIRE": {
+      "wallet": "0x81006f7E3dfc967A64CB14028D512c9791E558E0",
+      "rail": 0
+    }
+  },
+  "params": {
+    "pCap": "5000000",
+    "coolDown": 60,
+    "window": 300,
+    "disputeTime": 120,
+    "activeSettings": 0,
+    "timeUnit": 1000,
+    "dayLength": 180
+  },
+  "deployedAt": "2026-10-17T10:59:05.196Z"
+}

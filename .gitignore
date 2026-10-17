@@ -1,5 +1,32 @@
 node_modules
 .venv
 **/*.env
+.env
 
+# macOS metadata files on the external drive
+._*
+.DS_Store
+*.swp
 
+# Hardhat build output
+chain/artifacts
+chain/cache
+chain/deployments/hardhat.json
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Runtime state and logs (evidence/ and results/ are committed)
+data/state/
+data/demo/decision_log.jsonl
+
+# Web app build and test output
+web/node_modules
+web/dist
+web/test-results
+web/playwright-report
+
+# FISCO BCOS binaries and chain data live outside the repo (see chain/fisco/fisco.sh)
+chain/fisco/vendor

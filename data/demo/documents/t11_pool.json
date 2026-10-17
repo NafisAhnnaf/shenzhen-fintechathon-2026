@@ -1,0 +1,25 @@
+{
+ "inv_no": "HAR-2512044",
+ "supplier_name": "Harbour Lubricants Supply",
+ "tax_id": "HK30106149",
+ "sender_domain": "harbour-hk.com",
+ "po_id": "PO-DEC017",
+ "date": "2025-12-06",
+ "due_date": "2026-01-05",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "LUBE",
+   "desc": "Machine lubricant",
+   "unit": "drum",
+   "qty": 4,
+   "price": 272.13
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 1088.52,
+ "bank_account": "",
+ "notes": ""
+}

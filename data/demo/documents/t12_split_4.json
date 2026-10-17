@@ -1,0 +1,25 @@
+{
+ "inv_no": "KWO-2510249",
+ "supplier_name": "Kwong Fat Plastics Co.",
+ "tax_id": "HK55641228",
+ "sender_domain": "kwong-hk.com",
+ "po_id": "PO-DEC011",
+ "date": "2025-12-06",
+ "due_date": "2026-01-05",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "ABS-RESIN",
+   "desc": "ABS resin pellets",
+   "unit": "t",
+   "qty": 0.88,
+   "price": 2024.89
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 1781.9,
+ "bank_account": "",
+ "notes": ""
+}

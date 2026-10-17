@@ -1,0 +1,25 @@
+{
+ "inv_no": "ACM-2512412",
+ "supplier_name": "Acme Metals (HK) Ltd",
+ "tax_id": "HK53464097",
+ "sender_domain": "acme-hk.com",
+ "po_id": "PO-DEC023",
+ "date": "2025-12-05",
+ "due_date": "2025-12-14",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "CU-ROD",
+   "desc": "Copper rod",
+   "unit": "t",
+   "qty": 4.0,
+   "price": 13450.03
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 53800.12,
+ "bank_account": "",
+ "notes": ""
+}

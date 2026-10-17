@@ -1,0 +1,69 @@
+@import "@fontsource/instrument-sans/400.css";
+@import "@fontsource/instrument-sans/500.css";
+@import "@fontsource/instrument-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: #f5f6f3;
+    color: #1d2421;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply font-sans text-base;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+  :focus-visible {
+    outline: 2px solid #22573f;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: #e6efe9;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-ledger text-white hover:bg-[#1a4632];
+  }
+  .btn-quiet {
+    @apply btn border border-rule bg-surface text-ink hover:border-faint;
+  }
+  .btn-danger {
+    @apply btn border border-oxblood/30 bg-surface text-oxblood hover:border-oxblood;
+  }
+  .field {
+    @apply w-full rounded border border-rule bg-surface px-3 py-2 text-base placeholder:text-faint focus:border-ledger focus:outline-none;
+  }
+  .rule-b {
+    @apply border-b border-rule;
+  }
+}
+
+/* A single reveal when a payment settles: the new journal line arrives and the paid mark settles in. */
+@keyframes settle {
+  from {
+    background: #e6efe9;
+  }
+  to {
+    background: transparent;
+  }
+}
+.settle {
+  animation: settle 1.6s ease-out;
+}

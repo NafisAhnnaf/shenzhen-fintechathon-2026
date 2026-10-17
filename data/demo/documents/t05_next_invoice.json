@@ -1,0 +1,25 @@
+{
+ "inv_no": "SHA-2512031",
+ "supplier_name": "Shatin Circuit Boards Ltd",
+ "tax_id": "HK30729474",
+ "sender_domain": "shatin-hk.com",
+ "po_id": "PO-DEC005",
+ "date": "2025-12-09",
+ "due_date": "2026-01-08",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "PCB",
+   "desc": "PCB blanks",
+   "unit": "pcs",
+   "qty": 690,
+   "price": 4.32
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 2980.8,
+ "bank_account": "",
+ "notes": ""
+}

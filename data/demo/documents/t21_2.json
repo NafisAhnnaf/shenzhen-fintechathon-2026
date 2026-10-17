@@ -1,0 +1,25 @@
+{
+ "inv_no": "PEA-251292",
+ "supplier_name": "Pearl Delta Alloys Ltd",
+ "tax_id": "CN18354761",
+ "sender_domain": "pearl.cn",
+ "po_id": "PO-DEC026",
+ "date": "2025-12-04",
+ "due_date": "2025-12-25",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "ZN-ALLOY",
+   "desc": "Zinc die-cast alloy",
+   "unit": "t",
+   "qty": 0.48,
+   "price": 4383.77
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 2104.21,
+ "bank_account": "",
+ "notes": ""
+}

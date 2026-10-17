@@ -1,0 +1,11 @@
+{
+ "index_driven_changes": 124,
+ "overcharges": 35,
+ "detected": 29,
+ "missed": 6,
+ "false_flags": 5,
+ "detection_rate": 0.8285714285714286,
+ "false_flag_rate": 0.056179775280898875,
+ "dollars_caught": 6626.32,
+ "dollars_missed": 1031.67
+}

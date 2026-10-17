@@ -1,0 +1,64 @@
+{
+ "payees": {
+  "ACME": {
+   "wallet": "0x4c123b1612dd272d1371c17149d439536b3216fd",
+   "rail": 0
+  },
+  "LIONROCK": {
+   "wallet": "0xeb975729fae923d5a4fd12aabfe228f219e9cb0e",
+   "rail": 0
+  },
+  "GANJIANG": {
+   "wallet": "0x0000000000000000000000000000000000000000",
+   "rail": 1
+  },
+  "TSUENWAN": {
+   "wallet": "0xccf25ec84d8dbc74254770f58904dba41ecccc3f",
+   "rail": 0
+  },
+  "PEARLDELTA": {
+   "wallet": "0x0000000000000000000000000000000000000000",
+   "rail": 1
+  },
+  "KWONGFAT": {
+   "wallet": "0x13043b026c48bbf33feff9243a8f506b40928b5b",
+   "rail": 0
+  },
+  "SUNKEE": {
+   "wallet": "0xa767c76fb008f86bebb2737f6a6f0fb23c6f5da2",
+   "rail": 0
+  },
+  "KAITAK": {
+   "wallet": "0xec255404e4fb440034d6608697a8d41bed440e50",
+   "rail": 0
+  },
+  "HARBOURLUBE": {
+   "wallet": "0x54f31af3176813e02ea68ef786e4d3cea27d2693",
+   "rail": 0
+  },
+  "SHATINPCB": {
+   "wallet": "0xb484e73cf575dcad6ba2b0aee0ca923732881584",
+   "rail": 0
+  },
+  "VICPLATING": {
+   "wallet": "0xc4fa2815d2802827283e0ad84173581569969e58",
+   "rail": 0
+  },
+  "MONGKOKWIRE": {
+   "wallet": "0x81006f7e3dfc967a64cb14028d512c9791e558e0",
+   "rail": 0
+  }
+ },
+ "bundle": {
+  "mode": 2,
+  "pDayUsd": 15000,
+  "pNDay": 5,
+  "pSupWeekUsd": 5000.0,
+  "rUsd": 414.94
+ },
+ "pCapUsd": 5000.0,
+ "vaultUsd": 500000,
+ "poolUsd": 72000.0,
+ "naiveUsd": 50000,
+ "attacker": "0x9b1e4F2a7C3d5E6f708192A3b4C5d6E7f8091a2B"
+}

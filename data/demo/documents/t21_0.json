@@ -1,0 +1,25 @@
+{
+ "inv_no": "VIC-251290",
+ "supplier_name": "Victoria Plating Supplies",
+ "tax_id": "HK44709914",
+ "sender_domain": "victoria-hk.com",
+ "po_id": "PO-DEC024",
+ "date": "2025-12-04",
+ "due_date": "2025-12-25",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "NI-ANODE",
+   "desc": "Nickel plating anode",
+   "unit": "t",
+   "qty": 0.09,
+   "price": 20120.04
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 1810.8,
+ "bank_account": "",
+ "notes": ""
+}

@@ -1,0 +1,25 @@
+{
+ "inv_no": "MON-251291",
+ "supplier_name": "Mong Kok Solder & Wire",
+ "tax_id": "HK12437810",
+ "sender_domain": "mong-hk.com",
+ "po_id": "PO-DEC025",
+ "date": "2025-12-04",
+ "due_date": "2025-12-25",
+ "terms": "net30",
+ "currency": "USD",
+ "lines": [
+  {
+   "item": "SN-SOLDER",
+   "desc": "Tin solder wire",
+   "unit": "kg",
+   "qty": 31,
+   "price": 42.51
+  }
+ ],
+ "credit": 0.0,
+ "credit_note_ref": "",
+ "total": 1317.81,
+ "bank_account": "",
+ "notes": ""
+}
