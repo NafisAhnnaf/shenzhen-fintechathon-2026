@@ -118,3 +118,17 @@ def test_payment_planner_takes_discount_only_when_it_pays(ledger, docs, calib):
         ag.process(b.bill_id, auto_pay=False)
     plan = {p["bill"]: p for p in ag.plan_dates([b1, b2])}
     assert plan[b1.bill_id]["early"] and not plan[b2.bill_id]["early"]
+
+
+def test_every_card_number_is_tagged(ledger, docs, calib):
+    """S5 on real cards: routine, poisoned, fair-price (with market numbers) and the credit-note resolution."""
+    ag = _agent(ledger, calib)
+    ids = [ag.intake(demo.read_from_doc(docs[k])).bill_id for k in ("t01_routine", "t07_poisoned", "t16_fair_price")]
+    for bid in ids:
+        ag.process(bid)
+        card = ag.bill_card(bid)
+        assert card["tags"]["amount"]["sources"] == ["computed:erp_bounded"]
+        assert card["tags"]["supplier_says_total"]["label"] == "supplier says"
+    fp = ag.bill_card(ids[2])
+    assert fp["fair_price"] and fp["tags"]["fair_price.index_now"]["sources"] == ["market"]
+    assert "World Bank" in fp["tags"]["fair_price.index_now"]["label"]
