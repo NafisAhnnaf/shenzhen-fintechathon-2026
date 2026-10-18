@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Treasury Sentinel - FaceID Biometric Co-Signing</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#7d4200",
+            "primary-fixed": "#9cf2e8",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#00201d",
+            "surface-container-highest": "#dae2fd",
+            "on-primary-container": "#a3faef",
+            "surface-tint": "#006a63",
+            "surface-container": "#eaedff",
+            "primary": "#005c55",
+            "on-primary": "#ffffff",
+            "surface-bright": "#faf8ff",
+            "inverse-surface": "#283044",
+            "surface-variant": "#dae2fd",
+            "surface": "#faf8ff",
+            "primary-fixed-dim": "#80d5cb",
+            "secondary": "#006c49",
+            "on-surface": "#131b2e",
+            "error": "#ba1a1a",
+            "secondary-fixed-dim": "#4edea3",
+            "on-tertiary-container": "#ffe6d5",
+            "surface-container-lowest": "#ffffff",
+            "outline-variant": "#bdc9c6",
+            "on-primary-fixed-variant": "#00504a",
+            "secondary-fixed": "#6ffbbe",
+            "on-tertiary-fixed-variant": "#6e3900",
+            "on-secondary-container": "#00714d",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed-variant": "#005236",
+            "on-surface-variant": "#3e4947",
+            "on-secondary-fixed": "#002113",
+            "on-error": "#ffffff",
+            "on-background": "#131b2e",
+            "inverse-primary": "#80d5cb",
+            "tertiary-fixed": "#ffdcc3",
+            "surface-container-low": "#f2f3ff",
+            "primary-container": "#0f766e",
+            "inverse-on-surface": "#eef0ff",
+            "tertiary-fixed-dim": "#ffb77d",
+            "tertiary-container": "#a15600",
+            "surface-dim": "#d2d9f4",
+            "on-tertiary-fixed": "#2f1500",
+            "background": "#faf8ff",
+            "surface-container-high": "#e2e7ff",
+            "on-tertiary": "#ffffff",
+            "outline": "#6e7977",
+            "secondary-container": "#6cf8bb",
+            "on-secondary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1rem",
+            "gutter-dense": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-2xl": "2rem",
+            "space-md": "0.75rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "0.75rem",
+            "margin": "1.5rem",
+            "space-xl": "1.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Public Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "mono-data-md": ["Public Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "mono-data-lg": ["Public Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "mono-data-sm": ["Public Sans"],
+            "label-md": ["Public Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "display-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+            "mono-data-md": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+            "body-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400"}],
+            "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "600"}],
+            "mono-data-lg": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+            "body-lg": ["15px", {"lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "400"}],
+            "mono-data-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0em", "fontWeight": "400"}],
+            "label-md": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 500;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.94); opacity: 0.8; }
+      50% { transform: scale(1.06); opacity: 0.35; }
+      100% { transform: scale(0.94); opacity: 0.8; }
+    }
+    @keyframes scan-line {
+      0% { transform: translateY(-24px); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(24px); opacity: 0; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    .animate-scan-line {
+      animation: scan-line 2s ease-in-out infinite;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased font-body-md flex justify-center items-center min-h-screen p-0 sm:p-4">
+<!-- Mobile Device Simulation Frame (390px) -->
+<div class="relative w-full max-w-[390px] h-[844px] bg-surface-bright overflow-hidden rounded-[44px] shadow-2xl border-4 border-on-surface/10 flex flex-col justify-between">
+<!-- TOP APP BAR (Shared Components Exact Blueprint) -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none docked full-width top-0 z-10 w-full px-space-md py-space-sm flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-sm font-semibold text-xs border border-primary/20 shadow-xs">
+          MV
+        </div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-semibold text-on-surface dark:text-inverse-on-surface leading-tight">Treasury Sentinel</span>
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">Marcus Vance EIP-712 CFO</span>
+</div>
+</div>
+<button aria-label="Emergency Home" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="emergency_home">emergency_home</span>
+</button>
+</header>
+<!-- BACKDROP CANVAS: Treasury Executive Companion Screen (Blurred Under Scrim) -->
+<main class="flex-1 px-4 py-3 overflow-y-auto space-y-3 opacity-40 select-none pointer-events-none filter blur-[2px]">
+<!-- Live Agent Telemetry Banner -->
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-3 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-ping"></span>
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Agent v4.2 Active</span>
+</div>
+<span class="text-mono-data-sm font-mono-data-sm text-on-surface-variant">Arbitrum Nova #28,914,890</span>
+</div>
+<!-- Quick Balance Bento Box -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-3">
+<p class="text-label-sm font-label-sm text-on-surface-variant">LIQUID TREASURY</p>
+<p class="text-headline-md font-headline-md text-on-surface mt-1">$4,892,100</p>
+<p class="text-mono-data-sm font-mono-data-sm text-secondary mt-0.5">+2.4% yield APY</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-3">
+<p class="text-label-sm font-label-sm text-on-surface-variant">PENDING DISPATCH</p>
+<p class="text-headline-md font-headline-md text-tertiary-container mt-1">$148,200</p>
+<p class="text-mono-data-sm font-mono-data-sm text-on-surface-variant mt-0.5">2 Co-Signs Needed</p>
+</div>
+</div>
+<!-- Under-the-scrim Transaction Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl p-3.5 shadow-sm space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-label-md text-on-surface font-semibold">Vendor Payout Run #849</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-label-sm font-label-sm">AUTONOMOUS</span>
+</div>
+<p class="text-mono-data-lg font-mono-data-lg text-on-surface">$129,800.00 USDC</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Recipient: Acme Heavy Metals Corp</p>
+</div>
+</main>
+<!-- REALISTIC DIMMED GLASSMORPHIC SCRIM -->
+<div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm z-30 transition-opacity"></div>
+<!-- EIP-712 BIOMETRIC CO-SIGNING BOTTOM SHEET MODAL -->
+<section class="absolute bottom-0 inset-x-0 z-40 bg-surface-container-lowest rounded-t-[32px] border-t border-outline-variant/80 shadow-[0_-12px_32px_rgba(15,23,42,0.18)] max-h-[92%] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+<!-- Grab Handle Bar -->
+<div class="pt-2.5 pb-1 flex justify-center items-center cursor-grab">
+<div class="w-10 h-1 rounded-full bg-outline-variant"></div>
+</div>
+<!-- Scrollable Modal Content -->
+<div class="px-4 pb-4 overflow-y-auto space-y-3.5">
+<!-- Sheet Header: Title, Shield Badge & Dismiss -->
+<div class="flex items-start justify-between pt-1">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+</span>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight">EIP-712 Dual-Key Authorization</h2>
+</div>
+<!-- Contract Sub-badge -->
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-high border border-outline-variant/60 text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="account_balance">account_balance</span>
+<span class="text-label-sm font-label-sm font-mono-data-sm">Contract: BondedPaySafe.sol (Arbitrum Nova 0x4F...8B91)</span>
+</div>
+</div>
+<!-- Close / Dismiss Sub-action -->
+<button aria-label="Dismiss Sheet" class="w-7 h-7 rounded-full bg-surface-container-low hover:bg-surface-variant text-on-surface-variant flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- TRANSACTION SUMMARY CARD (Split Settlement) -->
+<div class="rounded-2xl border border-outline-variant/70 bg-surface-bright p-3.5 shadow-xs space-y-3">
+<!-- Vendor Entity Header -->
+<div class="flex justify-between items-start border-b border-outline-variant/40 pb-2.5">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant tracking-wider uppercase">PAYEE CREDENTIAL</p>
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-semibold flex items-center gap-1 mt-0.5">
+                Acme Heavy Metals Corp
+                <span class="text-primary material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+</h3>
+</div>
+<div class="text-right">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant text-label-sm font-label-sm font-bold">TIER 1 SUPPLIER</span>
+<p class="text-mono-data-sm font-mono-data-sm text-on-surface-variant mt-0.5">Vendor ID: V-88219</p>
+</div>
+</div>
+<!-- Split Financial Settlement Breakdown -->
+<div class="space-y-2">
+<!-- Released Clean Portion -->
+<div class="p-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 flex items-center justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="w-4 h-4 rounded-full bg-secondary/15 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-xs font-bold" data-icon="verified_user">verified_user</span>
+</span>
+<span class="text-label-sm font-label-sm text-secondary font-bold">RELEASED CLEAN PORTION</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant text-[11px] mt-0.5">Clean 3-Way Matched: PO #9941 + Ingested Invoice</p>
+</div>
+<div class="text-right">
+<span class="text-mono-data-lg font-mono-data-lg text-primary font-bold tabular-nums">$129,800.00</span>
+<span class="block text-label-sm font-label-sm text-on-surface-variant">USDC</span>
+</div>
+</div>
+<!-- Quarantined Discrepancy Escrow -->
+<div class="p-2.5 rounded-xl bg-tertiary-fixed/30 border border-tertiary/20 flex items-center justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="w-4 h-4 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-xs" data-icon="tune">tune</span>
+</span>
+<span class="text-label-sm font-label-sm text-tertiary-container font-bold">QUARANTINED DISCREPANCY</span>
+</div>
+<p class="text-body-sm font-body-sm text-tertiary text-[11px] mt-0.5">Auto-Escrowed: +14.2% price anomaly vs LME Nickel Spot Index</p>
+</div>
+<div class="text-right">
+<span class="text-mono-data-lg font-mono-data-lg text-tertiary font-bold tabular-nums">$18,400.00</span>
+<span class="block text-label-sm font-label-sm text-tertiary">USDC</span>
+</div>
+</div>
+</div>
+<!-- Gas & Execution Telemetry Bar -->
+<div class="pt-1 flex items-center justify-between text-mono-data-sm font-mono-data-sm text-on-surface-variant border-t border-outline-variant/30 text-[10px]">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary" data-icon="smart_toy">smart_toy</span>
+              Gas: 0.00012 ETH (~$0.38)
+            </span>
+<span class="text-secondary font-medium">• Sponsored via Biconomy ERC-4337</span>
+<span>• 0.2s Finality</span>
+</div>
+</div>
+<!-- CRYPTOGRAPHIC INSPECTION ACCORDION (Expanded State) -->
+<div class="rounded-xl border border-outline-variant/60 bg-surface-container-low p-3 space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="verified_user">verified_user</span>
+              CRYPTOGRAPHIC PROOF &amp; MULTI-SIG STATE
+            </span>
+<span class="text-label-sm font-label-sm text-secondary font-bold">1 OF 2 SIGNED</span>
+</div>
+<div class="space-y-1.5 font-mono-data-sm text-[11px] bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/40">
+<div class="flex justify-between items-center py-0.5">
+<span class="text-on-surface-variant">Domain Separator:</span>
+<span class="text-on-surface font-semibold cursor-pointer flex items-center gap-1 hover:text-primary">
+                0x82b4...3e91
+                <span class="material-symbols-outlined text-[12px] text-outline" data-icon="tune">tune</span>
+</span>
+</div>
+<div class="flex justify-between items-center py-0.5 border-t border-outline-variant/30">
+<span class="text-on-surface-variant">Typed Msg Hash:</span>
+<span class="text-on-surface">keccak256(0x7c21...bb90)</span>
+</div>
+<div class="flex justify-between items-center py-0.5 border-t border-outline-variant/30 text-secondary">
+<span>Signer 1 (AI Agent v4.2 ECDSA):</span>
+<span class="font-bold flex items-center gap-0.5">Sig: 0x5a1...982b ✓</span>
+</div>
+<div class="flex justify-between items-center py-0.5 border-t border-outline-variant/30 text-tertiary-container">
+<span>Signer 2 (Marcus Vance CFO EIP-712):</span>
+<span class="font-bold">Awaiting Biometric Co-Sig</span>
+</div>
+</div>
+</div>
+<!-- FACEID BIOMETRIC SCANNING WIDGET -->
+<div class="py-1 flex flex-col items-center justify-center text-center space-y-2">
+<!-- Outer Scanner Target with Pulse Effect -->
+<div class="relative w-24 h-24 flex items-center justify-center">
+<!-- Radiating Sensor Ring -->
+<div class="absolute inset-0 rounded-full border-2 border-secondary-fixed-dim animate-pulse-ring"></div>
+<!-- Core Biometric Frame -->
+<div class="w-20 h-20 rounded-full bg-gradient-to-b from-primary-fixed/30 to-surface-container-lowest border-2 border-primary-container flex items-center justify-center shadow-inner relative overflow-hidden">
+<!-- Subtle Scanner Grid Beams -->
+<div class="absolute inset-x-2 h-[2px] bg-secondary-fixed shadow-[0_0_8px_#4edea3] animate-scan-line"></div>
+<!-- Corner Bracket Glyph Overlay -->
+<div class="absolute inset-2 border border-dashed border-primary/40 rounded-full"></div>
+<!-- Central Iris/Face Geometry Material Symbol -->
+<span class="material-symbols-outlined text-4xl text-primary-container fill-icon" data-icon="verified_user">verified_user</span>
+</div>
+<!-- Pulsing Hardware Lock Indicator Dot -->
+<div class="absolute bottom-0 right-1 w-5 h-5 rounded-full bg-secondary text-on-secondary flex items-center justify-center border-2 border-surface-container-lowest shadow-sm">
+<span class="material-symbols-outlined text-[10px]" data-icon="smart_toy">smart_toy</span>
+</div>
+</div>
+<!-- Prompt Callouts -->
+<div>
+<p class="text-headline-sm font-headline-sm font-bold text-on-surface">Double Click Side Button or Tap FaceID</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Authorize cryptographic release of $129,800.00 USDC</p>
+</div>
+<!-- Secure Enclave Pill Badge -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/50 text-[10px] font-label-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            Hardware-Bound Key • Apple Secure Enclave Passkey (P-256 Curve)
+          </div>
+</div>
+<!-- ACTION FOOTER: Authorize & Secondary Rejection -->
+<div class="space-y-2 pt-1">
+<!-- Primary Action Button: Biometric Co-Sign Trigger -->
+<button class="w-full py-3.5 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-headline-sm font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-[0.98] transition-all border border-primary/20" onclick="triggerAuthorizeSuccess(this)">
+<span class="material-symbols-outlined text-xl" data-icon="verified_user">verified_user</span>
+<span>Authorize &amp; Broadcast ($129,800.00 USDC)</span>
+</button>
+<!-- Secondary Action: Reject & Escalate Discrepancy -->
+<button class="w-full py-2.5 px-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container text-error border border-error/30 font-headline-sm font-semibold text-sm flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all" onclick="alert('Transaction run rejected. Escrow dispute filed for LME nickel variance.')">
+<span class="material-symbols-outlined text-base" data-icon="tune">tune</span>
+<span>Reject &amp; Flag for Vendor Discrepancy</span>
+</button>
+<!-- Reversible Escrow Advisory Note -->
+<p class="text-center text-[10px] text-on-surface-variant font-body-sm px-2">
+            Quarantined $18,400 remains locked in multi-sig dispute contract until vendor reconciles LME benchmark.
+          </p>
+</div>
+</div>
+</section>
+</div>
+<!-- Micro-Interactions Script for Biometric Feedback -->
+<script>
+    function triggerAuthorizeSuccess(buttonElement) {
+      const originalContent = buttonElement.innerHTML;
+      buttonElement.disabled = true;
+      buttonElement.innerHTML = `
+        <span class="material-symbols-outlined text-xl animate-spin" data-icon="smart_toy">smart_toy</span>
+        <span>Securing Enclave Co-Signature...</span>
+      `;
+      buttonElement.classList.add('opacity-90');
+
+      setTimeout(() => {
+        buttonElement.classList.remove('bg-primary-container');
+        buttonElement.classList.add('bg-secondary');
+        buttonElement.innerHTML = `
+          <span class="material-symbols-outlined text-xl" data-icon="verified_user">verified_user</span>
+          <span>Broadcast Complete! TX: 0x9e...2a1b</span>
+        `;
+        setTimeout(() => {
+          buttonElement.innerHTML = originalContent;
+          buttonElement.disabled = false;
+          buttonElement.classList.remove('bg-secondary', 'opacity-90');
+          buttonElement.classList.add('bg-primary-container');
+        }, 3200);
+      }, 1200);
+    }
+  </script>
+</body></html>

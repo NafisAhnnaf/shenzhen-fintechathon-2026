@@ -15,6 +15,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
 
+from .config import load_env
 from .domain import InvLine, Invoice, Read
 
 # Layouts 5-7 put the credit in a page-2 footer, which readers miss more often.
@@ -158,9 +159,16 @@ class VLMReader:
     """OpenAI-compatible chat endpoint with image input and JSON-schema output. Isolated: no tools."""
 
     def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
-        self.base_url = (base_url or os.environ.get("VLM_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")).rstrip("/")
-        self.model = model or os.environ.get("VLM_MODEL", "qwen-vl-max")
-        self.api_key = api_key or os.environ.get("VLM_API_KEY", "")
+        load_env()
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key", "")
+        key = api_key if api_key is not None else (os.environ.get("VLM_API_KEY") or gemini_key or "")
+        is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("VLM_API_KEY"))
+        default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+        default_model = "gemini-3.8-flash" if is_gemini else "qwen-vl-max"
+
+        self.base_url = (base_url or os.environ.get("VLM_BASE_URL", default_base_url)).rstrip("/")
+        self.model = model or os.environ.get("VLM_MODEL", default_model)
+        self.api_key = key
 
     def available(self) -> bool:
         return bool(self.api_key)

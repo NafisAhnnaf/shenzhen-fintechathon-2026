@@ -5,76 +5,257 @@ import { money } from "../../lib/format";
 import { useAction, useAppState, useBills } from "../../lib/hooks";
 import { ErrorLine } from "../../components/bits";
 
-/** One list: what needs a person. The inbox stays closed until asked for. */
-export function Queue({ selected, onBill, onCase }: { selected: string | null; onBill: (id: string) => void; onCase: (id: string) => void }) {
+type FilterTab = "needs" | "all" | "inbox";
+
+/** High-density institutional triage queue. */
+export function Queue({
+  selected,
+  onBill,
+  onCase,
+}: {
+  selected: string | null;
+  onBill: (id: string) => void;
+  onCase: (id: string) => void;
+}) {
   const { data: bills } = useBills();
   const { data: st } = useAppState();
-  const needs = (bills ?? []).filter((b) => b.status === "held" || (b.status === "approved" && b.tier === "T2"));
+  const [tab, setTab] = useState<FilterTab>("needs");
+
+  const needs = (bills ?? []).filter(
+    (b) => b.status === "held" || (b.status === "approved" && b.tier === "T2")
+  );
   const cases = st?.open_cases ?? [];
 
   return (
-    <aside className="space-y-8">
-      <div>
-        <h2 className="text-sm font-semibold">Needs you</h2>
-        <ul className="mt-2">
-          {needs.length === 0 && cases.length === 0 && <li className="py-2 text-sm text-muted">Nothing right now.</li>}
+    <aside className="space-y-4">
+      {/* Segmented Triage Filter Header */}
+      <div className="flex rounded-lg border border-rule bg-paper p-1 text-xs">
+        <button
+          onClick={() => setTab("needs")}
+          className={`flex-1 rounded-md py-1.5 px-2 font-medium transition-all flex items-center justify-center gap-1.5 ${
+            tab === "needs"
+              ? "bg-surface text-ink shadow-xs"
+              : "text-muted hover:text-ink"
+          }`}
+        >
+          <span>Needs Co-Sign</span>
+          {(needs.length > 0 || cases.length > 0) && (
+            <span className="rounded-full bg-ochre px-1.5 py-0.2 text-[10px] font-bold text-white">
+              {needs.length + cases.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setTab("all")}
+          className={`flex-1 rounded-md py-1.5 px-2 font-medium transition-all ${
+            tab === "all"
+              ? "bg-surface text-ink shadow-xs"
+              : "text-muted hover:text-ink"
+          }`}
+        >
+          All ({(bills ?? []).length})
+        </button>
+        <button
+          onClick={() => setTab("inbox")}
+          className={`flex-1 rounded-md py-1.5 px-2 font-medium transition-all ${
+            tab === "inbox"
+              ? "bg-surface text-ink shadow-xs"
+              : "text-muted hover:text-ink"
+          }`}
+        >
+          Inbox
+        </button>
+      </div>
+
+      {/* Needs Co-Sign View */}
+      {tab === "needs" && (
+        <div className="space-y-2">
+          {needs.length === 0 && cases.length === 0 && (
+            <div className="rounded-xl border border-rule bg-surface p-6 text-center text-sm text-muted">
+              No pending invoices requiring manual signature.
+            </div>
+          )}
+
           {cases.map((c) => (
-            <Row key={c.case_id} active={selected === c.case_id} onClick={() => onCase(c.case_id)} title={caseTitle(c)} sub={st?.suppliers[c.supplier_id]?.name ?? c.supplier_id} tone="oxblood" />
+            <Row
+              key={c.case_id}
+              active={selected === c.case_id}
+              onClick={() => onCase(c.case_id)}
+              title={caseTitle(c)}
+              sub={st?.suppliers[c.supplier_id]?.name ?? c.supplier_id}
+              tag="Discrepancy"
+              tone="oxblood"
+            />
           ))}
+
           {needs.map((b) => (
             <Row
               key={b.bill}
               active={selected === b.bill}
               onClick={() => onBill(b.bill)}
               title={b.supplier}
-              sub={b.tier === "hold" ? "Held" : "Needs your signature"}
+              sub={b.tier === "hold" ? "Held" : "Pending CFO Co-Signature"}
               right={money(b.resolution?.amount ?? b.amount)}
+              tag={
+                b.fair_price?.flagged
+                  ? "⚠️ Price Anomaly"
+                  : b.tier === "T2"
+                  ? "EIP-712 Dual-Key"
+                  : "Held"
+              }
               tone={b.tier === "hold" ? "oxblood" : "ochre"}
             />
           ))}
-        </ul>
-      </div>
-      <InboxBox onBill={onBill} onCase={onCase} />
+        </div>
+      )}
+
+      {/* All Bills View */}
+      {tab === "all" && (
+        <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+          {(bills ?? []).map((b) => (
+            <Row
+              key={b.bill}
+              active={selected === b.bill}
+              onClick={() => onBill(b.bill)}
+              title={b.supplier}
+              sub={`Inv ${b.inv_no} • Due ${b.due}`}
+              right={money(b.resolution?.amount ?? b.amount)}
+              tag={
+                b.status === "paid"
+                  ? "Auto-Paid ✓"
+                  : b.tier === "T1"
+                  ? "T1 Clear"
+                  : b.tier === "T2"
+                  ? "Needs Co-Sign"
+                  : "Held"
+              }
+              tone={
+                b.status === "paid" || b.tier === "T1"
+                  ? "ledger"
+                  : b.tier === "T2"
+                  ? "ochre"
+                  : "oxblood"
+              }
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Inbox View */}
+      {tab === "inbox" && <InboxBox onBill={onBill} onCase={onCase} />}
     </aside>
   );
 }
 
-function Row({ title, sub, right, active, onClick, tone }: { title: string; sub: string; right?: string; active: boolean; onClick: () => void; tone: "ochre" | "oxblood" }) {
+function Row({
+  title,
+  sub,
+  right,
+  tag,
+  active,
+  onClick,
+  tone,
+}: {
+  title: string;
+  sub: string;
+  right?: string;
+  tag?: string;
+  active: boolean;
+  onClick: () => void;
+  tone: "ochre" | "oxblood" | "ledger";
+}) {
+  const toneClasses = {
+    ochre: {
+      border: "border-l-ochre",
+      badge: "bg-ochre-soft text-ochre border-ochre/20",
+    },
+    oxblood: {
+      border: "border-l-oxblood",
+      badge: "bg-oxblood-soft text-oxblood border-oxblood/20",
+    },
+    ledger: {
+      border: "border-l-ledger",
+      badge: "bg-ledger-soft text-ledger border-ledger/20",
+    },
+  }[tone];
+
   return (
-    <li>
-      <button
-        onClick={onClick}
-        className={`flex w-full items-baseline justify-between gap-3 rounded px-3 py-2.5 text-left ${active ? "bg-surface shadow-[inset_2px_0_0_#22573F]" : "hover:bg-surface"}`}
-      >
-        <span className="min-w-0">
-          <span className="block truncate">{title}</span>
-          <span className={`block text-sm ${tone === "ochre" ? "text-ochre" : "text-oxblood"}`}>{sub}</span>
-        </span>
-        {right && <span className="shrink-0 text-sm">{right}</span>}
-      </button>
-    </li>
+    <button
+      onClick={onClick}
+      className={`group w-full rounded-xl border border-l-4 p-3.5 text-left transition-all ${
+        toneClasses.border
+      } ${
+        active
+          ? "border-rule bg-surface shadow-md ring-1 ring-ledger"
+          : "border-rule bg-surface/90 hover:bg-surface hover:shadow-xs"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="truncate font-semibold text-sm text-ink group-hover:text-ledger transition-colors">
+            {title}
+          </div>
+          <div className="mt-0.5 text-xs text-muted truncate">{sub}</div>
+        </div>
+        {right && (
+          <div className="font-mono text-sm font-semibold text-ink whitespace-nowrap">
+            {right}
+          </div>
+        )}
+      </div>
+
+      {tag && (
+        <div className="mt-2.5 flex items-center justify-between pt-2 border-t border-rule/50">
+          <span
+            className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold ${toneClasses.badge}`}
+          >
+            {tag}
+          </span>
+          <span className="text-[11px] text-muted group-hover:translate-x-0.5 transition-transform">
+            Review →
+          </span>
+        </div>
+      )}
+    </button>
   );
 }
 
-function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (id: string) => void }) {
-  const { data } = useQuery({ queryKey: ["inbox"], queryFn: () => api.get<Inbox>("/inbox"), refetchInterval: 5000 });
-  const [open, setOpen] = useState(false);
+function InboxBox({
+  onBill,
+  onCase,
+}: {
+  onBill: (id: string) => void;
+  onCase: (id: string) => void;
+}) {
+  const { data } = useQuery({
+    queryKey: ["inbox"],
+    queryFn: () => api.get<Inbox>("/inbox"),
+    refetchInterval: 5000,
+  });
   const fileRef = useRef<HTMLInputElement>(null);
   const upload = useAction((f: File) => api.upload<{ bill: string }>("/documents", f));
   const take = useAction((key: string) => api.post<{ bill: string }>(`/inbox/documents/${key}`));
   const email = useAction((name: string) => api.post<any>(`/inbox/emails/${name}`));
-  const statement = useAction((name: string) => api.post<Case[]>(`/inbox/statements/${encodeURIComponent(name)}?supplier_id=${name.split("-")[0]}`));
+  const statement = useAction((name: string) =>
+    api.post<Case[]>(
+      `/inbox/statements/${encodeURIComponent(name)}?supplier_id=${name.split("-")[0]}`
+    )
+  );
+
   const docs = (data?.documents ?? []).filter((d) => !d.taken);
   const count = docs.length + (data?.emails.length ?? 0) + (data?.statements.length ?? 0);
 
   return (
-    <div>
-      <div className="flex items-baseline justify-between">
-        <button className="text-sm font-semibold hover:underline" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-          Inbox {count > 0 && <span className="font-normal text-muted">({count})</span>}
-        </button>
-        <button className="text-sm text-ledger hover:underline" onClick={() => fileRef.current?.click()}>
-          {upload.isPending ? "Reading" : "Upload a bill"}
+    <div className="rounded-xl border border-rule bg-surface p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Pending Ingestion ({count})
+        </span>
+        <button
+          className="text-xs font-semibold text-ledger hover:underline inline-flex items-center gap-1"
+          onClick={() => fileRef.current?.click()}
+        >
+          <span>+ Upload PDF</span>
         </button>
         <input
           ref={fileRef}
@@ -88,38 +269,56 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
           }}
         />
       </div>
+
       <ErrorLine error={upload.error || take.error || email.error || statement.error} />
-      {open && (
-        <ul className="mt-2 max-h-[50vh] overflow-y-auto text-sm">
-          {docs.map((d) => (
-            <li key={d.key}>
-              <button className="flex w-full justify-between gap-3 rounded px-3 py-2 text-left hover:bg-surface" disabled={take.isPending} onClick={() => take.mutate(d.key, { onSuccess: (r) => onBill(r.bill) })}>
-                <span className="truncate">{d.supplier}</span>
-                <span className="shrink-0 text-muted">{money(d.total)}</span>
-              </button>
-            </li>
-          ))}
-          {(data?.emails ?? []).map((n) => (
-            <li key={n}>
-              <button className="w-full rounded px-3 py-2 text-left text-muted hover:bg-surface" disabled={email.isPending} onClick={() => email.mutate(n)}>
-                Email: {n.replace(/\.eml$/, "").replace(/_/g, " ")}
-              </button>
-            </li>
-          ))}
-          {(data?.statements ?? []).map((n) => (
-            <li key={n}>
-              <button
-                className="w-full rounded px-3 py-2 text-left text-muted hover:bg-surface"
-                disabled={statement.isPending}
-                onClick={() => statement.mutate(n, { onSuccess: (cs) => cs[0] && onCase(cs[0].case_id) })}
-              >
-                Statement: {n.replace(/\.csv$/, "")}
-              </button>
-            </li>
-          ))}
-          {count === 0 && <li className="px-3 py-2 text-muted">Empty.</li>}
-        </ul>
-      )}
+
+      <ul className="divide-y divide-rule text-sm">
+        {docs.map((d) => (
+          <li key={d.key} className="py-2.5">
+            <button
+              className="flex w-full items-center justify-between text-left hover:text-ledger transition-colors"
+              disabled={take.isPending}
+              onClick={() => take.mutate(d.key, { onSuccess: (r) => onBill(r.bill) })}
+            >
+              <div className="truncate">
+                <span className="block font-medium text-xs text-ink">{d.supplier}</span>
+                <span className="block text-[11px] text-muted">Uploaded document</span>
+              </div>
+              <span className="font-mono text-xs font-semibold text-ink">{money(d.total)}</span>
+            </button>
+          </li>
+        ))}
+
+        {(data?.emails ?? []).map((n) => (
+          <li key={n} className="py-2.5">
+            <button
+              className="w-full text-left text-xs text-muted hover:text-ink"
+              disabled={email.isPending}
+              onClick={() => email.mutate(n)}
+            >
+              📩 Email: {n.replace(/\.eml$/, "").replace(/_/g, " ")}
+            </button>
+          </li>
+        ))}
+
+        {(data?.statements ?? []).map((n) => (
+          <li key={n} className="py-2.5">
+            <button
+              className="w-full text-left text-xs text-muted hover:text-ink"
+              disabled={statement.isPending}
+              onClick={() =>
+                statement.mutate(n, {
+                  onSuccess: (cs) => cs[0] && onCase(cs[0].case_id),
+                })
+              }
+            >
+              📊 Bank Statement: {n.replace(/\.csv$/, "")}
+            </button>
+          </li>
+        ))}
+
+        {count === 0 && <li className="py-4 text-center text-xs text-muted">Inbox is empty.</li>}
+      </ul>
     </div>
   );
 }

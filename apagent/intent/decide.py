@@ -15,6 +15,7 @@ import re
 from dataclasses import dataclass
 from typing import Optional
 
+from ..config import load_env
 from .catalogue import BUNDLES, EXCLUSIONS, INTENTS, TOPICS, WINDOWS
 
 
@@ -219,9 +220,16 @@ class LLMDecider:
     name = "llm"
 
     def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
-        self.base_url = (base_url or os.environ.get("LLM_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")).rstrip("/")
-        self.model = model or os.environ.get("LLM_MODEL", "qwen-plus")
-        self.api_key = api_key or os.environ.get("LLM_API_KEY", "")
+        load_env()
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key", "")
+        key = api_key if api_key is not None else (os.environ.get("LLM_API_KEY") or gemini_key or "")
+        is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("LLM_API_KEY"))
+        default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+        default_model = "gemini-3.8-flash" if is_gemini else "qwen-plus"
+
+        self.base_url = (base_url or os.environ.get("LLM_BASE_URL", default_base_url)).rstrip("/")
+        self.model = model or os.environ.get("LLM_MODEL", default_model)
+        self.api_key = key
 
     def available(self) -> bool:
         return bool(self.api_key)
@@ -235,7 +243,7 @@ class LLMDecider:
         ctx = {k: v for k, v in state.items() if k != "text"}
         prompt = (f"Choose the {schema.name} for this request from the options. Return a probability for every option; "
                   f"they must sum to 1.\nRequest: {state['text']}\nContext (trusted): {json.dumps(ctx)[:6000]}")
-        r = httpx.post(f"{self.base_url}/chat/completions", timeout=30,
+        r = httpx.post(f"{self.base_url}/chat/completions", timeout=60,
                        headers={"Authorization": f"Bearer {self.api_key}"},
                        json={"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": prompt}],
                              "response_format": {"type": "json_schema", "json_schema": {"name": schema.name, "schema": js, "strict": True}}})

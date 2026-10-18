@@ -2,12 +2,47 @@
 
 On-chain amounts use tUSDC with 6 decimals, where 1 tUSDC stands for $1,000.
 """
+import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 CHAIN_DIR = ROOT / "chain"
+
+
+def load_env(env_path: Optional[Path] = None) -> None:
+    """Load key-value pairs from .env into os.environ without overwriting existing environment variables."""
+    p = env_path or (ROOT / ".env")
+    if not p.exists():
+        return
+    try:
+        content = p.read_text(encoding="utf-8")
+    except Exception:
+        return
+    for line in content.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        if line.startswith("export "):
+            line = line[len("export "):].strip()
+        k, v = line.split("=", 1)
+        k = k.strip()
+        v = v.strip()
+        if len(v) >= 2 and ((v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'"))):
+            v = v[1:-1]
+        elif "#" in v:
+            v = v.split("#", 1)[0].strip()
+        if "${" in v:
+            v = re.sub(r"\$\{([A-Za-z0-9_]+)\}", lambda m: os.environ.get(m.group(1), ""), v)
+        if k and k not in os.environ:
+            os.environ[k] = v
+
+
+load_env()
+load_env(CHAIN_DIR / ".env")
 
 USD_PER_TUSDC = 1_000
 TUSDC_DECIMALS = 6

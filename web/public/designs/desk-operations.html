@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bonded AP Agent — Desk (Operations Hub)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with custom configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {tertiary: "#7d4200", "outline-variant": "#bdc9c6", "surface-variant": "#dae2fd", "inverse-on-surface": "#eef0ff", "error-container": "#ffdad6", "inverse-primary": "#80d5cb", "on-primary-container": "#a3faef", "on-primary-fixed": "#00201d", "surface-container-high": "#e2e7ff", "primary-fixed": "#9cf2e8", "on-error": "#ffffff", "surface-tint": "#006a63", "on-tertiary": "#ffffff", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#6e3900", "on-surface": "#131b2e", "primary-container": "#0f766e", primary: "#005c55", "tertiary-fixed": "#ffdcc3", "surface-dim": "#d2d9f4", outline: "#6e7977", "inverse-surface": "#283044", "tertiary-container": "#a15600", "surface-bright": "#faf8ff", secondary: "#006c49", "on-secondary-fixed-variant": "#005236", background: "#faf8ff", "on-primary-fixed-variant": "#00504a", "on-secondary-fixed": "#002113", "on-secondary": "#ffffff", "on-tertiary-container": "#ffe6d5", "surface-container": "#eaedff", error: "#ba1a1a", "primary-fixed-dim": "#80d5cb", "on-tertiary-fixed": "#2f1500", "secondary-fixed-dim": "#4edea3", "surface-container-highest": "#dae2fd", surface: "#faf8ff", "on-error-container": "#93000a", "tertiary-fixed-dim": "#ffb77d", "secondary-container": "#6cf8bb", "secondary-fixed": "#6ffbbe", "on-background": "#131b2e", "surface-container-low": "#f2f3ff", "on-surface-variant": "#3e4947", "on-secondary-container": "#00714d", "surface-container-lowest": "#ffffff"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {gutter: "1rem", "margin-mobile": "0.75rem", "space-lg": "1rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "gutter-dense": "0.5rem", margin: "1.5rem", "space-2xl": "2rem", "space-xl": "1.5rem"}, fontFamily: {"mono-data-sm": ["Public Sans"], "label-sm": ["Public Sans"], "body-lg": ["Plus Jakarta Sans"], "mono-data-md": ["Public Sans"], "body-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "mono-data-lg": ["Public Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Public Sans"]}, fontSize: {"mono-data-sm": ["11px", {lineHeight: "14px", letterSpacing: "0em", fontWeight: "400"}], "label-sm": ["10px", {lineHeight: "12px", letterSpacing: "0.05em", fontWeight: "600"}], "body-lg": ["15px", {lineHeight: "22px", letterSpacing: "-0.005em", fontWeight: "400"}], "mono-data-md": ["13px", {lineHeight: "18px", letterSpacing: "-0.01em", fontWeight: "500"}], "body-sm": ["12px", {lineHeight: "16px", letterSpacing: "0em", fontWeight: "400"}], "body-md": ["13px", {lineHeight: "18px", letterSpacing: "0em", fontWeight: "400"}], "headline-md": ["20px", {lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "600"}], "mono-data-lg": ["18px", {lineHeight: "24px", letterSpacing: "-0.02em", fontWeight: "500"}], "headline-sm": ["16px", {lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600"}], "display-lg-mobile": ["26px", {lineHeight: "34px", letterSpacing: "-0.02em", fontWeight: "600"}], "display-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.025em", fontWeight: "600"}], "label-md": ["11px", {lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600"}]}}}};</script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 18px;
+    }
+    /* Hairline boundaries and hardware feel */
+    .border-hairline { border: 1px solid #E2E8F0; }
+    .border-hairline-b { border-bottom: 1px solid #E2E8F0; }
+    .border-hairline-r { border-right: 1px solid #E2E8F0; }
+    .border-hairline-t { border-top: 1px solid #E2E8F0; }
+    
+    /* Custom pulse dot */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.15); }
+    }
+    .status-pulse {
+      animation: pulseGlow 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container h-full overflow-hidden flex flex-col">
+<!-- TOP NAV BAR (Institutional AppBar Anchor) -->
+<header class="flex items-center justify-between px-margin w-full h-14 sticky top-0 z-50 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex-shrink-0">
+<!-- Left Section: Brand & Nav Links -->
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="terminal">terminal</span>
+<span class="text-headline-sm font-headline-sm font-semibold tracking-tight text-on-surface">Bonded AP Agent</span>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Safe Badge -->
+<div class="flex items-center gap-space-xs bg-surface-container px-2 py-1 rounded">
+<span class="material-symbols-outlined text-secondary text-[15px]" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-mono-data-sm text-mono-data-sm text-on-surface font-medium">Safe: 0x4F...8B91</span>
+<span class="bg-surface-container-highest px-1.5 py-0.2 rounded font-label-sm text-label-sm text-on-surface-variant uppercase">Arbitrum</span>
+</div>
+<!-- Global Navigation Tabs (Desktop) -->
+<nav class="hidden md:flex items-center gap-space-md ml-space-sm">
+<!-- Desk is ACTIVE based on intent -->
+<a class="text-primary border-b-2 border-primary font-label-md text-label-md py-2 flex items-center gap-1" href="#desk">
+<span class="material-symbols-outlined text-[16px]" data-icon="inbox">inbox</span>
+          Desk
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md py-2 flex items-center gap-1 hover:bg-surface-container-low transition-colors duration-150" href="#risk">
+<span class="material-symbols-outlined text-[16px]" data-icon="tune">tune</span>
+          Risk &amp; Reserves
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md py-2 flex items-center gap-1 hover:bg-surface-container-low transition-colors duration-150" href="#threat">
+<span class="material-symbols-outlined text-[16px]" data-icon="shield">shield</span>
+          Threat Defense
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md py-2 flex items-center gap-1 hover:bg-surface-container-low transition-colors duration-150" href="#audit">
+<span class="material-symbols-outlined text-[16px]" data-icon="receipt_long">receipt_long</span>
+          Audit Ledger
+        </a>
+</nav>
+</div>
+<!-- Right Section: Identity, Health & Actions -->
+<div class="flex items-center gap-space-md">
+<!-- Live Reserve Health Indicator -->
+<div class="hidden lg:flex items-center gap-2 px-2.5 py-1 bg-surface-container-low border border-outline-variant rounded">
+<span class="w-2 h-2 rounded-full bg-secondary status-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase">Live Reserves:</span>
+<span class="font-mono-data-sm text-mono-data-sm font-semibold text-primary">$4,280,000 Bonded</span>
+</div>
+<!-- Identity Switcher with EIP-712 Signer -->
+<div class="flex items-center gap-2 bg-surface-container-lowest border border-outline-variant hover:border-outline rounded px-2.5 py-1 cursor-pointer transition-colors">
+<div class="w-6 h-6 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-mono-data-sm text-[11px] font-bold">
+          MV
+        </div>
+<div class="flex flex-col text-left">
+<div class="flex items-center gap-1">
+<span class="font-label-md text-label-md text-on-surface">Marcus Vance</span>
+<span class="material-symbols-outlined text-[12px] text-secondary" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<span class="font-mono-data-sm text-[9px] text-on-surface-variant leading-none">CFO • Multi-Sig Co-Signer [EIP-712]</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Action Cluster -->
+<div class="flex items-center gap-space-xs">
+<button class="bg-surface-container-lowest border border-outline-variant hover:border-outline text-on-surface text-label-md font-label-md px-2.5 py-1.5 rounded flex items-center gap-1.5 active:scale-[0.99] transition-transform">
+<span class="material-symbols-outlined text-[15px]" data-icon="play_circle">play_circle</span>
+          Simulate Run
+        </button>
+<button class="bg-error text-on-error hover:bg-red-700 text-label-md font-label-md px-2.5 py-1.5 rounded flex items-center gap-1.5 shadow-sm active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-[15px]" data-icon="bolt">bolt</span>
+          Emergency Freeze
+        </button>
+</div>
+</div>
+</header>
+<!-- WORKSPACE BODY (Main Orchestration Canvas) -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<!-- UPPER COMMAND & PREVIEW PANEL -->
+<section class="border-b border-outline-variant bg-surface-container-lowest px-margin py-3 flex-shrink-0">
+<div class="max-w-[1720px] mx-auto space-y-2.5">
+<!-- Command Bar with Agentic Prompt -->
+<div class="flex items-center justify-between gap-3 bg-surface-container-low border border-outline-variant p-2 rounded-lg">
+<div class="flex items-center gap-3 flex-1">
+<div class="flex items-center gap-1.5 pl-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="smart_toy">smart_toy</span>
+<span class="flex items-center gap-1 bg-surface-container-highest px-2 py-0.5 rounded-full text-label-sm font-label-sm text-primary uppercase font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary status-pulse"></span>
+                Agent v4.2 Active
+              </span>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Natural Language Command Input -->
+<div class="relative flex-1 flex items-center">
+<span class="font-mono-data-md text-mono-data-md text-on-surface flex-1 font-medium select-all">
+                Pay Acme Metals due this week (<span class="text-primary font-semibold">$148,200 USDC</span>) except the disputed lot #882
+              </span>
+<div class="flex items-center gap-2 text-outline font-mono-data-sm text-[10px]">
+<kbd class="px-1.5 py-0.5 bg-surface-container border border-outline-variant rounded">⌘K</kbd>
+<span>Autonomous Policy: Level 3 Co-Signature</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-2.5 py-1 rounded text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px]" data-icon="terminal">terminal</span>
+              Logs
+            </button>
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface p-1 rounded transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="refresh">refresh</span>
+</button>
+</div>
+</div>
+<!-- Actionable Plan Preview Card (Agentic 3-Step Preview) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- Step 1 -->
+<div class="flex items-start gap-2.5 p-2 bg-surface-container-low rounded border border-outline-variant/60">
+<div class="w-5 h-5 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[13px]" data-icon="check">check</span>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-primary">Step 1 • Ingest &amp; ERP Check</span>
+<span class="material-symbols-outlined text-[13px] text-secondary" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">Ingested 3 Invoices against <span class="font-mono-data-sm font-semibold">PO #9941</span>.</p>
+<p class="font-mono-data-sm text-[10px] text-outline">Verified on-chain ERP hash 0x7c9...aa1</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-2.5 p-2 bg-surface-container-low rounded border border-outline-variant/60">
+<div class="w-5 h-5 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[13px]" data-icon="verified_user">verified_user</span>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-primary">Step 2 • Dry-Run Simulation</span>
+<span class="bg-surface-container-highest px-1 rounded font-mono-data-sm text-[9px] text-primary">0 Slippage</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">Passed Arbitrum Nova dry-run simulation.</p>
+<p class="font-mono-data-sm text-[10px] text-outline">Estimated Gas: 12 Gwei (~$0.02)</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-2.5 p-2 bg-tertiary-fixed/40 rounded border border-tertiary/20">
+<div class="w-5 h-5 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[13px] text-on-tertiary" data-icon="gavel">gavel</span>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-tertiary">Step 3 • Escrow Isolation</span>
+<span class="bg-amber-100 text-amber-900 border border-amber-300 px-1 rounded font-label-sm text-[9px] uppercase font-bold">Quarantined</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">Disputed Lot #882 (<span class="font-mono-data-sm font-semibold">$18,400</span>) isolated.</p>
+<p class="font-mono-data-sm text-[10px] text-tertiary">Transferred to Multi-Sig Quarantine Vault</p>
+</div>
+</div>
+</div>
+<!-- Execution Actions -->
+<div class="flex items-center gap-2 self-end lg:self-center">
+<button class="bg-surface-container-lowest border border-outline-variant hover:border-outline text-on-surface font-label-md text-label-md px-3 py-2 rounded flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="edit">edit</span>
+                Modify / Cancel
+              </button>
+<button class="bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md px-4 py-2 rounded flex items-center gap-2 shadow-sm font-semibold tracking-wide active:scale-[0.99] transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="lock">lock</span>
+                Execute Plan via Multi-Sig
+                <span class="font-mono-data-sm text-xs bg-emerald-900/50 text-emerald-200 px-1.5 py-0.5 rounded">⇧E</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- MAIN OPERATIONS WORKSPACE: Split Master-Detail -->
+<main class="flex-1 flex overflow-hidden">
+<!-- LEFT QUEUE RAIL (380px fixed width) -->
+<aside class="w-[380px] flex-shrink-0 border-r border-outline-variant bg-surface-container-low flex flex-col h-full">
+<!-- Filter Tabs -->
+<div class="p-2 border-b border-outline-variant bg-surface-container-lowest flex items-center justify-between gap-1 overflow-x-auto text-nowrap">
+<button class="bg-surface-container-highest text-on-surface px-2.5 py-1 rounded font-label-sm text-label-sm font-semibold border-b-2 border-primary flex items-center gap-1">
+            Needs Co-Sign
+            <span class="bg-primary text-on-primary rounded-full px-1.5 py-0.2 text-[9px] font-mono-data-sm">2</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface px-2 py-1 rounded font-label-sm text-label-sm flex items-center gap-1">
+            Discrepancy
+            <span class="bg-tertiary-container text-on-tertiary rounded-full px-1.5 py-0.2 text-[9px] font-mono-data-sm">1</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface px-2 py-1 rounded font-label-sm text-label-sm flex items-center gap-1">
+            Auto-Processed
+            <span class="bg-surface-container text-on-surface-variant rounded-full px-1.5 py-0.2 text-[9px] font-mono-data-sm">14</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface px-2 py-1 rounded font-label-sm text-label-sm">
+            Inbox (5)
+          </button>
+</div>
+<!-- Filter Sub-header & Search -->
+<div class="p-2 border-b border-outline-variant flex items-center justify-between gap-2 bg-surface-container-low">
+<div class="relative flex-1">
+<span class="material-symbols-outlined text-outline absolute left-2 top-2 text-[15px]" data-icon="search">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded pl-7 pr-2 py-1 text-mono-data-sm font-mono-data-sm focus:outline-none focus:border-primary" placeholder="Filter vendor, invoice #, PO..." type="text"/>
+</div>
+<button class="p-1 border border-outline-variant rounded bg-surface-container-lowest text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+<!-- Master Item List -->
+<div class="flex-1 overflow-y-auto divide-y divide-outline-variant/60">
+<!-- ITEM 1 (SELECTED): Acme Heavy Metals Corp -->
+<div class="p-3 bg-surface-container-lowest border-l-4 border-primary relative cursor-pointer shadow-sm">
+<div class="flex items-start justify-between">
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Acme Heavy Metals Corp</span>
+<span class="material-symbols-outlined text-primary text-[14px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="font-mono-data-sm text-mono-data-sm text-outline">INV-2024-9011 • PO #9941</div>
+</div>
+<div class="text-right">
+<div class="font-mono-data-md text-mono-data-md font-bold text-on-surface">$148,200.00</div>
+<span class="bg-surface-container px-1 py-0.2 rounded font-mono-data-sm text-[9px] text-on-surface-variant font-medium">USDC</span>
+</div>
+</div>
+<!-- Anomaly Warning Pill -->
+<div class="mt-2.5 p-2 bg-error-container/40 border border-error/30 rounded flex items-start gap-1.5">
+<span class="material-symbols-outlined text-error text-[15px] flex-shrink-0 mt-0.5" data-icon="warning">warning</span>
+<p class="font-label-sm text-label-sm text-on-error-container font-medium leading-tight">
+                Commodity Anomaly Flagged (+14.2% vs World Bank Nickel Spot) &amp; Co-Sign Required
+              </p>
+</div>
+<!-- Meta Row -->
+<div class="mt-2 flex items-center justify-between text-outline font-mono-data-sm text-[10px]">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                Due in 2 days
+              </span>
+<span>Arbitrum Nova • 2 Signatures Req</span>
+</div>
+</div>
+<!-- ITEM 2: Nippon Precision Alloys -->
+<div class="p-3 bg-surface-container-lowest/70 hover:bg-surface-container-lowest cursor-pointer transition-colors">
+<div class="flex items-start justify-between">
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Nippon Precision Alloys</span>
+</div>
+<div class="font-mono-data-sm text-mono-data-sm text-outline">INV-JP-4028 • PO #8832</div>
+</div>
+<div class="text-right">
+<div class="font-mono-data-md text-mono-data-md font-bold text-on-surface">$42,500.00</div>
+<span class="bg-surface-container px-1 py-0.2 rounded font-mono-data-sm text-[9px] text-on-surface-variant font-medium">USDT</span>
+</div>
+</div>
+<div class="mt-2 p-1.5 bg-amber-50 border border-amber-200 rounded flex items-center gap-1.5">
+<span class="material-symbols-outlined text-amber-700 text-[14px]" data-icon="key">key</span>
+<span class="font-label-sm text-label-sm text-amber-800 font-medium">Pending CFO Hardware Key Co-Signature</span>
+</div>
+<div class="mt-2 flex items-center justify-between text-outline font-mono-data-sm text-[10px]">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                Due in 5 days
+              </span>
+<span>1 of 2 Co-Signed (Treasurer OK)</span>
+</div>
+</div>
+<!-- ITEM 3: Apex Logistics AG -->
+<div class="p-3 bg-surface-container-lowest/50 hover:bg-surface-container-lowest cursor-pointer transition-colors opacity-85">
+<div class="flex items-start justify-between">
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm font-medium text-on-surface">Apex Logistics AG</span>
+<span class="material-symbols-outlined text-secondary text-[14px]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="font-mono-data-sm text-mono-data-sm text-outline">INV-EU-1088 • Continuous Run</div>
+</div>
+<div class="text-right">
+<div class="font-mono-data-md text-mono-data-md font-medium text-on-surface">$12,980.00</div>
+<span class="bg-surface-container px-1 py-0.2 rounded font-mono-data-sm text-[9px] text-on-surface-variant font-medium">DAI</span>
+</div>
+</div>
+<div class="mt-2 p-1.5 bg-secondary-container/20 border border-secondary/20 rounded flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Autonomous Batch Executed</span>
+<span class="font-mono-data-sm text-[9px] text-outline hover:underline">Tx: 0x9a3f...7c12</span>
+</div>
+<div class="mt-2 flex items-center justify-between text-outline font-mono-data-sm text-[10px]">
+<span>Processed 18m ago</span>
+<span class="text-secondary font-medium">Ledger Sealed</span>
+</div>
+</div>
+</div>
+<!-- Rail Summary Footer -->
+<div class="p-2.5 bg-surface-container border-t border-outline-variant flex items-center justify-between text-on-surface-variant font-mono-data-sm text-[11px]">
+<span>Queue Total: <strong class="text-on-surface font-semibold">$203,680.00</strong></span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-secondary" data-icon="lock_clock">lock_clock</span>
+            2 Pending EIP-712
+          </span>
+</div>
+</aside>
+<!-- RIGHT DETAIL INSPECTOR (Master View: Acme Heavy Metals) -->
+<section class="flex-1 flex flex-col bg-surface-container-lowest overflow-y-auto">
+<!-- INVOICE HEADER STRIP -->
+<div class="p-margin border-b border-outline-variant bg-surface-container-lowest flex flex-wrap items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="bg-surface-container px-2 py-0.5 rounded font-mono-data-sm text-mono-data-sm text-on-surface-variant font-semibold">Vendor #V-88219</span>
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Acme Heavy Metals Corp</h1>
+<span class="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded font-label-sm text-label-sm uppercase font-semibold">Tier 1 Supplier</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant font-mono-data-sm text-mono-data-sm">
+<span>Invoice: <strong class="text-on-surface">INV-2024-9011</strong></span>
+<span>PO Link: <strong class="text-on-surface">PO #9941</strong></span>
+<span>Contract: <strong class="text-on-surface font-mono">0x892a...102f</strong></span>
+<span class="text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded font-medium">Due in 2 days (Oct 31)</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Total Gross Invoiced</div>
+<div class="text-display-lg font-display-lg font-bold text-on-surface font-mono-data-lg leading-tight">$148,200.00 <span class="text-headline-sm font-normal text-on-surface-variant">USDC</span></div>
+</div>
+<div class="h-10 w-px bg-outline-variant"></div>
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-tertiary uppercase tracking-wider font-semibold">Flagged Discrepancy</div>
+<div class="text-headline-md font-headline-md font-bold text-error font-mono-data-lg leading-tight">+$18,400.00</div>
+</div>
+</div>
+</div>
+<!-- SPLIT-VIEW DOCUMENT & AI SCHEMA PREVIEW (Bento Style Inspection) -->
+<div class="p-margin grid grid-cols-1 xl:grid-cols-12 gap-margin">
+<!-- LEFT: PDF Preview Representation with Optical Bounding Boxes (xl:col-span-6) -->
+<div class="xl:col-span-6 flex flex-col bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden">
+<div class="px-3 py-2 bg-surface-container border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">PDF Raster &amp; OCR Optical Inspection</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-1.5 py-0.2 rounded font-mono-data-sm text-[9px]">Page 1/1</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 hover:bg-surface-container-high rounded text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[16px]" data-icon="zoom_in">zoom_in</span>
+</button>
+<button class="p-1 hover:bg-surface-container-high rounded text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[16px]" data-icon="zoom_out">zoom_out</span>
+</button>
+</div>
+</div>
+<!-- PDF Emulation Sheet -->
+<div class="p-4 flex-1 flex flex-col justify-between bg-white relative font-sans text-slate-800 text-xs shadow-inner min-h-[360px]">
+<!-- Document Header Mock -->
+<div class="border-b pb-3 flex justify-between items-start">
+<div>
+<h3 class="font-bold text-sm tracking-tight text-slate-900">ACME HEAVY METALS CORP.</h3>
+<p class="text-[10px] text-slate-500">1044 Industrial Parkway, Duisburg, Germany</p>
+<p class="text-[10px] text-slate-500">VAT ID: DE-81299401</p>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs font-bold text-slate-700">INVOICE #INV-2024-9011</span>
+<p class="text-[10px] text-slate-500">Date: October 24, 2024</p>
+<p class="text-[10px] text-slate-500">PO Reference: PO-9941-REV3</p>
+</div>
+</div>
+<!-- Table with Optical Highlight Boxes -->
+<div class="my-4">
+<table class="w-full text-left text-[11px]">
+<thead>
+<tr class="border-b text-slate-400 font-medium">
+<th class="py-1">Item / Lot</th>
+<th class="py-1">Specification</th>
+<th class="py-1 text-right">Qty (kg)</th>
+<th class="py-1 text-right">Unit Price</th>
+<th class="py-1 text-right">Subtotal</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 font-mono text-[10px]">
+<tr>
+<td class="py-1.5 font-sans">Lot #880</td>
+<td>Industrial Electrolytic Nickel 99.9%</td>
+<td class="text-right">1,500</td>
+<td class="text-right">$42.00</td>
+<td class="text-right font-medium">$63,000.00</td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans">Lot #881</td>
+<td>Nickel Cathode Pellets Grade A</td>
+<td class="text-right">1,600</td>
+<td class="text-right">$42.00</td>
+<td class="text-right font-medium">$67,200.00</td>
+</tr>
+<!-- OCR BOUNDING BOX ON DISPUTED ITEM -->
+<tr class="bg-red-50/70 relative">
+<td class="py-1.5 font-sans font-bold text-red-900 flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-red-600"></span>
+                        Lot #882
+                      </td>
+<td class="text-red-900">Cold-Rolled Nickel Strip (Surge Surcharge)</td>
+<td class="text-right text-red-900 font-bold">383.3</td>
+<!-- OPTICAL BOUNDING BOX STROKE -->
+<td class="text-right relative">
+<div class="absolute inset-0 border-2 border-red-500 bg-red-100/30 rounded flex items-center justify-end px-1 -m-0.5">
+<span class="font-bold text-red-700 font-mono">$48.00</span>
+</div>
+<span class="opacity-0">$48.00</span>
+</td>
+<td class="text-right font-bold text-red-700">$18,400.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- OCR Callout Indicator -->
+<div class="mt-auto pt-2 border-t flex items-center justify-between text-[10px] text-slate-500 font-mono">
+<span class="flex items-center gap-1 text-red-700 font-semibold bg-red-50 px-2 py-0.5 border border-red-200 rounded">
+<span class="material-symbols-outlined text-[12px]" data-icon="search_check">search_check</span>
+                  OCR Optical Box #3: Unit Price Mismatch detected at coordinate (x:412, y:688)
+                </span>
+<span>Subtotal: $148,200.00 USDC</span>
+</div>
+</div>
+</div>
+<!-- RIGHT: AI Extracted Structured JSON Schema Comparison (xl:col-span-6) -->
+<div class="xl:col-span-6 flex flex-col bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden">
+<div class="px-3 py-2 bg-surface-container border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="data_object">data_object</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Structured Schema Diff: ERP Contract vs. Ingested Payload</span>
+</div>
+<span class="font-mono-data-sm text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.2 rounded font-semibold">
+                Confidence: 99.82%
+              </span>
+</div>
+<!-- Side-by-Side Schema Diff Table -->
+<div class="p-3 flex-1 flex flex-col justify-between font-mono-data-sm text-mono-data-sm space-y-3">
+<div class="border border-outline-variant rounded bg-surface-container-lowest overflow-hidden">
+<div class="grid grid-cols-12 bg-surface-container text-outline font-label-sm text-[10px] uppercase font-bold py-1 px-2 border-b border-outline-variant">
+<div class="col-span-4">Field Parameter</div>
+<div class="col-span-4">PO #9941 (Agreed Baseline)</div>
+<div class="col-span-4">Invoice #INV-2024-9011 (Parsed)</div>
+</div>
+<div class="divide-y divide-outline-variant/40">
+<div class="grid grid-cols-12 py-1.5 px-2 items-center">
+<div class="col-span-4 font-sans font-medium text-on-surface">Lots 880 &amp; 881 Rate</div>
+<div class="col-span-4 text-secondary font-medium">$42.00 / kg</div>
+<div class="col-span-4 text-secondary font-medium flex items-center gap-1">
+                      $42.00 / kg
+                      <span class="material-symbols-outlined text-[13px] text-secondary" data-icon="check">check</span>
+</div>
+</div>
+<div class="grid grid-cols-12 py-1.5 px-2 items-center bg-red-500/5">
+<div class="col-span-4 font-sans font-medium text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="cancel">cancel</span>
+                      Lot #882 Unit Price
+                    </div>
+<div class="col-span-4 text-on-surface font-semibold bg-surface-container-high px-1 rounded inline-block w-fit">
+                      $42.00 / kg
+                    </div>
+<div class="col-span-4 text-error font-bold flex items-center gap-1">
+                      $48.00 / kg
+                      <span class="bg-red-100 text-red-800 text-[9px] px-1 rounded border border-red-300">+$6.00 (+14.28%)</span>
+</div>
+</div>
+<div class="grid grid-cols-12 py-1.5 px-2 items-center">
+<div class="col-span-4 font-sans font-medium text-on-surface">Payment Terms</div>
+<div class="col-span-4 text-on-surface">Net 30 EOM</div>
+<div class="col-span-4 text-on-surface">Net 30 EOM</div>
+</div>
+<div class="grid grid-cols-12 py-1.5 px-2 items-center">
+<div class="col-span-4 font-sans font-medium text-on-surface">Settlement Rail</div>
+<div class="col-span-4 text-on-surface">Arbitrum Nova Multi-Sig</div>
+<div class="col-span-4 text-on-surface">0x4F...8B91 (Safe Vault)</div>
+</div>
+</div>
+</div>
+<!-- Live Reasoning Stream Pill Box -->
+<div class="bg-surface-container-low border border-outline-variant p-2.5 rounded font-mono text-[11px] space-y-1 text-on-surface-variant">
+<div class="flex items-center justify-between text-outline text-[10px]">
+<span class="uppercase font-semibold tracking-wider font-label-sm">Agent Semantic Explanation</span>
+<span>Evaluated 12:44:02 UTC</span>
+</div>
+<p class="leading-relaxed text-on-surface">
+<span class="text-primary font-semibold">Agent Rule #409 (Price Variance Gate):</span> Invoiced rate of $48.00/kg for Lot #882 exceeds agreed master contract limits without an executed price-index addendum. Agent has split the batch: Approved $129,800.00 for normal execution; isolated $18,400.00 to dispute escrow.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- COMMODITY PRICE ANOMALY WIDGET (Benchmarking Sparkline) -->
+<div class="px-margin pb-margin">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-outline-variant">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px]" data-icon="ssid_chart">ssid_chart</span>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Commodity Benchmark Intelligence: London Metal Exchange (LME) vs Supplier Invoice</h3>
+<span class="bg-error-container text-on-error-container text-label-sm font-label-sm uppercase px-1.5 py-0.2 rounded font-bold">Unjustified Markup</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                  World Bank &amp; LME Nickel Spot index shows only <strong class="text-secondary">+2.1%</strong> global delta this week, while Acme invoiced <strong class="text-error">+14.2%</strong>.
+                </p>
+</div>
+<!-- Legend -->
+<div class="flex items-center gap-4 font-mono-data-sm text-[11px]">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-1 bg-error rounded"></span>
+<span class="text-on-surface font-medium">Acme Invoice Surge (+14.2%)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-1 bg-secondary rounded"></span>
+<span class="text-on-surface font-medium">LME Benchmark Index (+2.1%)</span>
+</div>
+</div>
+</div>
+<!-- Visual SVG Sparkline Comparison Track -->
+<div class="pt-3 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+<div class="md:col-span-9 h-20 w-full relative">
+<!-- SVG Graph Vector -->
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 600 70">
+<defs>
+<lineargradient id="redGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#ba1a1a" stop-opacity="0.15"></stop>
+<stop offset="100%" stop-color="#ba1a1a" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid reference lines -->
+<line stroke="#E2E8F0" stroke-dasharray="3,3" x1="0" x2="600" y1="10" y2="10"></line>
+<line stroke="#E2E8F0" stroke-dasharray="3,3" x1="0" x2="600" y1="40" y2="40"></line>
+<line stroke="#E2E8F0" x1="0" x2="600" y1="65" y2="65"></line>
+<!-- Benchmark Line (Secondary - Stable +2.1%) -->
+<path d="M 0 55 Q 150 53 300 50 T 450 49 T 600 46" fill="none" stroke="#006c49" stroke-width="2"></path>
+<!-- Acme Supplier Spike Line (Error - Spike +14.2%) -->
+<path d="M 0 55 Q 150 54 300 51 T 420 48 L 510 25 L 600 12" fill="none" stroke="#ba1a1a" stroke-width="2.5"></path>
+<path d="M 0 55 Q 150 54 300 51 T 420 48 L 510 25 L 600 12 L 600 65 L 0 65 Z" fill="url(#redGrad)"></path>
+<!-- Anomaly Flag Marker -->
+<circle cx="510" cy="25" fill="#ba1a1a" r="4" stroke="#fff" stroke-width="2"></circle>
+<circle cx="600" cy="12" fill="#ba1a1a" r="4" stroke="#fff" stroke-width="2"></circle>
+</svg>
+</div>
+<!-- Quick Math Summary Card -->
+<div class="md:col-span-3 bg-surface-container-low p-2.5 rounded border border-outline-variant space-y-1">
+<span class="font-label-sm text-label-sm uppercase text-outline font-semibold">Arbitration Leverage</span>
+<div class="font-mono-data-md text-mono-data-md font-bold text-on-surface">Saving: $18,400.00</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant leading-tight">
+                  Dispute ticket auto-drafted to Acme controller with LME benchmark proof attached.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ACTION BAR AT BOTTOM: Cryptographic Co-signing card (Docked Footer) -->
+<div class="sticky bottom-0 mt-auto bg-surface-container-lowest border-t border-outline-variant px-margin py-3 shadow-lg z-30">
+<div class="max-w-[1720px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+<!-- EIP-712 Typed Data Summary -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="vpn_key">vpn_key</span>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md font-bold text-on-surface uppercase">EIP-712 Dual-Key Co-Sign Gate</span>
+<span class="bg-surface-container-highest text-primary font-mono-data-sm text-[10px] px-1.5 py-0.2 rounded font-semibold">Chain ID: 42170</span>
+<span class="font-mono-data-sm text-[10px] text-outline">Payload Digest: 0x93b4...e81c</span>
+</div>
+<p class="font-mono-data-sm text-mono-data-sm text-on-surface-variant">
+                  Authorizing batch release of <strong class="text-on-surface font-semibold">$129,800.00 USDC</strong> • Disputed Lot #882 held in escrow
+                </p>
+</div>
+</div>
+<!-- Co-Signature Multi-Button Cluster -->
+<div class="flex items-center gap-2.5 w-full md:w-auto justify-end">
+<!-- Hold Disputed Balance Button -->
+<button class="bg-amber-500 hover:bg-amber-600 text-white font-label-md text-label-md px-3.5 py-2.5 rounded flex items-center gap-1.5 shadow-sm active:scale-[0.99] transition-transform">
+<span class="material-symbols-outlined text-[17px]" data-icon="pause_circle">pause_circle</span>
+                Hold Disputed Balance ($18,400)
+              </button>
+<!-- Sign & Release Approved Button -->
+<button class="bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md px-4 py-2.5 rounded flex items-center gap-2 shadow font-bold tracking-wide active:scale-[0.99] transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                Sign &amp; Release $129,800
+                <span class="font-mono-data-sm text-[10px] bg-emerald-900/60 text-emerald-200 px-1 rounded ml-0.5">Hardware Key</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>
