@@ -252,7 +252,53 @@ function Details({ b }: { b: Bill }) {
             Recovered {money(o.amount)} owed from an earlier bill <Hash h={o.tx} />
           </p>
         ))}
+        <Sources tags={b.tags} />
       </div>
     </details>
+  );
+}
+
+const NUMBER_NAMES: Record<string, string> = {
+  supplier_says_total: "Bill total",
+  amount: "Amount to pay",
+  erp_bound: "Most we can pay",
+  score: "Risk score",
+  cutoff: "Limit",
+  injection_p: "Instruction-text score",
+  premium: "Reserve premium",
+  "resolution.amount": "Proposed payment",
+  "resolution.held": "Held back",
+  "resolution.credit": "Credit note",
+  "fair_price.p_last": "Last price paid",
+  "fair_price.p_invoice": "Price billed",
+  "fair_price.justified_price": "Fair price",
+  "fair_price.overcharge": "Over the fair price",
+  "fair_price.index_last": "Index then",
+  "fair_price.index_now": "Index now",
+};
+
+const SOURCE_NAMES: Record<string, string> = {
+  "computed:erp_bounded": "our orders and receipts (the bill can only lower it)",
+  erp: "our orders and receipts",
+  computed: "calculated",
+  settings: "settings",
+};
+
+/** Where every number on this card comes from (policy S5: an untagged number blocks the card). */
+function Sources({ tags }: { tags?: Bill["tags"] }) {
+  const rows = Object.entries(tags ?? {}).filter(([k]) => NUMBER_NAMES[k]);
+  if (!rows.length) return null;
+  return (
+    <div>
+      <p className="text-muted">Where each number comes from</p>
+      <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-xs">
+        {rows.map(([k, t]) => (
+          <div key={k} className="contents">
+            <dt className="text-muted">{NUMBER_NAMES[k]}</dt>
+            <dd>{t.label || t.sources.map((s) => SOURCE_NAMES[s] ?? s).join(" + ")}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
