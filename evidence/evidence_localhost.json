@@ -2,11 +2,11 @@
  "network": "localhost",
  "chain_id": 31337,
  "contracts": {
-  "token": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
-  "vault": "0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD",
-  "pool": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
-  "anchor": "0x36b58F5C1969B7b6591D752ea6F5486D069010AB",
-  "naive": "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7"
+  "token": "0x3aAde2dCD2Df6a8cAc689EE797591b2913658659",
+  "vault": "0xab16A69A5a8c12C732e0DEFF4BE56A70bb64c926",
+  "pool": "0xE3011A37A904aB90C8881a99BD1F6E21401f1522",
+  "anchor": "0x1f10F3Ba7ACB61b2F50B9d6DdCf91a6f787C0E82",
+  "naive": "0x457cCf29090fe5A24c19c1bc95F492168C0EaFdb"
  },
  "roles": {
   "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
@@ -18,28 +18,28 @@
   "attacker": "0x9b1e4F2a7C3d5E6f708192A3b4C5d6E7f8091a2B"
  },
  "deploy_txs": {
-  "setPool": "0x813ec6d8f84637a24ce2c0e13ca8fd426695a021fdf0242ae102f97514b2f31c",
-  "mintVault": "0x97bc5f4b2b3dd3b4bd680e5d0c533e5e9c1f11d25955915093d41d9fa0d4dd53",
-  "mintNaive": "0x3e08c0a06681d912d5cacdac881415766d339abc89f1f1b7a465ee3c4bedd408",
-  "mintUnderwriter": "0x0858c4db9571a2fd94e6a378d26f328863919244a627ec2c1e045365ce289ec7",
-  "approvePool": "0x36fef55a8909f16c1ae11319f44b1df366cf92d47d2d7ec90a5d887fa9cebbaa",
-  "fundPool": "0x564dc0d2b2ecb411dc33bb73893bf6f58aed1d66abb9f3d5f7cf8c925f478dd5",
-  "addPayee_ACME": "0x16523fd42fd676ef80669dd1c060e3adead9650f12f2fe7e091fcbc5fc96ebeb",
-  "addPayee_LIONROCK": "0x4536c70f8c0442dffd1f3c91dc2c4d869a9f7770fc3bdb3585f600e5ca9675ff",
-  "addPayee_GANJIANG": "0xef77a62090f8189dab9f90ed22a2545cdb22d3f0f94a71052483b5a51287e32d",
-  "addPayee_TSUENWAN": "0x9138cf035f31b6cb8a876cb4abdd988a32e6de770f199f920e0d518324dadb0c",
-  "addPayee_PEARLDELTA": "0x094fe59eea1324a774118c02c9a23521334a30f3b0006325aa4df7a8908e9d11",
-  "addPayee_KWONGFAT": "0x316f4649da228328af3c3dd3e8aaa1aba57b63ebd423838ac9a5e1fdde045b78",
-  "addPayee_SUNKEE": "0xee159030ab9f5072e79d32b4f2592c9bdbeb0d6d0e288f1d53e9631b4905fbc4",
-  "addPayee_KAITAK": "0x018dbe90626f8f12ada8d828458398f719e9715e5155e4a618f8944dd915dcea",
-  "addPayee_HARBOURLUBE": "0x92db9f0722a72219e57fa91ebae742b29b7b63726c1af62a2fa9b27919389bed",
-  "addPayee_SHATINPCB": "0xf31377915580c20aab8e53c9e694af093f8a30e183ec6fd3099fb0e76ccc8407",
-  "addPayee_VICPLATING": "0xc9b933cd1bf55ff2377e2a3f30ec74b6fd1e45ce8f8135bfa865f610d9b072a4",
-  "addPayee_MONGKOKWIRE": "0x99d7c3b5a05a7ceac1256868a1e69af2ad68f1867c38c995face4b4b13fa0dc9",
-  "proposeSettings": "0x0c1cbacfc90d787dae867fec3b452e268e214b77ba917584727c6d07fc4b6517",
-  "approveSettings": "0x725eaae0eb07a9660143661b7c920e1f50d193cccbf294f40f19536c4ee959d1"
+  "setPool": "0xd153f3d8f34f3868f1f43559412bd90709c23d0ba7c0d2e1f8afad3d0568f015",
+  "mintVault": "0x6fec7ed8d93f5fdca97a6031af1b7e74532b120e1533182f880194f2a9c9fab5",
+  "mintNaive": "0x94a0497bdf55267c3c290dac36d46f72d18515a731803bd98be6df57e57c8c70",
+  "mintUnderwriter": "0x1e6c960992ea9af8ff07bfab07ffee36eef69bb544ef8c7283dc12114c882c73",
+  "approvePool": "0x9dd8f3fadacb06f8148277470f674c7f6e3f363781c7f885f3a152f2111da97e",
+  "fundPool": "0x8ff7e655383f36673b04fd524f639f10cbf85b63f14c67e9b303fcbc273c6cf5",
+  "addPayee_ACME": "0x2a6924b70ddfed26a63bf735f45739af7ada621de5c36eeb713ffc363b468a5a",
+  "addPayee_LIONROCK": "0x5ac8ef41a014bd480b4ad251583882e906e303a12c2254fe2cf119ee423b1819",
+  "addPayee_GANJIANG": "0x1208f3f8457cda7cffdbb71fb1ded71da7d0c0856dcf2c99aa3e3ba9aef5a189",
+  "addPayee_TSUENWAN": "0x9af4ada6584b3055f1038b78b15d3b4c36de74cd05870514e024e7e29c7adf9d",
+  "addPayee_PEARLDELTA": "0x3a614ea0210050e404eff72c00b41302eb1337d5e6be03f747bea9bf2f83d67e",
+  "addPayee_KWONGFAT": "0xe63b0fead203377f93406d74b0ac12438da2b48f1f2272b217296591d5e239a4",
+  "addPayee_SUNKEE": "0x789b57001b4d1e02197b926c40fd9df4ac2208fba745f62163316bf05f961cb4",
+  "addPayee_KAITAK": "0x24fef7d941e9654b14bbe49bc3ddb36ec67ae8b054e9ddc5038a50ea3cd8dce0",
+  "addPayee_HARBOURLUBE": "0xc8437f218489776d639bfc981e040f7f9ce0c3c497cd588fe25c6e16e6026543",
+  "addPayee_SHATINPCB": "0xbf3ee7e2765f21f2272d1e421006c447a02a8860a591d35027e11953b33e0012",
+  "addPayee_VICPLATING": "0x46be2431ef307409f7e8c5fb07dd094b611e8dba86bb67ddf7ca9b04527c42d0",
+  "addPayee_MONGKOKWIRE": "0xcc6b9011d779a395e554eccc33284a8380c1ba582705297623671d0f1dc46ad9",
+  "proposeSettings": "0x08ed1a8f4d6e17564f24150ed052fa83ce94e9289f1a61e46ef153e0caa8227f",
+  "approveSettings": "0x02b14a42e8403353b260759b32bc677ecd0d3f88d1253555a641bfdeba3836e3"
  },
- "generated": "2026-10-17 01:09:54",
+ "generated": "2026-10-18 12:46:42",
  "tasks": [
   {
    "task": "8",
@@ -47,7 +47,7 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "naive agent reads the invoice and follows its text",
      "actor": "naive_agent",
      "result": {
@@ -57,15 +57,15 @@
        "amount": 50000.0,
        "why": "the document said to pay this address"
       },
-      "tx_hash": "0x1d1dcb63a37a1d073185ccef7c14f48d0167a5d08458399da5bf662675fb55f1",
+      "tx_hash": "0xe42590b3926d1a0c6037704593e35319e46c2f149e6abec8ca8ad0c5d627549f",
       "ok": true,
       "balance_after": 0.0
      },
-     "tx_hash": "0x1d1dcb63a37a1d073185ccef7c14f48d0167a5d08458399da5bf662675fb55f1",
+     "tx_hash": "0xe42590b3926d1a0c6037704593e35319e46c2f149e6abec8ca8ad0c5d627549f",
      "expect": "funds drained"
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "our agent processes the same invoice",
      "actor": "agent",
      "result": {
@@ -80,7 +80,7 @@
      "expect": "hold, nothing moves"
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "tool call with payee from the document",
      "actor": "policy_gate",
      "result": {
@@ -90,19 +90,19 @@
      "expect": "S1"
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "payment to the attacker sent anyway (hacked app)",
      "actor": "agent_key",
      "result": {
       "error": "PayeeNotActive"
      },
-     "tx_hash": "0xfb1c60f6ccdabdc95b4ea66f3765fcc9cf3fe3a6870ee929a4421c6db642c632",
+     "tx_hash": "0x27e3199cb95c9ebf14face8a99b0467ea614df9175f143d006932c81115f0858",
      "expect": "revert PayeeNotActive"
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.2600698
+   "started": 1792306000.782926
   },
   {
    "task": "7",
@@ -110,7 +110,7 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "injection flag",
      "actor": "agent",
      "result": {
@@ -120,7 +120,7 @@
      "expect": "p >= 0.5"
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "security log lines",
      "actor": "system",
      "result": [
@@ -139,7 +139,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.5062559
+   "started": 1792306000.917513
   },
   {
    "task": "1",
@@ -147,7 +147,7 @@
    "story": "routine",
    "steps": [
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "read, match, score, pay alone",
      "actor": "agent",
      "result": {
@@ -156,17 +156,17 @@
       "amount": 1810.16,
       "tx": {
        "ok": true,
-       "tx_hash": "0x67c87e617950fa37d8174643d7bd78cbc74c97535322ef6535695bae35ff8c8b",
+       "tx_hash": "0x5a7d41465e5b6f93472956357fa7def52c074b33ba19d76dcdcd86e46b7870b6",
        "error": null,
        "explorer": null
       },
       "source": "e-invoice"
      },
-     "tx_hash": "0x67c87e617950fa37d8174643d7bd78cbc74c97535322ef6535695bae35ff8c8b",
+     "tx_hash": "0x5a7d41465e5b6f93472956357fa7def52c074b33ba19d76dcdcd86e46b7870b6",
      "expect": "T1 payment"
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:40",
      "action": "reserve locked",
      "actor": "contract",
      "result": {
@@ -178,7 +178,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.5062778
+   "started": 1792306000.917525
   },
   {
    "task": "2",
@@ -186,7 +186,7 @@
    "story": "routine",
    "steps": [
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:41",
      "action": "first copy",
      "actor": "agent",
      "result": {
@@ -195,17 +195,17 @@
       "amount": 2397.6,
       "tx": {
        "ok": true,
-       "tx_hash": "0x1729b41e20c314d19ff234d6a12e587a23aaba5289762634c32f0544b6447629",
+       "tx_hash": "0xfc0c75df096b63fa1f31c832f0b482909b87ac3bdfafd476690d8f16880a5264",
        "error": null,
        "explorer": null
       },
       "source": "e-invoice"
      },
-     "tx_hash": "0x1729b41e20c314d19ff234d6a12e587a23aaba5289762634c32f0544b6447629",
+     "tx_hash": "0xfc0c75df096b63fa1f31c832f0b482909b87ac3bdfafd476690d8f16880a5264",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:41",
      "action": "re-issued copy of the same invoice",
      "actor": "agent",
      "result": {
@@ -222,7 +222,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.6121979
+   "started": 1792306000.988203
   },
   {
    "task": "13",
@@ -230,7 +230,7 @@
    "story": "routine",
    "steps": [
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:41",
      "action": "payment planner",
      "actor": "agent",
      "result": [
@@ -253,19 +253,19 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:41",
      "action": "discount taken on the Sun Kee bill",
      "actor": "agent",
      "result": {
       "discount_usd": 47.95
      },
-     "tx_hash": "0x1729b41e20c314d19ff234d6a12e587a23aaba5289762634c32f0544b6447629",
+     "tx_hash": "0xfc0c75df096b63fa1f31c832f0b482909b87ac3bdfafd476690d8f16880a5264",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.751283
+   "started": 1792306001.083155
   },
   {
    "task": "15",
@@ -273,7 +273,7 @@
    "story": "routine",
    "steps": [
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:41",
      "action": "Ganjiang (mainland) bill, bank rail",
      "actor": "agent",
      "result": {
@@ -282,21 +282,21 @@
       "amount": 2545.64,
       "tx": {
        "ok": true,
-       "tx_hash": "0x4274f74a80de6866361f4aa58f941d64732a7beb82b6fe5e3a88b1318938651d",
+       "tx_hash": "0x4eb518b51414c48d142381532babcb83cb5c8e948b1695ac94b40b38b7fa3e15",
        "error": null,
        "explorer": null
       },
       "source": "e-invoice"
      },
-     "tx_hash": "0x4274f74a80de6866361f4aa58f941d64732a7beb82b6fe5e3a88b1318938651d",
+     "tx_hash": "0x4eb518b51414c48d142381532babcb83cb5c8e948b1695ac94b40b38b7fa3e15",
      "expect": "BankPaymentRecorded"
     },
     {
-     "time": "2026-10-17 01:09:51",
+     "time": "2026-10-18 12:46:41",
      "action": "bank reference",
      "actor": "contract",
      "result": {
-      "bank_ref": "0xa317beaa4ac4753dd744da7780dc2bab794d17cf9a5ddca5b83f0004bda324f3"
+      "bank_ref": "0xd0300ed43082779cc2637f3dabe4288b0f91253e1a040d9c12c3bbe9de2f08b9"
      },
      "tx_hash": null,
      "expect": null
@@ -304,7 +304,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.795737
+   "started": 1792306001.11446
   },
   {
    "task": "4",
@@ -312,7 +312,7 @@
    "story": "mistake_recovery",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "Shatin PCB bill paid alone (a credit for returned boards was never recorded or billed)",
      "actor": "agent",
      "result": {
@@ -321,17 +321,17 @@
       "amount": 4017.6,
       "tx": {
        "ok": true,
-       "tx_hash": "0x23a5048902e615d436ea06101f6519699c63fa66d39a925207aada887e2c0fb7",
+       "tx_hash": "0x35983e0e1f50326bd9e61884cf87439d060458c2188028c57bf0f91072353111",
        "error": null,
        "explorer": null
       },
       "source": "e-invoice"
      },
-     "tx_hash": "0x23a5048902e615d436ea06101f6519699c63fa66d39a925207aada887e2c0fb7",
+     "tx_hash": "0x35983e0e1f50326bd9e61884cf87439d060458c2188028c57bf0f91072353111",
      "expect": "T1, overpaid"
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "statement reconciliation",
      "actor": "agent",
      "result": [
@@ -348,21 +348,21 @@
        "paid": 4017.6,
        "owed": 2872.58,
        "tier": "T1",
-       "tx_hash": "0x23a5048902e615d436ea06101f6519699c63fa66d39a925207aada887e2c0fb7"
+       "tx_hash": "0x35983e0e1f50326bd9e61884cf87439d060458c2188028c57bf0f91072353111"
       }
      ],
      "tx_hash": null,
      "expect": "missed_credit case"
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "manager confirms with one tap",
      "actor": "finance_manager",
      "result": {
       "case": "C-0002",
       "receivable_tx": {
        "ok": true,
-       "tx_hash": "0x83c5684367b9ff121c5712cdf073533904546cbf61dfeebc2613fd1d2daa1481",
+       "tx_hash": "0xbb891de0b34a5a00e2422bf2d874a71c3152ae9acf003f1f71bb929c16bde1c2",
        "error": null,
        "explorer": null
       },
@@ -376,39 +376,39 @@
        "probation_left": 5
       }
      },
-     "tx_hash": "0x83c5684367b9ff121c5712cdf073533904546cbf61dfeebc2613fd1d2daa1481",
+     "tx_hash": "0xbb891de0b34a5a00e2422bf2d874a71c3152ae9acf003f1f71bb929c16bde1c2",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "claim filed with the manager's signature",
      "actor": "agent",
      "result": {
       "ok": true,
-      "tx_hash": "0xb0dee6af3a2a2003b7349e6fe1f732a59c73b2948b825e758dfea73e68bab192",
+      "tx_hash": "0x2ee5bbaabee8e56dd2f3a0b19972187b2d1b45e96dbe1448c84cbc51c7f7b702",
       "error": null,
       "explorer": null
      },
-     "tx_hash": "0xb0dee6af3a2a2003b7349e6fe1f732a59c73b2948b825e758dfea73e68bab192",
+     "tx_hash": "0x2ee5bbaabee8e56dd2f3a0b19972187b2d1b45e96dbe1448c84cbc51c7f7b702",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "reserve repays the company",
      "actor": "contract",
      "result": {
       "ok": true,
-      "tx_hash": "0xeffc86a549666479ef92bdacc6a4a7eba0e0ebcfab5186a9041daaa045b2a7d6",
+      "tx_hash": "0xe441f51123d479475301b1d775bcbfdcd3c8fed2bac7e0c42afb9286d641102b",
       "error": null,
       "explorer": null
      },
-     "tx_hash": "0xeffc86a549666479ef92bdacc6a4a7eba0e0ebcfab5186a9041daaa045b2a7d6",
+     "tx_hash": "0xe441f51123d479475301b1d775bcbfdcd3c8fed2bac7e0c42afb9286d641102b",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177791.898294
+   "started": 1792306001.1849458
   },
   {
    "task": "5",
@@ -416,7 +416,7 @@
    "story": "mistake_recovery",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "next Shatin PCB bill (probation: goes to a person)",
      "actor": "agent",
      "result": {
@@ -424,7 +424,7 @@
       "tier": "T2",
       "reasons": [
        "Supplier on probation: 5 more bills go to a person",
-       "Supplier 7-day autonomous total would be $5,853.38 (cap $5,000): possible limit splitting"
+       "This supplier would get $5,853.38 in 7 days without a signature (limit $5,000): possible limit splitting"
       ],
       "resolution": {
        "action": "pay",
@@ -439,7 +439,7 @@
      "expect": "T2, net of receivable"
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "manager approves the proposed amount",
      "actor": "finance_manager",
      "result": {
@@ -448,28 +448,28 @@
       "amount": 1835.78,
       "tx": {
        "ok": true,
-       "tx_hash": "0xb8029438154f47eb82177f2a87126c35cd95784bca146e7c1540bc9fc9ae6fbe",
+       "tx_hash": "0x960b28020ef6f108f556f30e66186b7fe7a6a68efbf82018df233f2adbdcd261",
        "error": null,
        "explorer": null
       }
      },
-     "tx_hash": "0xb8029438154f47eb82177f2a87126c35cd95784bca146e7c1540bc9fc9ae6fbe",
+     "tx_hash": "0x960b28020ef6f108f556f30e66186b7fe7a6a68efbf82018df233f2adbdcd261",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "offset recorded on-chain",
      "actor": "agent",
      "result": {
       "against": "B-20251210-0007",
       "amount": 1145.02,
-      "tx": "0xb964e59a9207597cebb5a8a2efac8581a2dbf9eec2ba6cbcf60e490811e66674"
+      "tx": "0x55ad8337a312e3c179653dcc7eacc8c2302f62e673e157ce2ac2adbd541186f8"
      },
-     "tx_hash": "0xb964e59a9207597cebb5a8a2efac8581a2dbf9eec2ba6cbcf60e490811e66674",
+     "tx_hash": "0x55ad8337a312e3c179653dcc7eacc8c2302f62e673e157ce2ac2adbd541186f8",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "reserve balance",
      "actor": "contract",
      "result": {
@@ -482,7 +482,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.092854
+   "started": 1792306001.314699
   },
   {
    "task": "6",
@@ -490,7 +490,7 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "email from Lion Rock's registered domain",
      "actor": "agent",
      "result": {
@@ -501,7 +501,7 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "email from a look-alike domain",
      "actor": "agent",
      "result": {
@@ -511,7 +511,7 @@
      "expect": "logged only"
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "freeze payee on-chain with the agent key",
      "actor": "agent",
      "result": {
@@ -519,18 +519,18 @@
       "frozen": true,
       "tx": {
        "ok": true,
-       "tx_hash": "0xc3ab3d9e88f24c628c46aa7c442012025960e1ec2e1cd035f0e9ff8c00614d55",
+       "tx_hash": "0x51fd1ca7bee55450ca56877f430c97aa64ecd59bf2da3c786bfb21a223c20831",
        "error": null,
        "explorer": null
       }
      },
-     "tx_hash": "0xc3ab3d9e88f24c628c46aa7c442012025960e1ec2e1cd035f0e9ff8c00614d55",
+     "tx_hash": "0x51fd1ca7bee55450ca56877f430c97aa64ecd59bf2da3c786bfb21a223c20831",
      "expect": "PayeeFrozen"
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.274373
+   "started": 1792306001.4214242
   },
   {
    "task": "9",
@@ -538,19 +538,19 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "payAutonomous from an outside key, even with a valid governor signature",
      "actor": "attacker",
      "result": {
       "error": "NotAuthorized"
      },
-     "tx_hash": "0x041d13fcdf6b041e2f41fb354d87331e74e1faa925526a5443efe95b5092df53",
+     "tx_hash": "0x9c9301b2148af07f7b9bfaa2ccf90ccb7c57efcfe635b6b98465c78efd156f88",
      "expect": "revert NotAuthorized"
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.294707
+   "started": 1792306001.433444
   },
   {
    "task": "10",
@@ -558,19 +558,19 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "payAutonomous signed by the agent key itself",
      "actor": "agent_key",
      "result": {
       "error": "BadSignature"
      },
-     "tx_hash": "0xf72850a00304743eb09e22b11b7b2ea34868fd9d09c1f7b75aee6af7ee30e472",
+     "tx_hash": "0x772c156bf0dd1d11cd4ffaabda701993607d51efbe818bb0ba95eb5cb045ff46",
      "expect": "revert BadSignature"
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.380138
+   "started": 1792306001.470635
   },
   {
    "task": "14",
@@ -578,7 +578,7 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "blocked attempt 1",
      "actor": "policy_gate",
      "result": {
@@ -588,7 +588,7 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "blocked attempt 2",
      "actor": "policy_gate",
      "result": {
@@ -598,7 +598,7 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "blocked attempt 3",
      "actor": "policy_gate",
      "result": {
@@ -608,17 +608,17 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "circuit breaker",
      "actor": "agent",
      "result": {
       "paused": true
      },
-     "tx_hash": "0x6e518a8294d223149a4434a8ca84bf929df2f7aef41d7ba93934defaf28dbffc",
+     "tx_hash": "0x6d08c6eb6d8d1adc58afa22f9c9cdf16dc9e9e05078eb8d57e74cb012ba6b982",
      "expect": "AgentPaused"
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "routine bill while paused",
      "actor": "agent",
      "result": {
@@ -640,25 +640,25 @@
      "expect": "T2"
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "owner unpauses",
      "actor": "owner",
      "result": {
       "paused": false,
       "tx": {
        "ok": true,
-       "tx_hash": "0x9358aa424627bc7c4c336b8957ca566c5efae21ce0b08c1f3d96d532f21c10c0",
+       "tx_hash": "0xe939a8f66d8487f2051fc22a0cdc9511f019b663b95be54b992e0c607a406cb0",
        "error": null,
        "explorer": null
       }
      },
-     "tx_hash": "0x9358aa424627bc7c4c336b8957ca566c5efae21ce0b08c1f3d96d532f21c10c0",
+     "tx_hash": "0xe939a8f66d8487f2051fc22a0cdc9511f019b663b95be54b992e0c607a406cb0",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.466742
+   "started": 1792306001.50912
   },
   {
    "task": "20",
@@ -666,7 +666,7 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "request",
      "actor": "owner",
      "result": {
@@ -686,11 +686,11 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "owner taps ACME; plan preview",
      "actor": "agent",
      "result": {
-      "summary": "Pay 4 bill(s) for Acme Metals (HK) Ltd: $4,348.92 alone (T1), $49,643.28 need the manager's signature (T2).",
+      "summary": "Pay Acme Metals (HK) Ltd: 3 bills for $4,348.92 on its own and 1 bill for $49,639.64 after the finance manager signs.",
       "steps": [
        [
         "B-20251210-0010",
@@ -720,7 +720,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.6113799
+   "started": 1792306001.6090581
   },
   {
    "task": "1b",
@@ -728,19 +728,19 @@
    "story": "routine",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "release after P-WINDOW with no claim",
      "actor": "anyone (agent key)",
      "result": {
       "ok": true
      },
-     "tx_hash": "0x6b59e726799db4f6d2e4905f8c74b2a6b1082b15fbda525d8dafe672ad8c106d",
+     "tx_hash": "0x00d8d9df677a4e51c064b36349013cef0cf790dc8a92bb99fc7cefde7b0f1d28",
      "expect": "Released"
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.795827
+   "started": 1792306001.742694
   },
   {
    "task": "19",
@@ -748,11 +748,11 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "plan preview",
      "actor": "agent",
      "result": {
-      "summary": "Pay 3 bill(s) for Acme Metals (HK) Ltd: $4,348.92 alone (T1), $0.00 need the manager's signature (T2).",
+      "summary": "Pay Acme Metals (HK) Ltd: 3 bills for $4,348.92 on its own.",
       "steps": [
        [
         "B-20251210-0010",
@@ -784,40 +784,40 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "step 1 pay",
      "actor": "agent",
      "result": {
       "status": "done",
       "tier": "T1"
      },
-     "tx_hash": "0x8636926e23ec9dba50fe0017e86023b53183720601f6116b2d7020cfeffa9cf4",
+     "tx_hash": "0x0d0449eb1c0eca00d64c89a0516a13e6112c662c0357799a4688f4e5c8642a66",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "step 2 pay",
      "actor": "agent",
      "result": {
       "status": "done",
       "tier": "T1"
      },
-     "tx_hash": "0xdc0d614d684d80fac23e4a23a03142af1ef485e012f1d519c586e194f3a4be89",
+     "tx_hash": "0xb286bf3ad43d0dddb4334c9f476e4fd615bf9acc0de620ec8a38f14a753b6c27",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "step 3 pay",
      "actor": "agent",
      "result": {
       "status": "done",
       "tier": "T1"
      },
-     "tx_hash": "0xcce2d86cf13757d82cf0a2a28b39f0ca5a54e759bdb9d3fcfa40ffa57546ca31",
+     "tx_hash": "0x023e3bdcf61d199bafefb7a36c8d8e2b181395d8fe892862630693774815bf90",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:52",
+     "time": "2026-10-18 12:46:41",
      "action": "step 4 skip",
      "actor": "agent",
      "result": {
@@ -830,7 +830,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.807204
+   "started": 1792306001.7504919
   },
   {
    "task": "16",
@@ -838,31 +838,31 @@
    "story": "routine",
    "steps": [
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "fair-price check",
      "actor": "agent",
      "result": {
       "fair_price": {
        "item": "CU-ROD",
        "material": "Copper rod",
-       "p_last": 12410.82,
-       "p_invoice": 13527.79,
+       "p_last": 12339.48,
+       "p_invoice": 13450.03,
        "actual": 0.09,
-       "justified": 0.0,
-       "excess": 0.09,
-       "justified_price": 12410.82,
-       "overcharge": 4467.88,
+       "justified": 0.0057,
+       "excess": 0.0843,
+       "justified_price": 12409.91,
+       "overcharge": 4160.48,
        "qty": 4.0,
-       "index_last": 10812.03,
+       "index_last": 10739.91,
        "index_now": 10812.03,
        "series": "Copper",
        "flagged": true
       },
       "resolution": {
        "action": "pay_partial",
-       "amount": 49643.28,
-       "held": 4467.88,
-       "text": "Pay Copper rod at the justified price 12,410.82; hold the excess 4,467.88; draft a query.",
+       "amount": 49639.64,
+       "held": 4160.48,
+       "text": "Pay Copper rod at the justified price 12,409.91; hold the excess 4,160.48; draft a query.",
        "tag": "computed:erp_bounded"
       }
      },
@@ -870,18 +870,18 @@
      "expect": "T2"
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "query drafted",
      "actor": "agent",
      "result": {
       "to": "accounts@acme-hk.com",
-      "body": "Re invoice ACM-2512412 (Copper rod): unit price 13,527.79 is +9.0% on our last price 12,410.82. The Copper index moved +0.0% over the same lagged period; with our agreed pass-through this justifies 12,410.82. Please issue a credit note for 4,467.88 or explain the difference.\n\nPlease quote our reference Q-001 in your reply."
+      "body": "Re invoice ACM-2512412 (Copper rod): unit price 13,450.03 is +9.0% on our last price 12,339.48. The Copper index moved +0.7% over the same lagged period; with our agreed pass-through this justifies 12,409.91. Please issue a credit note for 4,160.48 or explain the difference.\n\nPlease quote our reference Q-001 in your reply."
      },
      "tx_hash": null,
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "sent with one tap",
      "actor": "finance_manager",
      "result": {
@@ -891,7 +891,7 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "supplier reply by email: classified, fields read from the text",
      "actor": "agent",
      "result": {
@@ -902,39 +902,39 @@
       "class": "credit_note",
       "resolution": {
        "action": "pay_partial",
-       "amount": 49643.28,
-       "held": 4467.88,
-       "text": "Credit note CN-7781 for 4,467.88 received (matches the query). Pay 49,643.28 net of it.",
+       "amount": 49639.64,
+       "held": 4160.48,
+       "text": "Credit note CN-7781 for 4,160.48 received (matches the query). Pay 49,639.64 net of it.",
        "tag": "computed:erp_bounded",
        "credit_note": "CN-7781",
-       "credit": 4467.88
+       "credit": 4160.48
       }
      },
      "tx_hash": null,
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "paid at the justified price",
      "actor": "finance_manager",
      "result": {
       "bill": "B-20251210-0013",
       "tier": "T2",
-      "amount": 49643.28,
+      "amount": 49639.64,
       "tx": {
        "ok": true,
-       "tx_hash": "0x3650a8add33c3448cc8ad449d7f9693de081ad0b0d92f3fba27d861a30cdbbec",
+       "tx_hash": "0x63a85f1b679db9433cdca53f737b21137caaf55b900a6ee11d75675f5cbe0f9d",
        "error": null,
        "explorer": null
       }
      },
-     "tx_hash": "0x3650a8add33c3448cc8ad449d7f9693de081ad0b0d92f3fba27d861a30cdbbec",
+     "tx_hash": "0x63a85f1b679db9433cdca53f737b21137caaf55b900a6ee11d75675f5cbe0f9d",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177792.9821508
+   "started": 1792306001.871392
   },
   {
    "task": "3",
@@ -942,7 +942,7 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "plan preview",
      "actor": "agent",
      "result": {
@@ -952,33 +952,33 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "owner signs the settings",
      "actor": "owner",
      "result": {
       "ok": true,
-      "tx_hash": "0x8ec156fff525285691de0c390ca656520200bc91ca7ed67223676702fcf34217",
+      "tx_hash": "0x246b09de5468b6c6d464a49e0d7568b46bb023d28558118bf09fbb77d3e01867",
       "error": null,
       "explorer": null
      },
-     "tx_hash": "0x8ec156fff525285691de0c390ca656520200bc91ca7ed67223676702fcf34217",
+     "tx_hash": "0x246b09de5468b6c6d464a49e0d7568b46bb023d28558118bf09fbb77d3e01867",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:41",
      "action": "underwriter co-signs (bonded)",
      "actor": "underwriter",
      "result": {
       "ok": true,
-      "tx_hash": "0xfb3867ee63b0767adc6a7de1b3f5923089970a9e3cd845a2cfd86b9b4599314c",
+      "tx_hash": "0x1a556886fbcd5716b14058657721957c71d603f30fe8e011fd19dacd6a2ca9a3",
       "error": null,
       "explorer": null
      },
-     "tx_hash": "0xfb3867ee63b0767adc6a7de1b3f5923089970a9e3cd845a2cfd86b9b4599314c",
+     "tx_hash": "0x1a556886fbcd5716b14058657721957c71d603f30fe8e011fd19dacd6a2ca9a3",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:42",
      "action": "on-chain settings",
      "actor": "contract",
      "result": {
@@ -994,7 +994,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177793.052741
+   "started": 1792306001.921925
   },
   {
    "task": "18",
@@ -1002,17 +1002,17 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:42",
      "action": "owner switches to standard mode",
      "actor": "owner",
      "result": {
       "mode": "standard"
      },
-     "tx_hash": "0x65bcc8fa92cbae21ed7f0cb72539be3b64d2d776b72e628fd4e36a7b2ae0d64c",
+     "tx_hash": "0xabfb79e7ecb5d71dfeb7b7ccb0899227548aabec5c99c94da03f82ffcd82e607",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:42",
      "action": "routine bill in standard mode (no reserve lock)",
      "actor": "agent",
      "result": {
@@ -1021,37 +1021,37 @@
       "amount": 1810.8,
       "tx": {
        "ok": true,
-       "tx_hash": "0x85c6d77c345657e67c57433f2ce07df0485ceeaf4da95c6e878801eefb213561",
+       "tx_hash": "0x6c76cdeab9c4c9b7656e23bd3863d1c6525bf13f615d76581db4faed9befd951",
        "error": null,
        "explorer": null
       },
       "source": "e-invoice"
      },
-     "tx_hash": "0x85c6d77c345657e67c57433f2ce07df0485ceeaf4da95c6e878801eefb213561",
+     "tx_hash": "0x6c76cdeab9c4c9b7656e23bd3863d1c6525bf13f615d76581db4faed9befd951",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:42",
      "action": "owner switches back to bonded",
      "actor": "owner",
      "result": {
       "mode": "bonded"
      },
-     "tx_hash": "0x791e8220d06bbd555a5b2302d79234db1775cc700554db6c4008521e22f503a5",
+     "tx_hash": "0x348b54994a80741da4b4008a0354ea31e8f4ac703a4d0f9cf0fd652c9bf461f6",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:53",
+     "time": "2026-10-18 12:46:42",
      "action": "underwriter co-signs",
      "actor": "underwriter",
      "result": {},
-     "tx_hash": "0xed55075324510df00ecafbea6a9ce4c0896bbe94fd68252c9fdcc995b79964cf",
+     "tx_hash": "0x35ae5a38ce0067e321a05e351001ec6191116f580a409e05614e826b60b1cd37",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177793.195681
+   "started": 1792306002.0198212
   },
   {
    "task": "12",
@@ -1059,7 +1059,7 @@
    "story": "attack_defence",
    "steps": [
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "one $16,000 order billed as ten parts of about $1,600",
      "actor": "agent",
      "result": {
@@ -1092,19 +1092,19 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "forced T1 on a held part",
      "actor": "agent_key",
      "result": {
       "error": "OverSupplierWeek"
      },
-     "tx_hash": "0x4009d56b3d1cc5e1754e639c73e2ce608e257e64fbc56fe9ba3c2de3b411c33c",
+     "tx_hash": "0x6da0347c8b7a8b8d4b010f350d5923ccf9919af519d23584c6400c64a9fc31f4",
      "expect": "revert OverSupplierWeek"
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177793.49848
+   "started": 1792306002.234477
   },
   {
    "task": "21",
@@ -1112,40 +1112,40 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "plan preview",
      "actor": "agent",
      "result": {
-      "summary": "Pay 4 bill(s) for all suppliers: $5,416.24 alone (T1), $0.00 need the manager's signature (T2).",
+      "summary": "Pay all suppliers: 4 bills for $5,416.24 on its own.",
       "t1_steps": 4
      },
      "tx_hash": null,
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "step 1",
      "actor": "agent",
      "result": {
       "status": "done",
       "bill": "B-20251210-0009"
      },
-     "tx_hash": "0xf1b892c7719c91e7535d6dfee584136f658bbf8e3050cd9535a265b307f51189",
+     "tx_hash": "0x93291eeb5b193b31c60c9da3e98503ab6f2184e0907f95d45e12a4919cf85006",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "step 2",
      "actor": "agent",
      "result": {
       "status": "done",
       "bill": "B-20251213-0025"
      },
-     "tx_hash": "0xc719fa904b6225886682cb4a71a7752b5ac51b9d969eb4e61720872bbb352706",
+     "tx_hash": "0xc2003e312761cb0cd3afee685a2b0bc947905bc691f36d2af541ad91885d7a2a",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "step 3",
      "actor": "agent",
      "result": {
@@ -1156,7 +1156,7 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "step 4",
      "actor": "agent",
      "result": {
@@ -1167,7 +1167,7 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "plan status",
      "actor": "owner",
      "result": {
@@ -1179,7 +1179,7 @@
    ],
    "ok": true,
    "error": null,
-   "started": 1792177794.11202
+   "started": 1792306002.659536
   },
   {
    "task": "11",
@@ -1187,14 +1187,14 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "governor decides T1 and signs",
      "actor": "governor",
      "result": {
       "bill": "B-20251213-0028",
       "tier": "T1",
       "reasons": [
-       "Checks passed; risk score 0.260 <= cut-off 0.843 for 'routine'"
+       "Checks passed; risk score 0.260 is within the limit 0.843 for routine bills"
       ],
       "amount": 1088.52
      },
@@ -1202,24 +1202,24 @@
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "underwriter withdraws free capital",
      "actor": "underwriter",
      "result": {
       "free_before": 68265.54
      },
-     "tx_hash": "0xcc1f9f4302ee823b40466f4ce324c9c948aacc0867f8d4cfd6a97cae833be7bd",
+     "tx_hash": "0x77c8ac89176dd4881cf812ca91b9a29a566792efbb0e63a1fbf6e0e64afb4640",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "T1 attempt",
      "actor": "agent",
      "result": {
       "bill": "B-20251213-0028",
       "tier": "T2",
       "reasons": [
-       "Checks passed; risk score 0.260 <= cut-off 0.843 for 'routine'",
+       "Checks passed; risk score 0.260 is within the limit 0.843 for routine bills",
        "Contract refused the autonomous payment: PoolIsPaused"
       ],
       "revert": "PoolIsPaused"
@@ -1228,7 +1228,7 @@
      "expect": "contract refuses: reserve too small"
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "approval card, manager approves, paid",
      "actor": "finance_manager",
      "result": {
@@ -1237,28 +1237,28 @@
       "amount": 1088.52,
       "tx": {
        "ok": true,
-       "tx_hash": "0x3f770a2c12c42e5aabfd1e87d7f688867cdffa426a39de7dcbc7cee26ed23626",
+       "tx_hash": "0x908236ee70a0927d43bde68d9c587fb6c15780666ec142ea5fbc6d4d6d157f6e",
        "error": null,
        "explorer": null
       }
      },
-     "tx_hash": "0x3f770a2c12c42e5aabfd1e87d7f688867cdffa426a39de7dcbc7cee26ed23626",
+     "tx_hash": "0x908236ee70a0927d43bde68d9c587fb6c15780666ec142ea5fbc6d4d6d157f6e",
      "expect": null
     },
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "underwriter tops up and unpauses",
      "actor": "underwriter",
      "result": {
       "unpause_ok": true
      },
-     "tx_hash": "0xc262b9c596d6c4a632135b0d9d4b7660b78e815f8d99ea04812fa094760b22c9",
+     "tx_hash": "0x9cf8be66b7a53faeeec563514ca952ebe0082599c89ffa0eb9457e4be4765efd",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177794.414167
+   "started": 1792306002.859749
   },
   {
    "task": "anchor",
@@ -1266,31 +1266,31 @@
    "story": "control",
    "steps": [
     {
-     "time": "2026-10-17 01:09:54",
+     "time": "2026-10-18 12:46:42",
      "action": "anchor",
      "actor": "agent",
      "result": {
-      "root": "0xf07ffd3f06895f0151260516a2b2c4f14634d394f2e0e4fba8c77300836cc6b0"
+      "root": "0x3cd7aca68d1527de5393ab049d84f940f1b71dff1281133626accfabec778d34"
      },
-     "tx_hash": "0x8383270063bb0782bf1ad6fff345d9c9857716901d06372c5727cccf280fa922",
+     "tx_hash": "0x9d077552a7bad10120fb36a124cfb08c052ff75ea787021cc6970b2664990fc0",
      "expect": null
     }
    ],
    "ok": true,
    "error": null,
-   "started": 1792177794.603389
+   "started": 1792306002.9880278
   }
  ],
  "money": {
   "discounts_taken": 47.95,
-  "overcharges_held": 8935.76,
+  "overcharges_held": 8320.96,
   "duplicates_blocked": 2397.6,
   "recovered": 1145.02,
   "claims_paid": 1145.02,
   "attacks_blocked": 5,
   "t1_paid": 22573.4,
   "t1_count": 12,
-  "t2_paid": 52567.579999999994,
+  "t2_paid": 52563.939999999995,
   "t2_count": 3
  },
  "summary": {
