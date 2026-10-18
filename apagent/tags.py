@@ -54,7 +54,8 @@ class T:
     def label(self) -> str:
         """How a card must label this number (policy S5)."""
         if Src.SUPPLIER_DOC in self.sources or Src.SUPPLIER_MSG in self.sources:
-            return "supplier says"
+            computed = self.sources & {Src.COMPUTED, Src.ERP_BOUNDED}
+            return "calculated from the bill" if computed else "supplier says"
         if Src.MARKET in self.sources:
             return self.note or "market"
         return ""

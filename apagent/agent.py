@@ -722,7 +722,8 @@ class Agent:
         when = f"{fp.get('series', 'index')}, World Bank monthly"
         for k in ("p_last", "justified_price", "qty"):
             src[f"fair_price.{k}"] = {erp, comp} if k == "justified_price" else {erp}
-        for k in ("p_invoice", "actual", "excess", "overcharge"):
+        src["fair_price.p_invoice"] = {doc}
+        for k in ("actual", "excess", "overcharge"):
             src[f"fair_price.{k}"] = {doc, comp}
         for k in ("index_last", "index_now", "justified"):
             src[f"fair_price.{k}"] = {mkt}
