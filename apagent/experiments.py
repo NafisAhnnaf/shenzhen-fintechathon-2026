@@ -75,6 +75,9 @@ def ac8(n_splits: int = 100, cfg=SETTINGS) -> dict:
 
 
 # =========================================================================== CAPITAL
+STRESS_HIT = 30  # bills hit by one supplier change in the correlated stress case
+
+
 def capital_exp(cfg=SETTINGS, trials: int = 20_000) -> dict:
     """K(beta) per bundle vs Chen-style per-action reserves and naive rules; windows over K on held-out bills."""
     model = fit_score(replay(simulate(TRAIN_SEED), cfg), cfg)
@@ -101,6 +104,19 @@ def capital_exp(cfg=SETTINGS, trials: int = 20_000) -> dict:
             "windows_over_naive_expected": capital.window_exceedance(z_test, naive_exp, spec.n_window, cfg.p_cap_usd, trials, rng),
             "n_t1_cal": b.n_t1_cal, "n_t1_test": int(len(z_test)),
         })
+        # Stress case (plan C8.1): one supplier change hits 30 bills in a window; errors are not independent.
+        sup_cap = cfg.p_supweek_usd * 30 / 7
+        typical = float(z_test[z_test > 0].mean()) if (z_test > 0).any() else 0.0
+        rows[-1]["stress"] = {
+            "n_hit": STRESS_HIT, "supplier_cap_window_usd": sup_cap, "typical_severity": typical,
+            "windows_over_K_typical": capital.stress_exceedance(z_test, b.K_usd, spec.n_window, cfg.p_cap_usd, sup_cap,
+                                                                STRESS_HIT, typical, trials, rng),
+            "windows_over_K_total_loss": capital.stress_exceedance(z_test, b.K_usd, spec.n_window, cfg.p_cap_usd, sup_cap,
+                                                                   STRESS_HIT, 1.0, trials, rng),
+            "K_plus_supplier_cap_usd": b.K_usd + sup_cap,
+            "windows_over_K_plus_cap_total_loss": capital.stress_exceedance(
+                z_test, b.K_usd + sup_cap, spec.n_window, cfg.p_cap_usd, sup_cap, STRESS_HIT, 1.0, trials, rng),
+        }
     # Capital@50: reserve needed to release 50% T1 share, by linear interpolation on the frontier.
     pts = sorted((r["t1_share"], r["K_usd"], r["chen_usd"]) for r in rows)
     def at(target, idx):
@@ -323,7 +339,23 @@ def summary_md(a: dict, c: dict, f: dict, r: dict | None) -> str:
         L.append(f"| {x['bundle']} | {x['t1_share']:.1%} | {x['N']} | ${x['K_usd']:,.0f} | ${x['r_usd']:,.0f} | ${x['chen_usd']:,.0f} | "
                  f"{x['chen_over_K']:.1f}x | {x['K_share_of_max']:.1%} | {x['windows_over_K']:.2%} | {x['windows_over_naive_expected']:.1%} |")
     cap50 = c["capital_at_50"]
-    L += ["", f"Capital@50 (reserve to release a 50% T1 share): ours ${cap50['ours'] or 0:,.0f}, Chen-style ${cap50['chen_style'] or 0:,.0f}.", "",
+    L += ["", f"Capital@50 (reserve to release a 50% T1 share): ours ${cap50['ours'] or 0:,.0f}, Chen-style ${cap50['chen_style'] or 0:,.0f}.", ""]
+    if all("stress" in x for x in c["bundles"]):
+        s0 = c["bundles"][0]["stress"]
+        L += ["### Stress case: correlated errors (independence assumption broken)", "",
+              f"One supplier change hits {s0['n_hit']} T1 bills in the same window, all failing together. The contract's "
+              f"P-SUPWEEK cap limits what one supplier can take alone to ${s0['supplier_cap_window_usd']:,.0f} per 30-day window.", "",
+              "| Bundle | K | Windows over K, typical error size | Windows over K, total loss on all hit bills | K + one supplier's cap | Windows over it, total loss |",
+              "| --- | --- | --- | --- | --- | --- |"]
+        for x in c["bundles"]:
+            s = x["stress"]
+            L.append(f"| {x['bundle']} | ${x['K_usd']:,.0f} | {s['windows_over_K_typical']:.2%} | {s['windows_over_K_total_loss']:.2%} | "
+                     f"${s['K_plus_supplier_cap_usd']:,.0f} | {s['windows_over_K_plus_cap_total_loss']:.2%} |")
+        L += ["", "The 99% guarantee assumes independent errors. When one supplier fails on every hit bill, the contract's "
+                  f"per-supplier cap limits that shock to ${s0['supplier_cap_window_usd']:,.0f} per window; the table shows how "
+                  "often total claims then exceed K. Several suppliers failing together is not covered: then T1 stops "
+                  "when the reserve runs out and the caps limit exposure.", ""]
+    L += [
           "## FAIR: fair-price check", "",
           f"- Index-driven price changes: {f['index_driven_changes']}; injected overcharges: {f['overcharges']}",
           f"- Detected {f['detected']} ({f['detection_rate']:.0%}), missed {f['missed']}, false flags {f['false_flags']} ({f['false_flag_rate']:.1%} of legitimate rises)",
@@ -338,6 +370,13 @@ def summary_md(a: dict, c: dict, f: dict, r: dict | None) -> str:
                   f"policies + contract {sc['policies_contract']}/{r['n']}.",
               f"Utility on normal requests: {r['utility']['requests']['accuracy_without_question']:.0%} correct without a question, "
               f"question rate {r['utility']['requests']['question_rate']:.0%}."]
+        u = r["utility"]["requests"]
+        if "intent_coverage" in u:
+            L += ["", "## Request layer: conformal sets on the held-out requests", "",
+                  f"- Requests: {u['n']}; intent-set coverage {u['intent_coverage']:.0%}, slot-set coverage {u['slot_coverage']:.0%} "
+                  f"(target: the right reading is in the set at least 95% of the time)",
+                  f"- Question rate {u['question_rate']:.0%}; accuracy when no question is asked {u['accuracy_without_question']:.0%}; "
+                  f"UNSUPPORTED requests refused {u['unsupported_refused']:.0%}"]
     return "\n".join(L)
 
 

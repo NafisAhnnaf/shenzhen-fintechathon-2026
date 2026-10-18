@@ -18,7 +18,16 @@
    "windows_over_K": 0.0,
    "windows_over_naive_expected": 0.12235,
    "n_t1_cal": 89,
-   "n_t1_test": 92
+   "n_t1_test": 92,
+   "stress": {
+    "n_hit": 30,
+    "supplier_cap_window_usd": 21428.571428571428,
+    "typical_severity": 0.06585,
+    "windows_over_K_typical": 0.0,
+    "windows_over_K_total_loss": 0.0,
+    "K_plus_supplier_cap_usd": 109791.84142857144,
+    "windows_over_K_plus_cap_total_loss": 0.0
+   }
   },
   {
    "bundle": "standard",
@@ -36,9 +45,18 @@
    "naive_expected_loss_usd": 2622.3224755700326,
    "naive_10pct_usd": 45000.0,
    "windows_over_K": 0.0,
-   "windows_over_naive_expected": 0.283,
+   "windows_over_naive_expected": 0.27975,
    "n_t1_cal": 307,
-   "n_t1_test": 321
+   "n_t1_test": 321,
+   "stress": {
+    "n_hit": 30,
+    "supplier_cap_window_usd": 21428.571428571428,
+    "typical_severity": 0.12100657142857142,
+    "windows_over_K_typical": 0.0,
+    "windows_over_K_total_loss": 0.0,
+    "K_plus_supplier_cap_usd": 83669.15142857144,
+    "windows_over_K_plus_cap_total_loss": 0.0
+   }
   },
   {
    "bundle": "more",
@@ -56,9 +74,18 @@
    "naive_expected_loss_usd": 4775.496923076923,
    "naive_10pct_usd": 60000.0,
    "windows_over_K": 0.0,
-   "windows_over_naive_expected": 0.6019,
+   "windows_over_naive_expected": 0.60965,
    "n_t1_cal": 520,
-   "n_t1_test": 497
+   "n_t1_test": 497,
+   "stress": {
+    "n_hit": 30,
+    "supplier_cap_window_usd": 21428.571428571428,
+    "typical_severity": 0.10763238095238092,
+    "windows_over_K_typical": 0.0,
+    "windows_over_K_total_loss": 0.0,
+    "K_plus_supplier_cap_usd": 84997.73142857142,
+    "windows_over_K_plus_cap_total_loss": 0.0
+   }
   },
   {
    "bundle": "most",
@@ -76,9 +103,18 @@
    "naive_expected_loss_usd": 6264.48,
    "naive_10pct_usd": 75000.0,
    "windows_over_K": 0.0,
-   "windows_over_naive_expected": 0.4879,
+   "windows_over_naive_expected": 0.48605,
    "n_t1_cal": 550,
-   "n_t1_test": 535
+   "n_t1_test": 535,
+   "stress": {
+    "n_hit": 30,
+    "supplier_cap_window_usd": 21428.571428571428,
+    "typical_severity": 0.10763238095238092,
+    "windows_over_K_typical": 0.0,
+    "windows_over_K_total_loss": 0.0,
+    "K_plus_supplier_cap_usd": 91698.72142857141,
+    "windows_over_K_plus_cap_total_loss": 0.0
+   }
   }
  ],
  "capital_at_50": {
