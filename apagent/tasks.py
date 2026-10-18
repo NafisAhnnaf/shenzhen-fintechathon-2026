@@ -18,6 +18,7 @@ from . import naive
 from .audit import input_hash
 from .config import DATA_DIR
 from .governor import Decision
+from .reader import VLMReader
 from . import demo
 from .session import Session
 
@@ -119,8 +120,14 @@ class Runner:
         def _(ev):
             r1 = self.s.ingest("t02_pdf")
             ev.add("first copy", "agent", r1, _tx(r1))
-            r2 = self.s.ingest("t02_resent")
-            ev.add("re-issued copy of the same invoice", "agent", r2, None, "reject as duplicate")
+            # The plan's version sends the duplicate as a phone photo; that needs the vision reader (VLM_API_KEY).
+            # Without it, the second copy is the same invoice re-issued with a new number and another layout.
+            if VLMReader().available():
+                r2 = self.s.ingest("t02_photo")
+                ev.add("phone photo of the same invoice (read by the vision model)", "agent", r2, None, "reject as duplicate")
+            else:
+                r2 = self.s.ingest("t02_resent")
+                ev.add("re-issued copy of the same invoice", "agent", r2, None, "reject as duplicate")
             self.bills["t02"] = r1["bill"]
             return r1["tier"] == "T1" and r2["tier"] == "reject"
 

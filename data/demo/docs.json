@@ -20,6 +20,13 @@
   "inv_no": "SUN-2512007A",
   "total": 2397.6
  },
+ "t02_photo": {
+  "file": "documents/t02_photo.jpg",
+  "supplier": "Sun Kee Packaging",
+  "inv_no": "SUN-2512007",
+  "total": 2397.6,
+  "truth": "documents/t02_pdf.json"
+ },
  "t13_net30": {
   "file": "documents/t13_net30.json",
   "pdf": "documents/t13_net30.pdf",
