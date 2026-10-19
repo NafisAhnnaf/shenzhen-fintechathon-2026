@@ -313,7 +313,7 @@ def internal_mail(body: InternalMail, request: Request):
         raise HTTPException(403)
     if "\n" in body.to or "\r" in body.to or "\n" in body.subject or "\r" in body.subject:
         raise HTTPException(400, "bad header")
-    return {"sent": mail.mailer().send(mail.build(body.to, body.subject[:200], body.text[:4000]))}
+    return {"sent": mail.mailer(to_people=True).send(mail.build(body.to, body.subject[:200], body.text[:4000]))}
 
 
 class WalletChallenge(BaseModel):

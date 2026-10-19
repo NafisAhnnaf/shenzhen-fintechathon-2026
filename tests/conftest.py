@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 import os  # noqa: E402
 
 for _k in ("GEMINI_API_KEY", "gemini_api_key", "LLM_API_KEY", "VLM_API_KEY", "TYPESAFE_API_KEY", "DATABASE_URL",
-           "SMTP_HOST", "IMAP_HOST", "NOTIFY_WEBHOOK_URL"):
+           "SMTP_HOST", "IMAP_HOST", "NOTIFY_WEBHOOK_URL", "AGENTMAIL_API_KEY", "AGENTMAIL_INBOX"):
     os.environ[_k] = ""
 os.environ["INJECTION_MODEL"] = "off"
 os.environ["STATE_STORE"] = "file"

@@ -146,3 +146,82 @@ def test_early_payment_offer_flow(ledger, docs, calib, boxes):
     bill = ledger.bills[b.bill_id]
     assert bill.status == "held" and bill.tier == "T2" and abs(bill.resolution["amount"] - o["net"]) < 0.01
     assert ag.approval_amount(b.bill_id) == o["net"]
+
+
+# ------------------------------------------------------------------ AgentMail (offline: the HTTP calls are recorded)
+class _Resp:
+    def __init__(self, data=None, content=b"", status=200):
+        self._d, self.content, self.status_code, self.text = data, content, status, ""
+
+    def json(self):
+        return self._d
+
+    def raise_for_status(self):
+        pass
+
+
+def _agentmail(monkeypatch, tmp_path, messages=()):
+    import httpx
+
+    from apagent import mail
+    monkeypatch.setenv("AGENTMAIL_API_KEY", "am_test")
+    monkeypatch.setenv("AGENTMAIL_INBOX", "fin-agent@agentmail.to")
+    monkeypatch.setattr(mail, "OUTBOX_DIR", tmp_path)
+    calls = []
+
+    def post(url, json=None, **kw):
+        calls.append(("post", url, json))
+        return _Resp({"message_id": "<m1@x>"})
+
+    def get(url, params=None, **kw):
+        calls.append(("get", url, params))
+        if url.endswith("/messages"):
+            return _Resp({"messages": list(messages)})
+        if url.endswith("/raw"):
+            return _Resp({"download_url": "https://dl/" + url.split("/")[-2]})
+        return _Resp(content=b"From: a@b.test\r\nSubject: hi\r\n\r\nbody")
+
+    def patch(url, json=None, **kw):
+        calls.append(("patch", url, json))
+        return _Resp({})
+
+    monkeypatch.setattr(httpx, "post", post)
+    monkeypatch.setattr(httpx, "get", get)
+    monkeypatch.setattr(httpx, "patch", patch)
+    return mail, calls
+
+
+def test_agentmail_never_sends_demo_supplier_mail_to_real_addresses(monkeypatch, tmp_path):
+    mail, calls = _agentmail(monkeypatch, tmp_path)
+    monkeypatch.delenv("MAIL_SANDBOX_TO", raising=False)
+    monkeypatch.delenv("MAIL_LIVE", raising=False)
+    supplier = mail.build("accounts@acme-hk.com", "Payment for invoice 1", "Paid.", "E-1")
+    mail.mailer().send(supplier)
+    assert calls == [] and len(list(tmp_path.glob("*.eml"))) == 1  # kept locally
+    monkeypatch.setenv("MAIL_SANDBOX_TO", "fin-suppliers@agentmail.to")
+    mail.mailer().send(supplier)
+    _, url, body = calls[-1]
+    assert body["to"] == ["fin-suppliers@agentmail.to"] and "Intended for accounts@acme-hk.com" in body["text"]
+    assert body["headers"]["X-AP-Reference"] == "E-1" and url.endswith("/inboxes/fin-agent@agentmail.to/messages/send")
+    monkeypatch.setenv("MAIL_LIVE", "on")
+    mail.mailer().send(supplier)
+    assert calls[-1][2]["to"] == ["accounts@acme-hk.com"] and "Intended" not in calls[-1][2]["text"]
+
+
+def test_agentmail_sends_invitations_to_the_person(monkeypatch, tmp_path):
+    mail, calls = _agentmail(monkeypatch, tmp_path)
+    monkeypatch.setenv("MAIL_SANDBOX_TO", "fin-suppliers@agentmail.to")
+    monkeypatch.delenv("MAIL_LIVE", raising=False)
+    mail.mailer(to_people=True).send(mail.build("kit@harbour.test", "You are invited", "Accept: link"))
+    assert calls[-1][2]["to"] == ["kit@harbour.test"] and calls[-1][2]["text"] == "Accept: link\n"
+
+
+def test_agentmail_reads_each_message_once_and_skips_its_own(monkeypatch, tmp_path):
+    msgs = [{"message_id": "<new@x>", "labels": ["received", "unread"]},
+            {"message_id": "<own@x>", "labels": ["sent", "received"]},
+            {"message_id": "<old@x>", "labels": ["received"]}]
+    mail, calls = _agentmail(monkeypatch, tmp_path, msgs)
+    got = mail.mailbox().fetch({"<old@x>"})
+    assert [k for k, _ in got] == ["<new@x>"] and got[0][1].startswith(b"From: a@b.test")
+    assert any(c[0] == "patch" and c[2]["add_labels"] == ["ap-read"] for c in calls)
+    assert mail.mailbox().describe()["kind"] == "agentmail"

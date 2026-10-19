@@ -27,6 +27,7 @@ from email.message import EmailMessage
 from email.utils import make_msgid
 from pathlib import Path
 from typing import Optional
+from urllib.parse import quote
 
 from .config import DATA_DIR
 
@@ -141,12 +142,71 @@ class Smtp:
         return {"kind": "smtp", "host": self.host, "port": self.port, "user": self.user}
 
 
-def mailer():
+AGENTMAIL_API = "https://api.agentmail.to/v0"
+
+
+def _agentmail_headers() -> dict:
+    return {"Authorization": f"Bearer {os.environ['AGENTMAIL_API_KEY']}"}
+
+
+def agentmail_inbox() -> str:
+    return os.environ.get("AGENTMAIL_INBOX", "")
+
+
+class AgentMail:
+    """The agent's own mailbox at AgentMail (https://docs.agentmail.to), sent through its HTTP API.
+
+    Mail to suppliers goes to their registered address only when MAIL_LIVE=on. Otherwise (the default) it goes to
+    the sandbox inbox MAIL_SANDBOX_TO, with the intended recipient written at the top, or, without a sandbox, to the
+    local outbox folder: the sample suppliers' addresses may belong to real companies who must not get demo mail.
+    Mail to people (invitations, password resets) always goes to the real address."""
+
+    name = "agentmail"
+
+    def __init__(self, to_people: bool = False):
+        self.inbox = agentmail_inbox()
+        self.to_people = to_people
+
+    def _route(self, to: str) -> Optional[str]:
+        if self.to_people or os.environ.get("MAIL_LIVE", "off").lower() == "on":
+            return to
+        return os.environ.get("MAIL_SANDBOX_TO") or None
+
+    def send(self, msg: EmailMessage) -> str:
+        import httpx
+
+        to = str(msg["To"])
+        target = self._route(to)
+        if target is None:
+            return Outbox().send(msg)
+        text = msg.get_content()
+        if target != to:
+            text = f"[Demo sandbox] Intended for {to}. Set MAIL_LIVE=on to send to suppliers.\n\n{text}"
+        body = {"to": [target], "subject": str(msg["Subject"]), "text": text}
+        if msg["X-AP-Reference"]:
+            body["headers"] = {"X-AP-Reference": str(msg["X-AP-Reference"])}
+            body["labels"] = ["ap-agent"]
+        r = httpx.post(f"{AGENTMAIL_API}/inboxes/{self.inbox}/messages/send", json=body, headers=_agentmail_headers(),
+                       timeout=30)
+        if r.status_code >= 400:
+            raise RuntimeError(f"AgentMail refused the message: {r.status_code} {r.text[:160]}")
+        return r.json()["message_id"]
+
+    def describe(self) -> dict:
+        return {"kind": "agentmail", "user": self.inbox, "host": "AgentMail",
+                "suppliers": "live" if os.environ.get("MAIL_LIVE", "off").lower() == "on"
+                else (f"sandbox {os.environ['MAIL_SANDBOX_TO']}" if os.environ.get("MAIL_SANDBOX_TO") else "outbox folder")}
+
+
+def mailer(to_people: bool = False):
+    if os.environ.get("AGENTMAIL_API_KEY") and agentmail_inbox():
+        return AgentMail(to_people)
     return Smtp() if os.environ.get("SMTP_HOST") else Outbox()
 
 
 def sender_address() -> str:
-    return os.environ.get("SMTP_FROM") or os.environ.get("SMTP_USER") or "ap@harbour-precision.example"
+    return (os.environ.get("SMTP_FROM") or os.environ.get("SMTP_USER") or agentmail_inbox()
+            or "ap@harbour-precision.example")
 
 
 def build(to: str, subject: str, body: str, reply_ref: Optional[str] = None) -> EmailMessage:
@@ -214,7 +274,46 @@ class ImapMailbox:
         return {"kind": "imap", "host": self.host, "user": self.user, "folder": self.folder}
 
 
+class AgentMailMailbox:
+    """New mail in the AgentMail inbox. AgentMail leaves out messages that fail sender authentication (SPF, DKIM,
+    DMARC) and spam unless asked for them, so a forged "From" of a registered supplier does not get this far.
+    Each message is read once per company (the caller's `seen` set) and labelled ap-read for people looking at the
+    inbox. The agent's own sent mail is skipped."""
+
+    name = "agentmail"
+
+    def __init__(self):
+        self.inbox = agentmail_inbox()
+
+    def fetch(self, seen: set) -> list[tuple[str, bytes]]:
+        import httpx
+
+        h = _agentmail_headers()
+        r = httpx.get(f"{AGENTMAIL_API}/inboxes/{self.inbox}/messages", params={"limit": 50, "labels": ["received"]},
+                      headers=h, timeout=30)
+        r.raise_for_status()
+        out = []
+        for m in reversed(r.json().get("messages", [])):  # oldest first
+            mid = m["message_id"]
+            if mid in seen or "sent" in (m.get("labels") or []):
+                continue
+            raw = httpx.get(f"{AGENTMAIL_API}/inboxes/{self.inbox}/messages/{quote(mid, safe='')}/raw", headers=h,
+                            timeout=30)
+            raw.raise_for_status()
+            data = httpx.get(raw.json()["download_url"], timeout=60)
+            data.raise_for_status()
+            out.append((mid, data.content))
+            httpx.patch(f"{AGENTMAIL_API}/inboxes/{self.inbox}/messages/{quote(mid, safe='')}",
+                        json={"add_labels": ["ap-read"], "remove_labels": ["unread"]}, headers=h, timeout=30)
+        return out
+
+    def describe(self) -> dict:
+        return {"kind": "agentmail", "user": self.inbox, "host": "AgentMail"}
+
+
 def mailbox():
+    if os.environ.get("AGENTMAIL_API_KEY") and agentmail_inbox():
+        return AgentMailMailbox()
     return ImapMailbox() if os.environ.get("IMAP_HOST") else FolderMailbox()
 
 

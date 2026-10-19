@@ -58,12 +58,12 @@ function General() {
           <h2>Email</h2>
           {mail && (
             <dl className="dl">
-              <dt>Incoming</dt><dd>{mail.incoming.kind === "imap" ? `${mail.incoming.user} on ${mail.incoming.host}` : `Drop folder ${mail.incoming.folder}`}</dd>
-              <dt>Outgoing</dt><dd>{mail.outgoing.kind === "smtp" ? `${mail.outgoing.user || "SMTP"} via ${mail.outgoing.host}` : `Saved as files in ${mail.outgoing.folder}`}</dd>
+              <dt>Incoming</dt><dd>{mail.incoming.kind === "agentmail" ? `${mail.incoming.user} (AgentMail)` : mail.incoming.kind === "imap" ? `${mail.incoming.user} on ${mail.incoming.host}` : `Drop folder ${mail.incoming.folder}`}</dd>
+              <dt>Outgoing</dt><dd>{mail.outgoing.kind === "agentmail" ? `${mail.outgoing.user} (AgentMail); supplier mail: ${mail.outgoing.suppliers}` : mail.outgoing.kind === "smtp" ? `${mail.outgoing.user || "SMTP"} via ${mail.outgoing.host}` : `Saved as files in ${mail.outgoing.folder}`}</dd>
               <dt>Agent emails on its own</dt><dd>{mail.auto ? "Yes: payment notices, price questions, duplicate notices, bank-change warnings" : "No"}</dd>
             </dl>
           )}
-          <p className="note">Set SMTP_* and IMAP_* in .env to use a real mailbox, and NOTIFY_WEBHOOK_URL to get alerts in WeCom, Slack or Teams.</p>
+          <p className="note">Set AGENTMAIL_API_KEY (or SMTP_* and IMAP_*) in .env to use a real mailbox, and NOTIFY_WEBHOOK_URL to get alerts in WeCom, Slack or Teams.</p>
           {can.intake && <div className="row"><button className="btn" disabled={poll.isPending} onClick={() => poll.mutate(undefined)}>Check mail now</button></div>}
         </div>
       </div>
