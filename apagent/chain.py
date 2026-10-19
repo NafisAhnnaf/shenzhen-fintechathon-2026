@@ -322,9 +322,20 @@ class Chain:
         fn = self.vault.functions.payAutonomous(b32(bill), b32(supplier), usd_to_units(usd), settings_id, expiry, input_hash, gov_sig)
         return self.send(caller, fn, mine_revert)
 
-    def pay_approved(self, bill: str, supplier: str, usd: float, expiry: int, sig: bytes, mine_revert: bool = False) -> TxResult:
-        fn = self.vault.functions.payApproved(b32(bill), b32(supplier), usd_to_units(usd), expiry, sig)
+    def pay_approved(self, bill: str, supplier: str, usd: float, expiry: int, sig: bytes, mine_revert: bool = False,
+                     owner_sig: Optional[bytes] = None) -> TxResult:
+        if owner_sig is not None:  # above the two-signature threshold (spec D4)
+            fn = self.vault.functions.payApprovedDual(b32(bill), b32(supplier), usd_to_units(usd), expiry, sig, owner_sig)
+        else:
+            fn = self.vault.functions.payApproved(b32(bill), b32(supplier), usd_to_units(usd), expiry, sig)
         return self.send("agent", fn, mine_revert)
+
+    def dual_above_usd(self) -> float:
+        """Approved payments above this need the owner's signature too; 0 means never."""
+        try:
+            return units_to_usd(self.vault.functions.dualAbove().call())
+        except Exception:  # noqa: BLE001 - a deployment from before the two-signature rule
+            return 0.0
 
     def freeze(self, supplier: str, role: str = "agent") -> TxResult:
         return self.send(role, self.vault.functions.freezePayee(b32(supplier)))

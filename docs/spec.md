@@ -120,7 +120,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | D1 | Governor: risk score, cut-off per group, caps, reserve, tier and reasons | Built | `governor.py` | `test_agent.py` |
 | D2 | Cut-offs by conformal risk control; reserve by betting bounds and Bernstein | Built | `risk/` | AC-8, CAPITAL |
 | D3 | Drift guard and supplier probation after a confirmed mistake | Built | `governor.outcome`, `agent.probation` | task 4 |
-| D4 | Two signatures above a threshold for approved payments | To build | `PaymentVault.sol` | |
+| D4 | Two signatures above a threshold ($25,000 in the demo) for approved payments | Built | `PaymentVault.payApprovedDual`, `agent.cosign` | contract tests, `test_api.py` |
 | D5 | Budgets per cost centre | To build | | |
 | D6 | Requests in plain words: intent, one question when unsure, plan, run | Built | `intent/` | tasks 19–21 |
 
@@ -132,7 +132,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | P2 | Bank rail for mainland payees | Built | `_send` | task 15 |
 | P3 | Pay-date planning (early-payment discounts, cash floor); pay now or on the best date | Built | `agent.plan_dates`, `session.run_due` | task 13, `test_api.py` |
 | P4 | Early-payment offers to suppliers | To build | | |
-| P5 | Rolling 7-day supplier cap in the contract | To build | `_applyCaps` | |
+| P5 | Rolling 7-day supplier cap in the contract | Built | `PaymentVault.supplierRolling` | contract tests |
 
 ### 5.5 Protect
 

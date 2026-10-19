@@ -101,6 +101,14 @@ def test_t2_approval_signed_in_wallet(client):
     bad = _wallet_sign(hardhat_keys()[5], req["typed_data"])
     assert "error" in c.post(f"/api/bills/{bill}/approve", json={"signature": bad, "expiry": req["expiry"]}, headers=FM()).json()
     out = c.post(f"/api/bills/{bill}/approve", json={"signature": sig, "expiry": req["expiry"]}, headers=FM()).json()
+    # $49,639.64 is above the $25,000 two-signature threshold: the payment waits for the owner (spec D4).
+    assert req["needs_owner"] and out["needs_owner"] and out["amount"] == req["amount"]
+    owner_req = c.get(f"/api/bills/{bill}/approval").json()
+    assert owner_req["signer_role"] == "owner" and owner_req["typed_data"] == req["typed_data"]
+    bad = _wallet_sign(hardhat_keys()[3], owner_req["typed_data"])  # the manager cannot sign twice
+    assert "error" in c.post(f"/api/bills/{bill}/cosign", json={"signature": bad}).json()
+    osig = _wallet_sign(hardhat_keys()[0], owner_req["typed_data"])
+    out = c.post(f"/api/bills/{bill}/cosign", json={"signature": osig}).json()
     assert out["tx"]["ok"] and out["amount"] == req["amount"]
 
 

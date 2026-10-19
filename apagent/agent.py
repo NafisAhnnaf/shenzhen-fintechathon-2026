@@ -219,15 +219,34 @@ class Agent:
         return round(max(0.0, min(usd, bill.erp_bound)), 2)
 
     def approval_request(self, bill_id: str, amount: Optional[float] = None, ttl: int = 900) -> dict:
-        """What the finance manager signs in their wallet for a T2 payment (EIP-712 PaymentApproval)."""
+        """What the finance manager signs in their wallet for a T2 payment (EIP-712 PaymentApproval). When the
+        manager has signed a payment above the two-signature threshold, this is what the owner signs: the same
+        message, so both signatures cover the same bill, payee, amount and expiry."""
         bill = self.led.bills[bill_id]
-        usd = self.approval_amount(bill_id, amount)
-        exp = self.chain.now() + ttl
-        return {"bill": bill_id, "amount": usd, "expiry": exp, "signer": self.chain.role_address("approver"),
+        pend = self._pending_dual().get(bill_id)
+        if pend:
+            usd, exp, signer = pend["amount"], pend["expiry"], "owner"
+        else:
+            usd, exp, signer = self.approval_amount(bill_id, amount), self.chain.now() + ttl, "approver"
+        dual = self.chain.dual_above_usd()
+        return {"bill": bill_id, "amount": usd, "expiry": exp, "signer": self.chain.role_address(signer),
+                "signer_role": signer, "needs_owner": bool(dual and usd > dual), "dual_above": dual,
                 "typed_data": self.chain.typed_data(self.chain._pay_msg(bill_id, bill.supplier_id, usd, exp))}
 
+    def _pending_dual(self) -> dict:
+        return self.__dict__.setdefault("pending_dual", {})
+
+    def cosign(self, bill_id: str, owner_signature: bytes) -> dict:
+        """The owner's second signature on an approved payment above the threshold (spec D4)."""
+        pend = self._pending_dual().get(bill_id)
+        if not pend:
+            return {"bill": bill_id, "error": "nothing waiting for the owner's signature"}
+        return self.approve(bill_id, pend["amount"], actor="owner", signature=pend["signature"], expiry=pend["expiry"],
+                            owner_signature=owner_signature)
+
     def approve(self, bill_id: str, amount: Optional[float] = None, actor: str = "finance_manager",
-                plan_id: Optional[str] = None, signature: Optional[bytes] = None, expiry: Optional[int] = None) -> dict:
+                plan_id: Optional[str] = None, signature: Optional[bytes] = None, expiry: Optional[int] = None,
+                owner_signature: Optional[bytes] = None) -> dict:
         """T2: the finance manager approves the proposed resolution (or an edited amount, never above erp_bound).
 
         signature/expiry come from the manager's wallet (approval_request). Without them the server signs with the
@@ -253,7 +272,23 @@ class Agent:
             elif self.chain.recover(self.chain._pay_msg(bill_id, bill.supplier_id, usd, expiry), signature) != self.chain.role_address("approver"):
                 self.log.add("system", "bad_signature", {"for": "pay_approved"}, bill_id=bill_id, security=True)
                 return {"bill": bill_id, "error": "signature is not the finance manager's for this bill and amount"}
-            tx = self.chain.pay_approved(bill_id, bill.supplier_id, usd, expiry, signature)
+            dual = self.chain.dual_above_usd()
+            if dual and usd > dual:
+                msg = self.chain._pay_msg(bill_id, bill.supplier_id, usd, expiry)
+                if owner_signature is None and self.chain.has_key("owner"):
+                    owner_signature = self.chain.approval_signature(bill_id, bill.supplier_id, usd, expiry, role="owner")
+                if owner_signature is None:
+                    self._pending_dual()[bill_id] = {"amount": usd, "expiry": expiry, "signature": signature}
+                    self.log.add(actor, "approve_first", {"amount": usd, "threshold": dual}, bill_id=bill_id,
+                                 plan_id=plan_id, decision="needs_owner")
+                    return {"bill": bill_id, "needs_owner": True, "amount": usd, "threshold": dual,
+                            "message": f"Above ${dual:,.0f}: the owner signs too"}
+                if self.chain.recover(msg, owner_signature) != self.chain.role_address("owner"):
+                    self.log.add("system", "bad_signature", {"for": "owner co-signature"}, bill_id=bill_id, security=True)
+                    return {"bill": bill_id, "error": "the second signature is not the owner's for this bill and amount"}
+            tx = self.chain.pay_approved(bill_id, bill.supplier_id, usd, expiry, signature, owner_sig=owner_signature)
+            if tx.ok:
+                self._pending_dual().pop(bill_id, None)
             if not tx.ok:
                 self.log.add("contract", "revert", {"error": tx.error}, bill_id=bill_id, plan_id=plan_id, decision="refused")
                 return {"bill": bill_id, "error": tx.error}

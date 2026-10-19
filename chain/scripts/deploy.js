@@ -93,6 +93,9 @@ async function main() {
   await record("proposeSettings", vault.connect(owner).proposeSettings(b.mode, b.pDay, b.pNDay, b.pSupWeek, b.r));
   const sid = (await vault.bundleCount()) - 1n;
   if (b.mode === 2) await record("approveSettings", vault.connect(underwriter).approveSettings(sid));
+  // Approved payments above this amount need the owner's signature too (spec D4). DUAL_ABOVE_USD=0 turns it off.
+  const dualAbove = usd(Number(process.env.DUAL_ABOVE_USD ?? 25000));
+  await record("setDualAbove", vault.connect(owner).setDualAbove(dualAbove));
 
   Object.assign(out, {
     contracts: {
@@ -110,6 +113,7 @@ async function main() {
     params: {
       pCap: DEMO.pCap.toString(), coolDown: DEMO.coolDown, window: DEMO.window,
       disputeTime: DEMO.disputeTime, activeSettings: Number(sid), timeUnit: TIME_UNIT, dayLength: DAY_SECONDS,
+      dualAbove: dualAbove.toString(),
     },
     deployedAt: new Date().toISOString(),
   });

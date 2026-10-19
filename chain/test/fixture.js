@@ -106,6 +106,16 @@ async function deploy() {
       return vault.connect(opts.caller ?? agent).payApproved(id(bill), id(supplier), amount, exp, sig);
     },
 
+    /** T2 above dualAbove: the finance manager and the owner both sign the same PaymentApproval. */
+    async payT2Dual(bill, supplier, amount, opts = {}) {
+      const exp = opts.expiry ?? (await expiry());
+      const payee = (await vault.payees(id(supplier))).wallet;
+      const msg = { billId: id(bill), payee, amount, expiry: exp };
+      const sig = await (opts.signer ?? approver).signTypedData(vaultDomain, payTypes, msg);
+      const ownerSig = await (opts.second ?? owner).signTypedData(vaultDomain, payTypes, msg);
+      return vault.connect(agent).payApprovedDual(id(bill), id(supplier), amount, exp, sig, ownerSig);
+    },
+
     async openReceivable(bill, amount, signer = approver) {
       const exp = await expiry();
       const sig = await signer.signTypedData(vaultDomain, recvTypes, { billId: id(bill), amount, expiry: exp });

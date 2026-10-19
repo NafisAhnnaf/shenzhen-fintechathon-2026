@@ -211,6 +211,32 @@ describe("Payment rules", () => {
     await expect(s.payT1("S5", "ACME", U(1))).to.be.revertedWithCustomError(s.vault, "OverSupplierWeek");
   });
 
+  it("supplier cap is a rolling 7 days, not a calendar week (spec P5)", async () => {
+    const s = await deploy();
+    await s.setBundle(Mode.Standard, { pDay: U(100), pNDay: 20, pSupWeek: U(5) });
+    const WEEK = 7 * 86400;
+    const now = await time.latest();
+    await time.increaseTo(Math.ceil(now / WEEK) * WEEK - 3600); // one hour before a calendar-week boundary
+    await s.payT1("R1", "ACME", U(5));
+    await time.increase(2 * 3600); // a new calendar week, but only two hours later
+    await expect(s.payT1("R2", "ACME", U(1))).to.be.revertedWithCustomError(s.vault, "OverSupplierWeek");
+    expect(await s.vault.supplierRolling(id("ACME"))).to.equal(U(5));
+    await time.increase(WEEK); // the first payment leaves the window
+    await s.payT1("R3", "ACME", U(5));
+    expect(await s.vault.supplierRolling(id("ACME"))).to.equal(U(5));
+  });
+
+  it("approved payments above the threshold need the owner too (spec D4)", async () => {
+    const s = await loadFixture(standard);
+    await expect(s.vault.connect(s.approver).setDualAbove(U(3))).to.be.revertedWithCustomError(s.vault, "NotAuthorized");
+    await expect(s.vault.connect(s.owner).setDualAbove(U(3))).to.emit(s.vault, "DualAboveSet");
+    await expect(s.payT2("D1", "ACME", U(4))).to.be.revertedWithCustomError(s.vault, "NeedsOwnerSignature");
+    await expect(s.payT2Dual("D1", "ACME", U(4), { second: s.approver }))
+      .to.be.revertedWithCustomError(s.vault, "NeedsOwnerSignature");
+    await expect(s.payT2Dual("D1", "ACME", U(4))).to.emit(s.vault, "PaidApproved");
+    await expect(s.payT2("D2", "ACME", U(3))).to.emit(s.vault, "PaidApproved"); // at the threshold: one signature
+  });
+
   it("governor signature is bound to the active settings bundle", async () => {
     const s = await loadFixture(standard);
     const old = await s.vault.activeSettings();

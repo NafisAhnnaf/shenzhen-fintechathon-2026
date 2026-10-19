@@ -47,6 +47,12 @@ contract PaymentVault is EIP712 {
         bool opened;
     }
 
+    /// @dev One payment by agent, kept for the rolling 7-day supplier cap.
+    struct Recent {
+        uint64 at;
+        uint192 amount;
+    }
+
     bytes32 private constant GOV_TYPEHASH = keccak256(
         "GovApproval(bytes32 billId,bytes32 supplierId,uint256 amount,uint256 settingsId,uint256 expiry,bytes32 inputHash)"
     );
@@ -81,7 +87,11 @@ contract PaymentVault is EIP712 {
     mapping(bytes32 => Receivable) public receivables;
     mapping(uint256 => uint256) public dayAmount;
     mapping(uint256 => uint256) public dayCount;
-    mapping(bytes32 => mapping(uint256 => uint256)) public supplierWeekAmount;
+    /// @notice Payments by agent per supplier, oldest first; head skips the ones older than 7 days (spec P5).
+    mapping(bytes32 => Recent[]) private _recent;
+    mapping(bytes32 => uint256) private _recentHead;
+    /// @notice Approved payments above this amount also need the owner's signature (spec D4). 0 = never.
+    uint256 public dualAbove;
 
     event PayeeAdded(bytes32 indexed id, address wallet, Rail rail, uint64 activeAt);
     event PayeeFrozen(bytes32 indexed id, address by);
@@ -97,6 +107,7 @@ contract PaymentVault is EIP712 {
     event AgentPaused(address by);
     event AgentUnpaused();
     event RoleSet(string role, address account);
+    event DualAboveSet(uint256 amount);
 
     error NotAuthorized();
     error AgentIsPaused();
@@ -114,6 +125,7 @@ contract PaymentVault is EIP712 {
     error NeedsUnderwriter();
     error BadReceivable();
     error PoolNotSet();
+    error NeedsOwnerSignature();
 
     modifier only(address who) {
         if (msg.sender != who) revert NotAuthorized();
@@ -226,6 +238,12 @@ contract PaymentVault is EIP712 {
         _activate(id);
     }
 
+    /// @notice Approved payments above `amount` need the owner's signature as well as the finance manager's.
+    function setDualAbove(uint256 amount) external only(owner) {
+        dualAbove = amount;
+        emit DualAboveSet(amount);
+    }
+
     function withdraw(address to, uint256 amount) external only(owner) {
         token.safeTransfer(to, amount);
     }
@@ -275,17 +293,25 @@ contract PaymentVault is EIP712 {
     }
 
     /// @notice T2: payment approved by the finance manager's EIP-712 signature. Works while the agent is paused.
+    /// Above dualAbove, use payApprovedDual.
     function payApproved(bytes32 billId, bytes32 supplierId, uint256 amount, uint256 expiry, bytes calldata sig)
         external
         only(agent)
     {
-        if (nowSeconds() > expiry) revert Expired();
-        Payee memory p = _checkPayee(billId, supplierId);
-        bytes32 digest =
-            _hashTypedDataV4(keccak256(abi.encode(PAY_TYPEHASH, billId, p.wallet, amount, expiry)));
-        if (ECDSA.recover(digest, sig) != approver) revert BadSignature();
-        _send(billId, supplierId, p, amount, false);
-        emit PaidApproved(billId, supplierId, amount);
+        if (dualAbove != 0 && amount > dualAbove) revert NeedsOwnerSignature();
+        _payApproved(billId, supplierId, amount, expiry, sig, "");
+    }
+
+    /// @notice T2 above dualAbove: the finance manager and the owner both sign the same PaymentApproval.
+    function payApprovedDual(
+        bytes32 billId,
+        bytes32 supplierId,
+        uint256 amount,
+        uint256 expiry,
+        bytes calldata sig,
+        bytes calldata ownerSig
+    ) external only(agent) {
+        _payApproved(billId, supplierId, amount, expiry, sig, ownerSig);
     }
 
     // ---------------------------------------------------------------- recovery
@@ -358,16 +384,53 @@ contract PaymentVault is EIP712 {
         emit SettingsActivated(id);
     }
 
+    function _payApproved(
+        bytes32 billId,
+        bytes32 supplierId,
+        uint256 amount,
+        uint256 expiry,
+        bytes calldata sig,
+        bytes memory ownerSig
+    ) internal {
+        if (nowSeconds() > expiry) revert Expired();
+        Payee memory p = _checkPayee(billId, supplierId);
+        bytes32 digest =
+            _hashTypedDataV4(keccak256(abi.encode(PAY_TYPEHASH, billId, p.wallet, amount, expiry)));
+        if (ECDSA.recover(digest, sig) != approver) revert BadSignature();
+        if (dualAbove != 0 && amount > dualAbove && ECDSA.recover(digest, ownerSig) != owner) {
+            revert NeedsOwnerSignature();
+        }
+        _send(billId, supplierId, p, amount, false);
+        emit PaidApproved(billId, supplierId, amount);
+    }
+
     function _applyCaps(bytes32 supplierId, uint256 amount, Bundle memory b) internal {
         if (amount > pCap) revert OverPaymentCap();
         uint256 day = nowSeconds() / dayLength;
-        uint256 week = nowSeconds() / (7 * dayLength);
         if (dayAmount[day] + amount > b.pDay) revert OverDailyAmount();
         if (dayCount[day] + 1 > b.pNDay) revert OverDailyCount();
-        if (supplierWeekAmount[supplierId][week] + amount > b.pSupWeek) revert OverSupplierWeek();
+        if (supplierRolling(supplierId) + amount > b.pSupWeek) revert OverSupplierWeek();
         dayAmount[day] += amount;
         dayCount[day] += 1;
-        supplierWeekAmount[supplierId][week] += amount;
+        _pruneRecent(supplierId);
+        _recent[supplierId].push(Recent(uint64(nowSeconds()), uint192(amount)));
+    }
+
+    /// @notice Paid by agent to this supplier in the last 7 days (rolling, not calendar weeks).
+    function supplierRolling(bytes32 supplierId) public view returns (uint256 total) {
+        Recent[] storage r = _recent[supplierId];
+        uint256 since = nowSeconds() > 7 * dayLength ? nowSeconds() - 7 * dayLength : 0;
+        for (uint256 i = _recentHead[supplierId]; i < r.length; i++) {
+            if (r[i].at > since) total += r[i].amount;
+        }
+    }
+
+    function _pruneRecent(bytes32 supplierId) internal {
+        Recent[] storage r = _recent[supplierId];
+        uint256 since = nowSeconds() > 7 * dayLength ? nowSeconds() - 7 * dayLength : 0;
+        uint256 h = _recentHead[supplierId];
+        while (h < r.length && r[h].at <= since) h++;
+        _recentHead[supplierId] = h;
     }
 
     function _checkPayee(bytes32 billId, bytes32 supplierId) internal view returns (Payee memory p) {

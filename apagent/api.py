@@ -332,7 +332,7 @@ def take_document(key: str, process: bool = True):
 
 
 # ------------------------------------------------------------------ T2: approvals
-@app.get("/api/bills/{bill_id}/approval", dependencies=[FM])
+@app.get("/api/bills/{bill_id}/approval", dependencies=[need("approver", "owner")])
 def approval_request(bill_id: str, amount: Optional[float] = None):
     """EIP-712 PaymentApproval for the finance manager's wallet."""
     with _lock:
@@ -343,6 +343,17 @@ def approval_request(bill_id: str, amount: Optional[float] = None):
 @mutating
 def approve(bill_id: str, body: Approve):
     return _err(S().agent.approve(bill_id, body.amount, signature=_sig(body.signature), expiry=body.expiry))
+
+
+class Cosign(BaseModel):
+    signature: str
+
+
+@app.post("/api/bills/{bill_id}/cosign", dependencies=[OWNER])
+@mutating
+def cosign(bill_id: str, body: Cosign):
+    """The owner's second signature on an approved payment above the two-signature threshold (spec D4)."""
+    return S().agent.cosign(bill_id, _sig(body.signature))
 
 
 @app.post("/api/bills/{bill_id}/pay", dependencies=[STAFF])
