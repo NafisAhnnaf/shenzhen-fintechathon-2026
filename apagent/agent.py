@@ -453,6 +453,16 @@ class Agent:
         return {"supplier": supplier_id, "active_at": p.get("active_at"), "frozen": p.get("frozen"),
                 "tx": self._tx(tx) if tx else None}
 
+    def set_signing_key(self, supplier_id: str, address: str, actor: str = "owner") -> dict:
+        """Enrol a supplier's invoice-signing key (spec C9); an empty address withdraws it."""
+        from web3 import Web3
+        sup = self.led.suppliers[supplier_id]
+        if address and not Web3.is_address(address):
+            raise ValueError("not an address")
+        sup.signing_key = Web3.to_checksum_address(address) if address else ""
+        self.log.add(actor, "signing_key", {"supplier": supplier_id, "key": sup.signing_key or None}, security=True)
+        return {"supplier": supplier_id, "signing_key": sup.signing_key}
+
     # ================================================================== bank and arbiter decisions on claims (V4)
     def bank_tx_request(self, action: str, bill_id: Optional[str] = None, usd: Optional[float] = None) -> dict:
         """Unsigned transactions for the bank's or the arbiter's wallet."""

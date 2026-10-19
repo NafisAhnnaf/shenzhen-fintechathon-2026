@@ -86,6 +86,12 @@ def match_supplier(led: Ledger, bill: Bill) -> tuple[Optional[Supplier], list[Mi
     registered = sup.bank_account if sup.rail == "bank" else sup.wallet
     if r.bank_account and r.bank_account != registered:
         out.append(Mismatch("bank_change", "Bank details on the bill differ from the registry"))
+    if getattr(sup, "signing_key", ""):  # spec C9: an enrolled supplier signs every e-invoice
+        from . import signing
+        who = signing.signer(r.doc_hash, r.signature) if r.doc_hash and r.signature else None
+        if who is None or who.lower() != sup.signing_key.lower():
+            out.append(Mismatch("unsigned", "This supplier signs its invoices; this one has no valid signature from it",
+                                {"signed": bool(r.signature)}))
     return sup, out
 
 
@@ -334,6 +340,8 @@ def propose_resolution(res: CheckResult, bill: Bill) -> dict:
             steps.append(f"pay net of the recorded credit {m.detail['recorded']:,.2f}")
         elif m.code == "arith":
             steps.append("pay the amount computed from the lines and the order")
+        elif m.code == "unsigned":
+            steps.append("confirm with the supplier that it sent this invoice: it is not signed with the supplier's key")
         elif m.code in ("domain", "tax_id", "currency"):
             steps.append(f"check {m.code.replace('_', ' ')} with the supplier before paying")
     if res.deductions.get("open_receivable"):

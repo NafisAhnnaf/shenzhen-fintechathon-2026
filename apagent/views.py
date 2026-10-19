@@ -243,6 +243,7 @@ def supplier_rows(s) -> list[dict]:
         out.append({"id": sid, "name": sp.name, "contact": sp.contact, "domain": sp.domain, "rail": sp.rail,
                     "frozen": p.get("frozen", sp.frozen), "active": p.get("active"), "active_at": p.get("active_at"),
                     "probation_left": sp.probation_left, "confirmed_errors": sp.confirmed_errors,
+                    "signing_key": getattr(sp, "signing_key", ""),
                     "paid_ytd": round(sum(b.amount_usd for b in paid if (b.paid_on or "")[:4] == led.today[:4]), 2),
                     "open_cases": [c.case_id for c in led.cases.values() if c.supplier_id == sid and c.status == "open"]})
     return out

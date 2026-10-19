@@ -36,6 +36,7 @@ class Supplier:
     frozen: bool = False
     confirmed_errors: int = 0
     bills_paid: int = 0
+    signing_key: str = ""  # address the supplier signs e-invoices with (spec C9); empty = not enrolled
 
 
 @dataclass
@@ -138,6 +139,8 @@ class Read:
     bank_account: str
     confidence: dict[str, float]
     raw_text: str = ""  # free text from the document; only the injection flag sees it
+    doc_hash: str = ""  # e-invoice: hash of the document as received (spec C9)
+    signature: str = ""  # e-invoice: the supplier's signature over doc_hash, if any
 
     @property
     def min_confidence(self) -> float:

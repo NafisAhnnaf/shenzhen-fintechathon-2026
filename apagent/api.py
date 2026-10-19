@@ -747,6 +747,17 @@ def set_payee(supplier_id: str, body: PayeeBody):
     return _err(S().agent.set_payee(supplier_id, body.wallet, body.rail, body.callback, body.tx_hash, body.new))
 
 
+class KeyBody(BaseModel):
+    address: str = ""
+
+
+@app.post("/api/suppliers/{supplier_id}/signing-key", dependencies=[OWNER])
+@mutating
+def signing_key(supplier_id: str, body: KeyBody):
+    """Enrol the key a supplier signs its e-invoices with (spec C9)."""
+    return S().agent.set_signing_key(supplier_id, body.address)
+
+
 @app.get("/api/bank", dependencies=[ANY])
 def bank_view():
     """The bank's console (spec E7)."""

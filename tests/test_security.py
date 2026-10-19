@@ -177,3 +177,28 @@ def test_model_flag_only_adds_suspicion():
     assert injection.assess(loud, Fake(0.0))["p"] == injection.score(loud)["p"]  # a lenient model cannot lower it
     down = injection.assess(loud, Fake(fail=True))
     assert down["p"] == injection.score(loud)["p"] and down["model"].startswith("unavailable")
+
+
+def test_enrolled_supplier_must_sign_its_invoices(ledger, docs, calib):
+    """Spec C9: once Kai Tak enrols a key, only invoices signed with it pass; any edit breaks the signature."""
+    import json
+
+    from eth_account import Account
+
+    from apagent import demo, signing
+    from apagent.agent import Agent
+    from apagent.reader import JsonReader
+
+    key = Account.create().key.hex()
+    d = json.loads((demo.DEMO_DIR / docs["t01_routine"]["file"]).read_text())
+    ag = Agent(ledger, calib, chain=None)
+    ag.set_signing_key("KAITAK", Account.from_key(key).address)
+
+    unsigned = ag.process(ag.intake(JsonReader().read_dict(d)).bill_id)
+    assert unsigned["tier"] != "T1" and any("signs its invoices" in r for r in unsigned["reasons"])
+
+    signed = signing.sign({**d, "inv_no": "KAI-2512001S"}, key)
+    tampered = {**signed, "total": signed["total"] + 0.01}
+    assert signing.signer(signing.doc_hash(tampered), tampered["signature"]) != Account.from_key(key).address
+    out = ag.process(ag.intake(JsonReader().read_dict(signed)).bill_id)
+    assert not any("signs its invoices" in r for r in out.get("reasons", []))

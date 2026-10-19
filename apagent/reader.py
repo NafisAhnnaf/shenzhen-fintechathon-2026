@@ -17,6 +17,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
 
+from . import signing
 from .config import load_env
 from .domain import InvLine, Invoice, Read
 
@@ -122,6 +123,7 @@ class JsonReader:
             terms=d.get("terms", "net30"), currency=d.get("currency", "USD"), lines=lines, credit=credit,
             total=float(d.get("total", round(gross - credit, 2))), bank_account=d.get("bank_account", ""),
             confidence=d.get("confidence", conf), raw_text=d.get("notes", ""),
+            doc_hash=signing.doc_hash(d), signature=str(d.get("signature", "")),
         )
 
     def read(self, path: Path) -> Read:
