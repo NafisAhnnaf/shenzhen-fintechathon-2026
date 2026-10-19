@@ -111,7 +111,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | C7 | Hidden-instruction detector, patterns after decoding | Built | `injection.py` | RED |
 | C8 | Hidden-instruction check by a model (closed choice, no tools) next to the patterns; the higher score wins | Built | `injection.assess` | `test_security.py` |
 | C9 | Supplier-signed e-invoices: an enrolled supplier's unsigned or altered invoice goes to a person | Built | `signing.py`, `checker.match_supplier` | `test_security.py` |
-| C10 | Market watch: 90% price range, alert, buy-ahead suggestion | To build | | |
+| C10 | Market watch: adaptive conformal 90% range (backtest coverage Aluminum 89.6%, Copper 91.4%, Tin 88.9%, Nickel 89.2%, Zinc 89.6% over 731 months), alert on 2 of 3 signals, buy-ahead by CVaR, draft purchase order | Built | `marketwatch.py`, `agent.draft_po` | `test_marketwatch.py` |
 
 ### 5.3 Decide
 
@@ -214,7 +214,7 @@ New in this release:
 | Bernstein bound for the reserve | — | Pay | `risk/capital.py` | CAPITAL: 7× less than per-payment reserves |
 | Record linkage weights for duplicates | Fellegi & Sunter 1969 | Check | `checker.find_duplicate` | task 2 |
 | Drift guard on the cut-off | online conformal update | Decide | `governor.outcome` | task 4 |
-| Adaptive conformal price ranges | Gibbs & Candès 2021 | Check (C10) | to build | |
+| Adaptive conformal price ranges | Gibbs & Candès 2021 | Check (C10) | `marketwatch.aci` | coverage Aluminum 89.6%, Copper 91.4%, Tin 88.9%, Nickel 89.2%, Zinc 89.6% vs 90% target |
 
 ## 9. Screens
 

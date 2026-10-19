@@ -1,0 +1,27 @@
+{
+ "Aluminum": {
+  "coverage": 0.896,
+  "months": 731,
+  "target": 0.9
+ },
+ "Copper": {
+  "coverage": 0.9138,
+  "months": 731,
+  "target": 0.9
+ },
+ "Tin": {
+  "coverage": 0.8892,
+  "months": 731,
+  "target": 0.9
+ },
+ "Nickel": {
+  "coverage": 0.8919,
+  "months": 731,
+  "target": 0.9
+ },
+ "Zinc": {
+  "coverage": 0.896,
+  "months": 731,
+  "target": 0.9
+ }
+}

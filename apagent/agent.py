@@ -453,6 +453,30 @@ class Agent:
         return {"supplier": supplier_id, "active_at": p.get("active_at"), "frozen": p.get("frozen"),
                 "tx": self._tx(tx) if tx else None}
 
+    # ================================================================== market watch: draft purchase orders (C10)
+    def draft_po(self, item: str, option: str, months: int = 2, actor: str = "owner") -> dict:
+        """A buy-ahead suggestion turned into a draft purchase order (T0: a person places it in the ERP). The
+        quantity comes from the company's own purchases, the supplier from its last order; market data only
+        informs the choice (S7)."""
+        from . import marketwatch
+        mat = self.led.materials[item]
+        card = next(c for c in marketwatch.watch(self.led) if c["item"] == item)
+        cmp_ = marketwatch.buy_ahead(mat.series, card["need_t_per_month"], months=months,
+                                     cash_available=self.led.cash_usd - self.cfg.cash_floor_usd)
+        opt = cmp_["options"][option]
+        if opt["now_t"] <= 0:
+            return {"item": item, "option": option, "draft": None, "message": "Waiting: nothing to order now."}
+        last = max((po for po in self.led.pos.values() if any(l.item == item for l in po.lines)), key=lambda p: p.date)
+        unit_qty = round(opt["now_t"] / mat.tonnes_per_unit, 3)
+        drafts = self.__dict__.setdefault("po_drafts", [])
+        d = {"id": f"DPO-{len(drafts) + 1:03d}", "item": item, "material": mat.name, "supplier_id": last.supplier_id,
+             "supplier": self.led.suppliers[last.supplier_id].name, "qty": unit_qty, "unit": mat.unit,
+             "index_price_t": cmp_["price"], "option": option, "months": months, "created": self.led.today,
+             "status": "draft", "comparison": cmp_}
+        drafts.append(d)
+        self.log.add(actor, "draft_po", {k: d[k] for k in ("id", "item", "qty", "unit", "supplier_id", "option")})
+        return {"item": item, "option": option, "draft": d}
+
     def set_signing_key(self, supplier_id: str, address: str, actor: str = "owner") -> dict:
         """Enrol a supplier's invoice-signing key (spec C9); an empty address withdraws it."""
         from web3 import Web3

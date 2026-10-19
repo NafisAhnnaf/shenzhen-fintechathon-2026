@@ -860,6 +860,45 @@ def market_series(series: str, start: str = "2024-01", end: str = "2025-12"):
     return {"series": series, "source": market.SOURCE, "points": [[k, v] for k, v in sorted(s.items()) if start <= k <= end]}
 
 
+class DraftPO(BaseModel):
+    item: str
+    option: str
+    months: int = 2
+
+
+@app.get("/api/market-watch", dependencies=[ANY])
+def market_watch():
+    """Spec C10: a 90% price range per indexed material, alert signals, and a buy-ahead comparison on alert."""
+    from . import marketwatch
+    with _lock:
+        return _ok({"cards": marketwatch.watch(S().led), "drafts": S().agent.__dict__.get("po_drafts", [])})
+
+
+@app.get("/api/market-watch/{item}/buy-ahead", dependencies=[ANY])
+def buy_ahead(item: str, months: int = 2):
+    from . import marketwatch
+    s = S()
+    with _lock:
+        mat = s.led.materials.get(item)
+        if not mat or not mat.series:
+            raise HTTPException(404, "no public index for this material")
+        need = next(c["need_t_per_month"] for c in marketwatch.watch(s.led) if c["item"] == item)
+        return _ok(marketwatch.buy_ahead(mat.series, need, months=months,
+                                         cash_available=s.led.cash_usd - s.agent.cfg.cash_floor_usd))
+
+
+@app.post("/api/market-watch/drafts", dependencies=[STAFF])
+@mutating
+def draft_po(body: DraftPO):
+    return S().agent.draft_po(body.item, body.option, body.months)
+
+
+@app.get("/api/market-watch/backtest", dependencies=[ANY])
+def market_backtest():
+    from . import marketwatch
+    return marketwatch.backtest()
+
+
 # ------------------------------------------------------------------ results
 @app.get("/api/results", dependencies=[ANY])
 def results():
