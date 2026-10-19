@@ -100,7 +100,7 @@ class GovernorService:
         res = checker.check(self.led, bill, SETTINGS)
         bill.supplier_id = res.supplier.id if res.supplier else None
         bill.amount_usd = res.amount.value
-        inj = injection.score(read.raw_text)["p"]
+        inj = injection.assess(read.raw_text)["p"]
         st = self.chain.state()
         if st["settings_id"] != settings_id:
             raise PermissionError("the agent asked for a settings bundle that is not active on-chain")

@@ -105,10 +105,10 @@ class Agent:
 
     def process(self, bill_id: str, auto_pay: bool = True, plan_id: Optional[str] = None) -> dict:
         bill = self.led.bills[bill_id]
-        inj = injection.score(bill.read.raw_text)
+        inj = injection.assess(bill.read.raw_text)
         bill.injection_p = inj["p"]
         if inj["p"] >= self.cfg.injection_threshold:
-            self.log.add("agent", "injection_flag", {"p": inj["p"], "decoded": inj["decoded"]}, bill_id=bill_id,
+            self.log.add("agent", "injection_flag", {"p": inj["p"], "decoded": inj["decoded"], "model_p": inj.get("model_p")}, bill_id=bill_id,
                          decision="T2", security=True)
             self.money["attacks_blocked"] += 1
         res = checker.check(self.led, bill, self.cfg)
@@ -689,7 +689,7 @@ class Agent:
         from .intent.decide import classify_reply
 
         cls = classify_reply(text)
-        inj = injection.score(text)
+        inj = injection.assess(text)
         self.log.add("agent", "message", {"supplier": supplier_id, "class": cls, "injection_p": inj["p"]},
                      security=cls == "bank_change" or inj["p"] >= self.cfg.injection_threshold)
         out = {"class": cls, "injection_p": inj["p"]}
@@ -708,7 +708,7 @@ class Agent:
         m = parse_email(raw)
         sid = supplier_by_sender(self.led, m["from"])
         if sid is None:
-            inj = injection.score(m["body"])
+            inj = injection.assess(m["body"])
             self.log.add("agent", "email_unknown_sender", {"from": m["from"], "injection_p": inj["p"]}, security=True)
             return {"from": m["from"], "supplier": None, "action": "logged: sender is not a registered supplier"}
         ref = re.search(r"\bQ-\d{3}\b", f"{m['subject']} {m['body']}")
@@ -856,7 +856,7 @@ class Agent:
         bill = self.led.bills[q["bill"]]
         fields = {**extract_reply_fields(reply_text), **(fields or {})}
         cls = classify_reply(reply_text)
-        inj = injection.score(reply_text)
+        inj = injection.assess(reply_text)
         self.log.add("agent", "reply", {"query": qid, "class": cls, "injection_p": inj["p"], "fields": fields},
                      bill_id=bill.bill_id, security=inj["p"] >= self.cfg.injection_threshold)
         out = {"query": qid, "class": cls}

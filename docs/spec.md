@@ -109,7 +109,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | C5 | Currencies HKD, CNY, USD: converted at intake at a dated reference rate; original kept on the bill | Built | `fx.py`, `agent.intake` | `test_checker.py` |
 | C6 | Mainland e-invoice (fapiao) check against a verification service (simulated in the demo) | To build | | |
 | C7 | Hidden-instruction detector, patterns after decoding | Built | `injection.py` | RED |
-| C8 | Hidden-instruction detector backed by a model, next to the patterns | To build | | |
+| C8 | Hidden-instruction check by a model (closed choice, no tools) next to the patterns; the higher score wins | Built | `injection.assess` | `test_security.py` |
 | C9 | Supplier-signed bills: a registered supplier signs the bill hash | To build | | |
 | C10 | Market watch: 90% price range, alert, buy-ahead suggestion | To build | | |
 
