@@ -88,9 +88,17 @@ class Agent:
 
     # ================================================================== intake and processing
     def intake(self, read: Read, source: str = "pdf", bill_id: Optional[str] = None) -> Bill:
+        from . import fx
         self.n_bills += 1
         bid = bill_id or f"B-{self.led.today.replace('-', '')}-{self.n_bills:04d}"
-        bill = Bill(bill_id=bid, received=self.led.today, source=source, read=read)
+        conv = None
+        if (read.currency or "USD").upper() != "USD":
+            r = fx.rate(read.currency, read.date or self.led.today)
+            if r:  # checked in USD like the order; the original stays on the bill
+                conv = {"currency": read.currency.upper(), "total": read.total, "rate": r, "date": read.date,
+                        "source": "reference rate"}
+                read = fx.to_usd(read, r)
+        bill = Bill(bill_id=bid, received=self.led.today, source=source, read=read, fx=conv)
         self.led.bills[bid] = bill
         self.log.add("agent", "intake", {"source": source, "inv_no": read.inv_no, "total": read.total}, bill_id=bid)
         return bill
@@ -139,7 +147,7 @@ class Agent:
         if d.tier == "T2":
             bill.status = "held"
             out = {"bill": bill_id, "tier": "T2", "reasons": d.reasons, "resolution": bill.resolution}
-            if bill.fair_price and mail.auto_email_on():  # ask the supplier about the price straight away
+            if (bill.fair_price or "price_history" in res.codes) and mail.auto_email_on():  # ask about the price at once
                 q = self.draft_query(bill_id, "price")
                 out["query"] = self.send_query(q["id"], actor="agent")["id"]
             return out
@@ -791,7 +799,15 @@ class Agent:
         bill = self.led.bills[bill_id]
         sup = self.led.suppliers[bill.supplier_id]
         fp = bill.fair_price
-        if topic == "price" and fp:
+        res = self.checks.get(bill_id)
+        hp = next((m.detail for m in res.mismatches if m.code == "price_history"), None) if res else None
+        if topic == "price" and not fp and hp:
+            body = (f"Re invoice {bill.read.inv_no} ({hp['material']}): unit price {hp['p_invoice']:,.2f} is "
+                    f"{hp['actual']:+.1%} on our last order price {hp['p_last']:,.2f}. Over our last {hp['purchases']} "
+                    f"orders this item's price has not moved more than {hp['band']:.0%}. Please explain the increase or "
+                    f"issue a credit note for {hp['overcharge']:,.2f}.")
+            fp = {"overcharge": hp["overcharge"]}
+        elif topic == "price" and fp:
             body = (f"Re invoice {bill.read.inv_no} ({fp['material']}): unit price {fp['p_invoice']:,.2f} is "
                     f"{fp['actual']:+.1%} on our last price {fp['p_last']:,.2f}. The {fp['series']} index moved "
                     f"{fp['index_now'] / fp['index_last'] - 1:+.1%} over the same lagged period; with our agreed "
@@ -1009,6 +1025,7 @@ class Agent:
         from . import views
         card.update(stage=views.stage(b), paid_by=views.paid_by(b), received=b.received, paid_on=b.paid_on,
                     source=b.source, po=b.read.po_id, inv_date=b.read.date, currency=b.read.currency,
+                    fx=getattr(b, "fx", None),
                     hold_reason=b.hold_reason, plan_id=b.plan_id, match=self.three_way(b),
                     confidence=b.read.confidence, low_confidence=sorted(k for k, v in b.read.confidence.items() if v < 0.9),
                     queries=[q["id"] for q in self.queries.values() if q["bill"] == bill_id],

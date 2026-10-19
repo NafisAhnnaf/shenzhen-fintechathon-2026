@@ -85,3 +85,46 @@ def test_amount_never_exceeds_erp_bound_on_simulated_year():
         b.supplier_id = res.supplier.id if res.supplier else None
         b.amount_usd = res.amount.value
         led.bills[b.bill_id] = b
+
+
+def test_hkd_bill_converted_and_checked_like_usd(ledger, docs, calib):
+    """Spec C5: a bill in HKD is converted at the reference rate and passes the same checks as its USD twin."""
+    from dataclasses import replace
+
+    from apagent.agent import Agent
+    from apagent.domain import InvLine
+
+    r = demo.read_from_doc(docs["t01_routine"])
+    hkd = replace(r, currency="HKD", lines=[InvLine(l.item, l.desc, l.unit, l.qty, round(l.price * 7.8, 2)) for l in r.lines],
+                  credit=round(r.credit * 7.8, 2), total=round(r.total * 7.8, 2))
+    ag = Agent(ledger, calib, chain=None)
+    b = ag.intake(hkd)
+    assert b.fx["currency"] == "HKD" and b.fx["total"] == hkd.total and b.read.currency == "USD"
+    out = ag.process(b.bill_id)
+    assert out["tier"] == "T1" and abs(ledger.bills[b.bill_id].amount_usd - r.total) < 0.05
+
+
+def test_unsupported_currency_is_held(ledger, docs, calib):
+    from dataclasses import replace
+
+    from apagent.agent import Agent
+
+    ag = Agent(ledger, calib, chain=None)
+    b = ag.intake(replace(demo.read_from_doc(docs["t01_routine"]), currency="EUR"))
+    out = ag.process(b.bill_id)
+    assert out["tier"] != "T1" and any("Currency EUR" in x for x in out["reasons"])
+
+
+def test_price_rise_on_unindexed_item_flagged_by_supplier_history(ledger, docs):
+    """Spec C4: fasteners have no public index; a 30% rise is far above Kai Tak's usual price changes."""
+    from dataclasses import replace
+
+    from apagent.domain import InvLine
+
+    r = demo.read_from_doc(docs["t01_routine"])
+    assert ledger.materials.get(r.lines[0].item) is None or ledger.materials[r.lines[0].item].series is None
+    up = replace(r, inv_no="KAI-2512099", lines=[InvLine(l.item, l.desc, l.unit, l.qty, round(l.price * 1.3, 2)) for l in r.lines])
+    up = replace(up, total=round(sum(l.amount for l in up.lines) - up.credit, 2))
+    res = checker.check(ledger, Bill("B-HIST", ledger.today, "test", up))
+    hp = next(m.detail for m in res.mismatches if m.code == "price_history")
+    assert hp["flagged"] and hp["actual"] > hp["band"] and res.amount.value < up.total

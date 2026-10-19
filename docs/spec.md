@@ -105,8 +105,8 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | C1 | Three-way match: supplier, order, lines, received quantity, price tolerance, totals, credits | Built | `checker.py` | `test_checker.py` |
 | C2 | Duplicates, exact and fuzzy (Fellegi–Sunter weights) | Built | `checker.find_duplicate` | task 2 |
 | C3 | Market check against World Bank indices (pass-through, lag) | Built | `checker`, `market.py` | task 16, FAIR |
-| C4 | Market check fallback: the supplier's own price history when no index exists | To build | | |
-| C5 | Currencies HKD, CNY, USD with a dated reference rate | To build | | |
+| C4 | Price check from the supplier's own history when no public index exists (flags 0.2% of the simulated year) | Built | `checker.history_price_check` | `test_checker.py` |
+| C5 | Currencies HKD, CNY, USD: converted at intake at a dated reference rate; original kept on the bill | Built | `fx.py`, `agent.intake` | `test_checker.py` |
 | C6 | Mainland e-invoice (fapiao) check against a verification service (simulated in the demo) | To build | | |
 | C7 | Hidden-instruction detector, patterns after decoding | Built | `injection.py` | RED |
 | C8 | Hidden-instruction detector backed by a model, next to the patterns | To build | | |

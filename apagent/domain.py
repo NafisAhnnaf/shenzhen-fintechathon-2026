@@ -168,6 +168,7 @@ class Bill:
     hold_reason: Optional[str] = None
     offsets: list[dict] = field(default_factory=list)
     erp_ref: Optional[str] = None  # the payment as recorded in the ERP
+    fx: Optional[dict] = None  # a bill in HKD or CNY: original currency, total and the reference rate used (spec C5)
 
 
 @dataclass

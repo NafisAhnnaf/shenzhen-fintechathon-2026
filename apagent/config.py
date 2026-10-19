@@ -83,6 +83,7 @@ class Settings:
     price_tolerance: float = 0.01  # order price tolerance
     tax_rate: float = 0.0  # Hong Kong has no VAT/GST
     fair_price_tolerance: float = 0.02  # 2 points of excess
+    history_price_tolerance: float = 0.10  # no index: flag a rise above the item's usual changes, and at least 10%
     probation_bills: int = 5
     break_attempts: int = 3  # P-BREAK: blocked attempts ...
     break_window_s: int = 600  # ... within 10 minutes

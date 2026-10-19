@@ -154,6 +154,30 @@ def fair_price_check(led: Ledger, sup: Supplier, line, inv_date: str, cfg: Setti
                      justified_price, overcharge, line.qty, i_last, i_now, mat.series, flagged)
 
 
+def history_price_check(led: Ledger, sup: Supplier, line, inv_date: str, cfg: Settings,
+                        po_date: Optional[str] = None) -> Optional[dict]:
+    """Spec C4: for a material with no public index, compare the price with this supplier's own history for the
+    item. Flag a rise above the 90th percentile of its past changes (and at least history_price_tolerance)."""
+    mat = led.materials.get(line.item)
+    if mat is not None and mat.series:
+        return None
+    pts = sorted((po.date, l.price) for po in led.pos.values() if po.supplier_id == sup.id
+                 and po.date < (po_date or inv_date) for l in po.lines if l.item == line.item)
+    if len(pts) < 3:
+        return None
+    p_last = pts[-1][1]
+    if line.price <= p_last * (1 + 1e-9):
+        return None
+    changes = sorted(abs(p1 / p0 - 1) for (_, p0), (_, p1) in zip(pts, pts[1:]) if p0 != p1)
+    band = max(cfg.history_price_tolerance, changes[int(0.9 * (len(changes) - 1))] if len(changes) >= 3 else 0.0)
+    a = line.price / p_last - 1
+    justified = round(p_last * (1 + band), 2)
+    return {"item": line.item, "material": line.desc, "p_last": p_last, "p_invoice": line.price, "actual": round(a, 4),
+            "band": round(band, 4), "justified_price": justified, "qty": line.qty, "purchases": len(pts),
+            "overcharge": round(max(0.0, (line.price - justified) * line.qty), 2), "series": "supplier history",
+            "flagged": a > band}
+
+
 def _past_excess(led: Ledger, sup: Supplier, item: str, mat, before: str) -> list[float]:
     pts = sorted(((po.date, l.price) for po in led.pos.values() if po.supplier_id == sup.id and po.date < before
                   for l in po.lines if l.item == item))
@@ -232,6 +256,11 @@ def check(led: Ledger, bill: Bill, cfg: Settings = SETTINGS) -> CheckResult:
                                            {"item": pl.item, "invoice_price": line.price, "order_price": pl.price, "qty": line.qty}))
             pay_price = line.price if dev <= tol + 1e-12 else pl.price  # above tolerance: pay at the order price
             fp = fair_price_check(led, sup, line, r.date, cfg, po_date=po.date)
+            hp = None if fp else history_price_check(led, sup, line, r.date, cfg, po_date=po.date)
+            if hp and hp["flagged"]:
+                pay_price = min(pay_price, hp["justified_price"])  # pay up to the usual rise, hold the rest
+                mismatches.append(Mismatch("price_history", f"{pl.desc}: price {hp['actual']:+.1%} on the last order; "
+                                           f"this supplier's usual change is within {hp['band']:.0%}", hp))
             if fp:
                 fair.append(fp)
                 if fp.flagged:
@@ -297,6 +326,10 @@ def propose_resolution(res: CheckResult, bill: Bill) -> dict:
             d = m.detail
             steps.append(f"pay {d['material']} at the justified price {d['justified_price']:,.2f}; "
                          f"hold the excess {d['overcharge']:,.2f}; draft a query")
+        elif m.code == "price_history":
+            d = m.detail
+            steps.append(f"pay {d['material']} at {d['justified_price']:,.2f} (the usual rise); hold "
+                         f"{d['overcharge']:,.2f}; draft a query")
         elif m.code == "credit_missing":
             steps.append(f"pay net of the recorded credit {m.detail['recorded']:,.2f}")
         elif m.code == "arith":
