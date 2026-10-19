@@ -1,5 +1,8 @@
 """Sign-in with the wallet and role checks for the API (spec X2).
 
+With the login service on (apagent/identity.py), only the bank and the arbiter sign in this way: company staff use
+email and password. Without it (local runs, no database), everyone does, as below.
+
 The browser asks for a challenge, the person signs it in their wallet (EIP-4361 "Sign-In with Ethereum" text,
 personal_sign), and the server issues a session for the address that signed. The role comes from the deployment
 record, never from the request: the owner's address is the owner, the approver's address is the finance manager,
@@ -29,9 +32,14 @@ ROLE_ORDER = ("owner", "approver", "underwriter", "arbiter")
 
 @dataclass
 class User:
-    address: str
-    role: str  # owner, approver, underwriter, arbiter, viewer; "*" when AUTH=off
+    address: str  # the wallet; "" for a person signed in with email who has not linked one
+    role: str  # owner, approver, clerk, underwriter, arbiter, viewer; "none" without a company; "*" when AUTH=off
     expires: float
+    company: str = "demo"
+    user_id: Optional[str] = None  # set for people signed in with email and password (apagent/identity.py)
+    name: str = ""
+    email: str = ""
+    kind: str = "wallet"  # wallet or account
 
     def can(self, *roles: str) -> bool:
         return self.role == "*" or self.role in roles
@@ -55,33 +63,42 @@ def _iso(t: float) -> str:
 
 class Auth:
     def __init__(self):
-        self.challenges: dict[str, tuple[str, float, str]] = {}  # nonce -> (address, expires, message)
+        self.challenges: dict[str, tuple[str, float, str, str]] = {}  # nonce -> (address, expires, message, company)
         self.sessions: dict[str, User] = {}
 
-    def challenge(self, address: str, domain: str, uri: str, chain_id: int, company: str) -> dict:
+    def challenge(self, address: str, domain: str, uri: str, chain_id: int, company: str,
+                  statement: Optional[str] = None, company_id: str = "demo") -> dict:
         now = time.time()
         self.challenges = {n: c for n, c in self.challenges.items() if c[1] > now}
         nonce = secrets.token_hex(12)
         msg = (f"{domain} wants you to sign in with your Ethereum account:\n{address}\n\n"
-               f"Sign in to the {company} payables desk.\n\n"
+               f"{statement or f'Sign in to the {company} payables desk.'}\n\n"
                f"URI: {uri}\nVersion: 1\nChain ID: {chain_id}\nNonce: {nonce}\n"
                f"Issued At: {_iso(now)}\nExpiration Time: {_iso(now + NONCE_TTL)}")
-        self.challenges[nonce] = (address.lower(), now + NONCE_TTL, msg)
+        self.challenges[nonce] = (address.lower(), now + NONCE_TTL, msg, company_id)
         return {"nonce": nonce, "message": msg}
 
-    def login(self, nonce: str, signature: str, roles: dict) -> tuple[str, User]:
-        c = self.challenges.pop(nonce, None)  # a challenge can be used once
+    def verify(self, nonce: str, signature: str) -> tuple[str, str]:
+        """Check a signed challenge; returns (address, company). A challenge can be used once."""
+        c = self.challenges.pop(nonce, None)
         if c is None or c[1] < time.time():
             raise PermissionError("the sign-in request expired; try again")
-        address, _, msg = c
+        address, _, msg, company = c
         try:
             signer = Account.recover_message(encode_defunct(text=msg), signature=signature)
         except Exception as e:  # noqa: BLE001 - malformed signature
             raise PermissionError(f"the signature could not be read: {str(e)[:80]}")
         if signer.lower() != address:
             raise PermissionError("the signature is not from the address that asked to sign in")
+        return signer, company
+
+    def login(self, nonce: str, signature: str, roles: dict, allowed: Optional[tuple] = None) -> tuple[str, User]:
+        signer, company = self.verify(nonce, signature)
+        role = role_of(signer, roles)
+        if allowed is not None and role not in allowed:
+            raise PermissionError("company staff sign in with their email; wallet sign-in is for the bank and the arbiter")
         token = secrets.token_urlsafe(32)
-        user = User(signer, role_of(signer, roles), time.time() + SESSION_TTL)
+        user = User(signer, role, time.time() + SESSION_TTL, company=company)
         self.sessions[token] = user
         return token, user
 

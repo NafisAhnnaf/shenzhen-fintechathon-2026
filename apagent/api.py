@@ -12,6 +12,7 @@ and reloads the baseline ledger together.
 """
 from __future__ import annotations
 
+import contextvars
 import functools
 import json
 import os
@@ -25,12 +26,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+import anyio
+
 from . import auth as A
 from . import demo, naive
+from . import identity as I
 from .config import DATA_DIR, SETTINGS
 from .intake import BadDocument, ReaderUnavailable
 from .intent import planner
-from .session import Session, reset as reset_session
+from .session import DEFAULT_COMPANY, Session, reset as reset_session, store as state_store
 
 NETWORK = os.environ.get("NETWORK", "localhost")
 ERP = os.environ.get("ERP", "file")
@@ -50,24 +54,74 @@ app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials
                    allow_methods=["GET", "POST"], allow_headers=["content-type", "authorization"])
 
 _lock = threading.RLock()
-_session: Optional[Session] = None
+_sessions: dict[str, Session] = {}  # one desk per company, opened on first use
+# The company of the person making the request; set by the `who` middleware before the endpoint runs.
+_company: contextvars.ContextVar[str] = contextvars.ContextVar("company", default=DEFAULT_COMPANY)
 
 # ------------------------------------------------------------------ sign-in and roles (spec X2)
+# Company staff sign in with email and password through the login service (auth/, Better Auth); the API reads the
+# session from the shared database (identity.py). The bank and the arbiter are outside the company and sign in with
+# their wallets (auth.py). Without the login service (LOGIN=wallet, the default when there is no database), everyone
+# signs in with a wallet and the deployment record decides the role, as before.
 AUTH = A.Auth()
 COOKIE = "desk_session"
-LABEL = {"owner": "owner", "approver": "finance manager", "underwriter": "bank", "arbiter": "arbiter", "viewer": "viewer"}
+LABEL = {"owner": "owner", "approver": "finance manager", "clerk": "accounts clerk", "underwriter": "bank",
+         "arbiter": "arbiter", "viewer": "viewer"}
 # The request router's names for the two people who can type requests.
 ROUTER_ROLE = {"owner": "owner", "approver": "finance_manager"}
+_directory: Optional[I.Directory] = None
+
+
+def accounts() -> bool:
+    """Email sign-in through the login service is on when the state is in Postgres and the shared secret is set."""
+    mode = os.environ.get("LOGIN", "").lower()
+    if mode in ("wallet", "accounts"):
+        return mode == "accounts"
+    return state_store() is not None and bool(I.secret())
+
+
+def directory() -> Optional[I.Directory]:
+    global _directory
+    if not accounts():
+        return None
+    if _directory is None:
+        _directory = I.Directory(os.environ["DATABASE_URL"])
+    return _directory
+
+
+def _resolve(request: Request) -> Optional[A.User]:
+    if not A.enabled():
+        return A.User("0x0000000000000000000000000000000000000000", "*", float("inf"))
+    d = directory()
+    if d is not None:
+        p = d.person(request.cookies)
+        if p is not None:
+            return A.User(p.wallet or "", p.role, p.expires, company=p.company_id or "", user_id=p.user_id,
+                          name=p.name, email=p.email, kind="account")
+    h = request.headers.get("authorization", "")
+    token = h[7:].strip() if h.lower().startswith("bearer ") else request.cookies.get(COOKIE)
+    return AUTH.user(token)
+
+
+@app.middleware("http")
+async def who(request: Request, call_next):
+    """Work out who is asking and which company's desk they use, before the endpoint runs."""
+    path = request.url.path
+    u = None
+    if path.startswith("/api/") and not path.startswith("/api/auth/"):
+        u = await anyio.to_thread.run_sync(_resolve, request)
+    request.state.user = u
+    if u is not None and u.company and state_store() is not None:
+        _company.set(u.company)
+    return await call_next(request)
 
 
 def current_user(request: Request) -> A.User:
-    if not A.enabled():
-        return A.User("0x0000000000000000000000000000000000000000", "*", float("inf"))
-    h = request.headers.get("authorization", "")
-    token = h[7:].strip() if h.lower().startswith("bearer ") else request.cookies.get(COOKIE)
-    u = AUTH.user(token)
+    u = getattr(request.state, "user", None)
     if u is None:
-        raise HTTPException(401, "Sign in with your wallet first")
+        raise HTTPException(401, "Sign in first")
+    if u.role == "none":
+        raise HTTPException(403, "Open a company first")
     return u
 
 
@@ -87,8 +141,9 @@ def _demo_clock(u: A.User = Depends(current_user)) -> A.User:
     return u
 
 
-ANY = need("owner", "approver", "underwriter", "arbiter", "viewer")
+ANY = need("owner", "approver", "clerk", "underwriter", "arbiter", "viewer")
 STAFF = need("owner", "approver")
+INTAKE = need("owner", "approver", "clerk")  # bringing in invoices, emails, statements and ERP data
 OWNER = need("owner")
 FM = need("approver")
 BANK = need("underwriter")
@@ -97,11 +152,16 @@ DEMO = Depends(_demo_clock)
 
 
 def S() -> Session:
-    global _session
-    if _session is None:
-        LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-        _session = Session.open(NETWORK, log_path=LOG_PATH, signing=SIGNING, erp=ERP)
-    return _session
+    """The desk of the company making this request."""
+    cid = _company.get()
+    s = _sessions.get(cid)
+    if s is None:
+        with _lock:
+            s = _sessions.get(cid)
+            if s is None:
+                LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+                s = _sessions[cid] = Session.open(NETWORK, log_path=LOG_PATH, signing=SIGNING, erp=ERP, company_id=cid)
+    return s
 
 
 def _ok(x):
@@ -184,48 +244,184 @@ def health():
     return {"ok": True, "network": NETWORK, "signing": SIGNING}
 
 
+def _company_or_404(company: str) -> str:
+    st = state_store()
+    if st is None:
+        return DEFAULT_COMPANY
+    if st.company(company) is None and company != DEFAULT_COMPANY:
+        raise HTTPException(404, "no such company")
+    return company
+
+
 @app.get("/api/public")
-def public():
-    """What the sign-in page needs before anyone signs in: the chain for the wallet and the role addresses."""
+def public(company: str = DEFAULT_COMPANY):
+    """What the sign-in page needs before anyone signs in: how people sign in, the chain for the wallet and the
+    addresses of the outside signers."""
+    _company.set(_company_or_404(company))
     s = S()
     return _ok({"network": NETWORK, "chain_id": s.chain.chain_id, "rpc": RPC_PUBLIC, "company": s.led.company,
                 "roles": {k: v for k, v in s.chain.dep["roles"].items() if k in A.ROLE_ORDER}, "auth": A.enabled(),
-                "demo_date": s.led.today})
+                "login": "accounts" if accounts() else "wallet", "demo_date": s.led.today})
 
 
 # ------------------------------------------------------------------ sign-in
-@app.post("/api/auth/challenge")
-def auth_challenge(body: Challenge, request: Request):
+# Email and password, two-factor, companies and invitations: the login service, reached through this server so the
+# browser sees one origin and the cookie stays first-party.
+@app.api_route("/api/auth/{path:path}", methods=["GET", "POST"], include_in_schema=False)
+async def auth_service(path: str, request: Request):
+    import httpx
+
+    if not accounts():
+        raise HTTPException(404, "email sign-in is not set up on this server")
+    headers = {k: v for k, v in request.headers.items() if k.lower() not in ("host", "content-length", "connection")}
+    headers["x-forwarded-for"] = request.client.host if request.client else ""
+    service = os.environ.get("AUTH_SERVICE_URL", "http://127.0.0.1:3001")
+    async with httpx.AsyncClient(timeout=20) as c:
+        try:
+            r = await c.request(request.method, f"{service}/api/auth/{path}", params=request.query_params,
+                                content=await request.body(), headers=headers)
+        except httpx.HTTPError:
+            raise HTTPException(503, "the login service is not running")
+    if path.startswith(("sign-out", "organization/set-active", "organization/leave", "organization/remove-member",
+                        "organization/update-member-role", "organization/accept-invitation")):
+        d = directory()
+        if d is not None:
+            d.forget()  # the next request reads the new role or company
+    out = Response(r.content, r.status_code, media_type=r.headers.get("content-type"))
+    for v in r.headers.get_list("set-cookie"):
+        out.headers.append("set-cookie", v)
+    return out
+
+
+class InternalMail(BaseModel):
+    to: str
+    subject: str
+    text: str
+
+
+@app.post("/api/internal/mail", include_in_schema=False)
+def internal_mail(body: InternalMail, request: Request):
+    """The login service's invitation, verification and reset mail, sent through the company mailbox. Only the login
+    service, on this machine and holding the shared secret, may call it."""
+    import hmac
+
+    from . import mail
+
+    host = request.client.host if request.client else ""
+    token = request.headers.get("x-internal-token", "")
+    if host not in ("127.0.0.1", "::1", "testclient") or not I.secret() or not hmac.compare_digest(token, I.secret()):
+        raise HTTPException(403)
+    if "\n" in body.to or "\r" in body.to or "\n" in body.subject or "\r" in body.subject:
+        raise HTTPException(400, "bad header")
+    return {"sent": mail.mailer().send(mail.build(body.to, body.subject[:200], body.text[:4000]))}
+
+
+class WalletChallenge(BaseModel):
+    address: str
+    company: str = DEFAULT_COMPANY
+
+
+@app.post("/api/wallet/challenge")
+def wallet_challenge(body: WalletChallenge, request: Request):
+    """Wallet sign-in for the bank and the arbiter (and for everyone when there is no login service)."""
     from web3 import Web3
 
     if not Web3.is_address(body.address):
         raise HTTPException(400, "not a wallet address")
+    cid = _company_or_404(body.company)
+    _company.set(cid)
     s = S()
     host = request.headers.get("host", "localhost")
     return AUTH.challenge(Web3.to_checksum_address(body.address), host, f"{request.url.scheme}://{host}",
-                          s.chain.chain_id, s.led.company.replace(" (fictional)", ""))
+                          s.chain.chain_id, s.led.company.replace(" (fictional)", ""), company_id=cid)
 
 
-@app.post("/api/auth/login")
-def auth_login(body: Login, response: Response):
+@app.post("/api/wallet/login")
+def wallet_login(body: Login, response: Response):
+    c = AUTH.challenges.get(body.nonce)
+    if c is not None:
+        _company.set(c[3])
     try:
-        token, u = AUTH.login(body.nonce, body.signature, S().chain.dep["roles"])
+        token, u = AUTH.login(body.nonce, body.signature, S().chain.dep["roles"],
+                              allowed=("underwriter", "arbiter") if accounts() else None)
     except PermissionError as e:
         raise HTTPException(401, str(e))
     response.set_cookie(COOKIE, token, httponly=True, samesite="strict", max_age=A.SESSION_TTL)
     return {"address": u.address, "role": u.role, "label": LABEL.get(u.role, u.role), "token": token}
 
 
-@app.post("/api/auth/logout")
-def auth_logout(request: Request, response: Response):
+@app.post("/api/wallet/logout")
+def wallet_logout(request: Request, response: Response):
     AUTH.logout(request.cookies.get(COOKIE))
     response.delete_cookie(COOKIE)
     return {"ok": True}
 
 
-@app.get("/api/auth/me")
-def auth_me(u: A.User = Depends(current_user)):
-    return {"address": u.address, "role": u.role, "label": LABEL.get(u.role, u.role)}
+@app.get("/api/me")
+def me(request: Request):
+    """Who is signed in, their role in the open company, and the other companies they belong to."""
+    u = getattr(request.state, "user", None)
+    if u is None:
+        raise HTTPException(401, "Sign in first")
+    out = {"kind": u.kind, "address": u.address or None, "role": u.role, "label": LABEL.get(u.role, u.role),
+           "name": u.name, "email": u.email, "company": u.company or None, "companies": []}
+    d = directory()
+    if u.kind == "account" and d is not None:
+        out["companies"] = d.companies_of(u.user_id)
+        p = d.person(request.cookies)
+        out["two_factor"] = bool(p and p.two_factor)
+        if u.company:
+            dep = S().chain.dep["roles"]
+            out["signs_as"] = A.role_of(u.address, dep) if u.address else None
+            out["expected_wallet"] = dep.get(u.role) if u.role in ("owner", "approver") else None
+    return out
+
+
+@app.post("/api/me/wallet/challenge")
+def link_challenge(body: Challenge, request: Request, u: A.User = Depends(current_user)):
+    """A person links the wallet they sign payments with: the server asks them to sign a one-time message with it."""
+    from web3 import Web3
+
+    if u.kind != "account":
+        raise HTTPException(400, "only people signed in with email link a wallet")
+    if not Web3.is_address(body.address):
+        raise HTTPException(400, "not a wallet address")
+    s = S()
+    host = request.headers.get("host", "localhost")
+    return AUTH.challenge(Web3.to_checksum_address(body.address), host, f"{request.url.scheme}://{host}",
+                          s.chain.chain_id, s.led.company, company_id=u.company,
+                          statement=f"Link this wallet to {u.email} at {s.led.company.replace(' (fictional)', '')}.")
+
+
+@app.post("/api/me/wallet")
+def link_wallet(body: Login, u: A.User = Depends(current_user)):
+    try:
+        address, company = AUTH.verify(body.nonce, body.signature)
+        if company != u.company:
+            raise PermissionError("the request was for another company")
+        directory().link_wallet(u.company, u.user_id, address)
+    except PermissionError as e:
+        raise HTTPException(400, str(e))
+    return {"wallet": address, "signs_as": A.role_of(address, S().chain.dep["roles"])}
+
+
+@app.post("/api/me/wallet/unlink")
+def unlink_wallet(u: A.User = Depends(current_user)):
+    if u.kind != "account":
+        raise HTTPException(400, "only people signed in with email link a wallet")
+    directory().unlink_wallet(u.company, u.user_id)
+    return {"wallet": None}
+
+
+@app.get("/api/team", dependencies=[ANY])
+def team(u: A.User = Depends(current_user)):
+    """The company's people and their roles; the on-chain signer addresses are shown next to whoever linked them."""
+    d = directory()
+    roles = S().chain.dep["roles"]
+    people = d.members(u.company) if d is not None and u.company else []
+    for p in people:
+        p["signs_as"] = A.role_of(p["wallet"], roles) if p["wallet"] else None
+    return {"members": people, "signers": {k: v for k, v in roles.items() if k in A.ROLE_ORDER}}
 
 
 @app.get("/api/state", dependencies=[ANY])
@@ -251,13 +447,14 @@ def state():
 @app.post("/api/admin/reset", dependencies=[OWNER])
 def admin_reset(confirm: str = ""):
     """Redeploy the contracts and reload the baseline ledger together. On a public network pass confirm=redeploy."""
-    global _session
+    cid = _company.get()
     with _lock:
         try:
-            _session = reset_session(NETWORK, LOG_PATH, allow_testnet=confirm == "redeploy", signing=SIGNING, erp=ERP)
+            s = _sessions[cid] = reset_session(NETWORK, LOG_PATH, allow_testnet=confirm == "redeploy", signing=SIGNING,
+                                               erp=ERP, company_id=cid)
         except RuntimeError as e:
             raise HTTPException(400, str(e))
-        return _ok({"reset": True, "contracts": _session.chain.dep["contracts"]})
+        return _ok({"reset": True, "contracts": s.chain.dep["contracts"]})
 
 
 # ------------------------------------------------------------------ ERP
@@ -268,7 +465,7 @@ def erp_status():
                 "receipts": len(s.led.receipts), "returns": len(s.led.returns)})
 
 
-@app.post("/api/erp/sync", dependencies=[STAFF])
+@app.post("/api/erp/sync", dependencies=[INTAKE])
 @mutating
 def erp_sync():
     """Pull the company records from the ERP now (it also happens before each new bill)."""
@@ -293,7 +490,7 @@ def bill(bill_id: str):
     return _ok(s.agent.bill_card(bill_id))
 
 
-@app.post("/api/documents", dependencies=[STAFF])
+@app.post("/api/documents", dependencies=[INTAKE])
 @mutating
 def upload_document(file: UploadFile = File(...), process: bool = Form(True)):
     """A supplier document as received: .json e-invoice, .pdf, or a photo (.png/.jpg). PDFs and photos need the
@@ -322,7 +519,7 @@ def file(kind: str, name: str):
     return FileResponse(p)
 
 
-@app.post("/api/inbox/documents/{key}", dependencies=[STAFF])
+@app.post("/api/inbox/documents/{key}", dependencies=[INTAKE])
 @mutating
 def take_document(key: str, process: bool = True):
     """Take a document from the inbox folder through the same intake path as an upload."""
@@ -379,7 +576,7 @@ def queries():
     return _ok(list(S().agent.queries.values()))
 
 
-@app.post("/api/bills/{bill_id}/query", dependencies=[STAFF])
+@app.post("/api/bills/{bill_id}/query", dependencies=[INTAKE])
 @mutating
 def draft_query(bill_id: str, topic: str = "price"):
     return S().agent.draft_query(bill_id, topic)
@@ -391,20 +588,20 @@ def send_query(qid: str):
     return S().agent.send_query(qid)
 
 
-@app.post("/api/emails", dependencies=[STAFF])
+@app.post("/api/emails", dependencies=[INTAKE])
 @mutating
 def receive_email(body: RawEmail):
     """An email as received (RFC 822 text with From/Subject). Replies quoting a query ID go to that query."""
     return S().agent.receive_email(body.raw)
 
 
-@app.post("/api/emails/upload", dependencies=[STAFF])
+@app.post("/api/emails/upload", dependencies=[INTAKE])
 @mutating
 def receive_email_file(file: UploadFile = File(...)):
     return S().agent.receive_email(file.file.read().decode("utf-8", errors="replace"))
 
 
-@app.post("/api/inbox/emails/{name}", dependencies=[STAFF])
+@app.post("/api/inbox/emails/{name}", dependencies=[INTAKE])
 @mutating
 def take_email(name: str):
     p = demo.INBOX_DIR / name
@@ -433,7 +630,7 @@ def release_email(email_id: str):
     return S().agent.release_email(email_id)
 
 
-@app.post("/api/mailbox/poll", dependencies=[STAFF])
+@app.post("/api/mailbox/poll", dependencies=[INTAKE])
 @mutating
 def poll_mailbox():
     return S().poll_mailbox()
@@ -455,14 +652,14 @@ if float(os.environ.get("MAILBOX_POLL_SECONDS", "0") or 0) > 0:
 
 
 # ------------------------------------------------------------------ statements, cases, claims
-@app.post("/api/statements/{supplier_id}", dependencies=[STAFF])
+@app.post("/api/statements/{supplier_id}", dependencies=[INTAKE])
 @mutating
 def statement(supplier_id: str, file: UploadFile = File(...)):
     """A supplier statement (.csv: date,ref,kind,amount,against, or .json). Each unmatched line opens a case."""
     return [c.__dict__ for c in S().statement(supplier_id, file.filename or "statement.csv", file.file.read())]
 
 
-@app.post("/api/inbox/statements/{name}", dependencies=[STAFF])
+@app.post("/api/inbox/statements/{name}", dependencies=[INTAKE])
 @mutating
 def take_statement(name: str, supplier_id: str):
     p = demo.STATEMENTS_DIR / name

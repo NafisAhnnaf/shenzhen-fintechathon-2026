@@ -28,9 +28,9 @@ def _wallet_send(chain, key: str, tx: dict) -> str:
 def _login(c, key: str) -> dict:
     """Sign-in with the wallet: sign the server's challenge with personal_sign, get a session token."""
     acct = Account.from_key(key)
-    ch = c.post("/api/auth/challenge", json={"address": acct.address}).json()
+    ch = c.post("/api/wallet/challenge", json={"address": acct.address}).json()
     sig = "0x" + Account.sign_message(encode_defunct(text=ch["message"]), key).signature.hex().removeprefix("0x")
-    r = c.post("/api/auth/login", json={"nonce": ch["nonce"], "signature": sig})
+    r = c.post("/api/wallet/login", json={"nonce": ch["nonce"], "signature": sig})
     assert r.status_code == 200, r.text
     return {"Authorization": f"Bearer {r.json()['token']}"}
 
@@ -43,7 +43,7 @@ def client():
     os.environ.pop("AUTH", None)
     from apagent import api
     api.SIGNING = "client"
-    api._session = None
+    api._sessions.clear()
     c = TestClient(api.app)
     keys = hardhat_keys()
     ROLE_HEADERS.update(owner=_login(c, keys[0]), fm=_login(c, keys[3]), bank=_login(c, keys[4]),
@@ -136,7 +136,7 @@ def test_settings_sent_from_owner_wallet(client):
 def test_state_survives_restart(client):
     c, api = client
     before = c.get("/api/bills").json()
-    api._session = None  # simulate a server restart: state is reloaded from disk
+    api._sessions.clear()  # simulate a server restart: state is reloaded from disk
     after = c.get("/api/bills").json()
     assert [b["bill"] for b in before] == [b["bill"] for b in after]
     assert c.get("/api/state").json()["consistency"]["ok"]
@@ -157,7 +157,7 @@ def test_sign_in_required_and_roles_enforced(client):
     anon = TestClient(api.app)
     assert anon.get("/api/state").status_code == 401
     assert anon.get("/api/public").status_code == 200  # the sign-in page needs it
-    me = c.get("/api/auth/me", headers=ROLE_HEADERS["viewer"]).json()
+    me = c.get("/api/me", headers=ROLE_HEADERS["viewer"]).json()
     assert me["role"] == "viewer"
     assert c.get("/api/bills", headers=ROLE_HEADERS["viewer"]).status_code == 200
     assert c.post("/api/pause", headers=ROLE_HEADERS["viewer"]).status_code == 403
@@ -170,12 +170,12 @@ def test_challenge_cannot_be_reused_or_signed_by_someone_else(client):
     c, _ = client
     keys = hardhat_keys()
     owner = Account.from_key(keys[0]).address
-    ch = c.post("/api/auth/challenge", json={"address": owner}).json()
+    ch = c.post("/api/wallet/challenge", json={"address": owner}).json()
     forged = "0x" + Account.sign_message(encode_defunct(text=ch["message"]), keys[5]).signature.hex().removeprefix("0x")
-    assert c.post("/api/auth/login", json={"nonce": ch["nonce"], "signature": forged}).status_code == 401
+    assert c.post("/api/wallet/login", json={"nonce": ch["nonce"], "signature": forged}).status_code == 401
     # The nonce was used up by the failed attempt.
     good = "0x" + Account.sign_message(encode_defunct(text=ch["message"]), keys[0]).signature.hex().removeprefix("0x")
-    assert c.post("/api/auth/login", json={"nonce": ch["nonce"], "signature": good}).status_code == 401
+    assert c.post("/api/wallet/login", json={"nonce": ch["nonce"], "signature": good}).status_code == 401
 
 
 def test_request_role_comes_from_the_wallet(client):

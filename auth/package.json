@@ -1,0 +1,15 @@
+{
+  "name": "payables-auth",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Login service for the payables desk (Better Auth on the shared Postgres)",
+  "scripts": {
+    "start": "node --env-file-if-exists=../.env server.mjs",
+    "migrate": "node --env-file-if-exists=../.env server.mjs --migrate"
+  },
+  "dependencies": {
+    "better-auth": "1.7.7",
+    "pg": "8.13.1"
+  }
+}

@@ -130,16 +130,16 @@ def test_api_runs_on_the_database_and_survives_a_restart(store, monkeypatch):
     monkeypatch.setenv("AUTH", "off")
     monkeypatch.setattr(S, "_STORE", None)
     from apagent import api
-    api._session = None
+    api._sessions.clear()
     c = TestClient(api.app)
     assert c.post("/api/admin/reset").status_code == 200
     paid = c.post("/api/inbox/documents/t01_routine").json()
     assert paid["tier"] == "T1" and paid["tx"]["ok"]
-    api._session = None  # restart
+    api._sessions.clear()  # restart
     S._STORE = None
     st = c.get("/api/state").json()
     assert st["consistency"]["ok"]
     bill = c.get(f"/api/bills/{paid['bill']}").json()
     assert bill["status"] == "paid" and bill["tx_hash"] == paid["tx"]["tx_hash"]
     assert store.verify_journal("demo")["ok"]
-    api._session = None
+    api._sessions.clear()
