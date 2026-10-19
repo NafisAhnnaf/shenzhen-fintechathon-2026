@@ -7,6 +7,7 @@ takes protective actions (freeze, pause, probation) on its own.
 """
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import asdict
 from datetime import date, timedelta
@@ -23,6 +24,17 @@ from .risk.calibrate import Calibration
 from .tags import Src, T
 
 CAUSE = {"overpayment": 1, "duplicate": 2, "wrong_payee": 3}
+
+
+def governor_url() -> Optional[str]:
+    """The separate governor service (apagent/governor_service.py), if one is configured."""
+    u = os.environ.get("GOVERNOR_URL", "").strip()
+    return u.rstrip("/") or None
+
+
+def _governor_headers() -> dict:
+    t = os.environ.get("GOVERNOR_TOKEN", "")
+    return {"x-governor-token": t} if t else {}
 
 
 class Agent:
@@ -146,7 +158,13 @@ class Agent:
         tx = None
         if self.chain:
             cs = self.chain.state()
-            self.gov.sign(d, bill_id, bill.supplier_id, cs["settings_id"], ih)
+            refused = self._gov_sign(d, bill, cs["settings_id"], ih)
+            if refused:
+                self.log.add("governor", "refused", {"reason": refused}, bill_id=bill_id, plan_id=plan_id,
+                             decision="T2", security=True)
+                bill.status, bill.tier = "held", "T2"
+                bill.reasons = bill.reasons + [f"The governor refused to co-sign: {refused}"]
+                return {"bill": bill_id, "tier": "T2", "reasons": bill.reasons, "governor": refused}
             tx = self.chain.pay_autonomous(bill_id, bill.supplier_id, d.amount, d.settings_id, d.expiry, ih, d.signature)
             if not tx.ok:
                 self.log.add("contract", "revert", {"error": tx.error}, bill_id=bill_id, plan_id=plan_id,
@@ -164,6 +182,27 @@ class Agent:
                                                      "premium": d.premium}, bill_id=bill_id, plan_id=plan_id,
                      input_hash="0x" + ih.hex(), decision="paid", tx_hash=bill.tx_hash)
         return {"bill": bill_id, "tier": "T1", "amount": d.amount, "tx": self._tx(tx) if tx else None}
+
+    def _gov_sign(self, d, bill: Bill, settings_id: int, ih: bytes) -> Optional[str]:
+        """Get the governor's co-signature. With GOVERNOR_URL set, the separate governor service re-checks the bill
+        and signs (spec X5); this process never holds the governor key. Otherwise sign locally (scripted runs).
+        Returns the reason if the governor refused."""
+        url = governor_url()
+        if not url:
+            self.gov.sign(d, bill.bill_id, bill.supplier_id, settings_id, ih)
+            return None
+        import httpx
+        body = {"bill_id": bill.bill_id, "read": asdict(bill.read), "source": bill.source, "amount_usd": d.amount,
+                "settings_id": settings_id, "input_hash": "0x" + ih.hex().removeprefix("0x"), "today": self.led.today}
+        try:
+            r = httpx.post(f"{url}/sign", json=body, timeout=60, headers=_governor_headers())
+        except httpx.HTTPError as e:
+            return f"governor service unreachable ({type(e).__name__})"
+        if r.status_code != 200:
+            return (r.json().get("detail") if r.headers.get("content-type", "").startswith("application/json") else r.text)[:300]
+        out = r.json()
+        d.settings_id, d.expiry, d.signature = out["settings_id"], out["expiry"], bytes.fromhex(out["signature"][2:])
+        return None
 
     def approval_amount(self, bill_id: str, amount: Optional[float] = None) -> float:
         """The amount a T2 approval pays: the proposed resolution, or an edited amount, never above erp_bound."""
@@ -447,6 +486,13 @@ class Agent:
             ell = amount / bill.amount_usd if bill.amount_usd else 0.0
             before = self.gov.cutoff(bill.group)
             self.gov.outcome(bill.group, ell)
+            if governor_url():  # the separate governor tightens too
+                import httpx
+                try:
+                    httpx.post(f"{governor_url()}/outcome", json={"supplier_id": c.supplier_id, "group": bill.group,
+                                                                  "loss_ratio": ell}, timeout=30, headers=_governor_headers())
+                except httpx.HTTPError as e:
+                    self.log.add("system", "governor_outcome_failed", {"error": type(e).__name__}, security=True)
             out["cutoff"] = {"group": bill.group, "before": round(before, 4), "after": round(self.gov.cutoff(bill.group), 4)}
             self.log.add("governor", "cutoff_drop", out["cutoff"])
             if self._claim_needed(bill):

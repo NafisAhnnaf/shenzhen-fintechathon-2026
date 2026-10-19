@@ -139,11 +139,11 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | ID | Feature | Status | Code | Test |
 | --- | --- | --- | --- | --- |
 | X1 | Freeze, pause, circuit breaker, cool-down on new payees | Built | vault, `agent.py` | tasks 6, 9, 10, 14 |
-| X2 | Sign-in with the wallet; the server checks the role on every request; CORS limited to the app | To build | `api.py` | |
-| X3 | Owner transactions checked by function and arguments; a transaction hash is accepted once | To build | `chain.verify_sent` | |
-| X4 | State guards: paid and rejected bills are final; ledger state read from the chain | To build | `agent.py` | |
-| X5 | Governor as a separate service with its own key | To build | `governor_service.py` | |
-| X6 | Independent arbiter key | To build | `deploy.js` | |
+| X2 | Sign-in with the wallet; the server checks the role on every request; CORS limited to the app | Built | `auth.py`, `api.py` | `test_api.py` |
+| X3 | Owner transactions checked by function and arguments; a transaction hash is accepted once | Built | `chain.verify_sent`, `agent._verify_once` | `test_api.py` |
+| X4 | State guards: paid and rejected bills are final; consistency check covers payees and settings | Built | `agent.reject`, `session.consistency` | `test_api.py` |
+| X5 | Governor as a separate service with its own key; re-checks every bill before signing | Built | `governor_service.py` | `test_governor_service.py` |
+| X6 | Independent arbiter key | Built | `deploy.js` | deploy refuses owner, bank or agent |
 | X7 | Supplier onboarding and bank change: call-back checklist, owner signs, cool-down | To build | | |
 | X8 | Try-your-own attack: type any invoice text and send it to both agents | To build | | |
 

@@ -32,7 +32,11 @@ SERVICE_ROLES = {"agent", "governor", "underwriter"}
 
 
 def held_roles(signing: str) -> Optional[set]:
-    return None if signing == "server" else SERVICE_ROLES
+    """With a separate governor service (GOVERNOR_URL), this process does not hold the governor key either."""
+    if signing == "server":
+        return None
+    from .agent import governor_url
+    return SERVICE_ROLES - {"governor"} if governor_url() else SERVICE_ROLES
 
 
 def ledger_for(erp: ErpAdapter) -> Ledger:
@@ -262,6 +266,13 @@ def reset(network: str = "localhost", log_path: Optional[Path] = None, allow_tes
     if log_path and log_path.exists():
         log_path.rename(log_path.with_suffix(f".{int(time.time())}.jsonl"))
     s = Session(network, log_path=log_path, signing=signing, erp=erp)
+    from .agent import _governor_headers, governor_url
+    if governor_url():  # the governor service starts again from the company records, too
+        import httpx
+        try:
+            httpx.post(f"{governor_url()}/reset", timeout=60, headers=_governor_headers())
+        except httpx.HTTPError:
+            pass
     if network in ("localhost", "fisco"):
         s.chain.advance(s.chain.cool_down + 1)  # payee cool-down (on FISCO this waits)
     s.save()
