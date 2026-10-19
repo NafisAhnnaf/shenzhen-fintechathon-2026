@@ -32,3 +32,14 @@ def test_all_scripted_tasks_pass():
         day()
     failed = [(e.task, e.error) for e in r.out if not e.ok]
     assert not failed, failed
+
+
+def test_malformed_signature_is_refused_not_crashed():
+    """A garbage EIP-712 signature recovers to nobody, so approval is refused with a message, never a server error."""
+    from apagent.chain import Chain
+    try:
+        ch = Chain("localhost")
+    except Exception:
+        import pytest
+        pytest.skip("local chain not running")
+    assert ch.recover(ch._pay_msg("B-1", "ACME", 1.0, 1), b"\x00" * 65) == ""

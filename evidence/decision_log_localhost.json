@@ -1,6 +1,6 @@
 [
  {
-  "ts": 1792306000.844938,
+  "ts": 1792384236.2175019,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -17,7 +17,7 @@
   "security": false
  },
  {
-  "ts": 1792306000.84563,
+  "ts": 1792384236.218276,
   "actor": "agent",
   "kind": "injection_flag",
   "detail": {
@@ -33,7 +33,7 @@
   "security": true
  },
  {
-  "ts": 1792306000.8551471,
+  "ts": 1792384236.228786,
   "actor": "agent",
   "kind": "freeze_payee",
   "detail": {
@@ -45,11 +45,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "frozen",
-  "tx_hash": "0xc5e3de3665871fa0fa52ab4105e6ed3e66bfc5f6a8a6a267679ee7297e234b78",
+  "tx_hash": "0x26ab55c4dc765d71c1bd5f151be1ae9ee02e27bf91835a4b361770cac9f1383e",
   "security": true
  },
  {
-  "ts": 1792306000.855154,
+  "ts": 1792384236.228796,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -66,7 +66,7 @@
   "security": false
  },
  {
-  "ts": 1792306000.880387,
+  "ts": 1792384236.256356,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -88,7 +88,7 @@
   "security": false
  },
  {
-  "ts": 1792306000.880414,
+  "ts": 1792384236.256393,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -104,7 +104,7 @@
   "security": true
  },
  {
-  "ts": 1792306000.917739,
+  "ts": 1792384236.298833,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -121,7 +121,7 @@
   "security": false
  },
  {
-  "ts": 1792306000.9474251,
+  "ts": 1792384236.332674,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -143,7 +143,7 @@
   "security": false
  },
  {
-  "ts": 1792306000.985748,
+  "ts": 1792384236.3755121,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -159,7 +159,7 @@
   "security": false
  },
  {
-  "ts": 1792306000.985755,
+  "ts": 1792384236.37552,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -172,11 +172,11 @@
   "input_hash": "0x584448df1e55021d9284d987748176e7dae4b1b517b81845aafc8c59d39b03ef",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x5a7d41465e5b6f93472956357fa7def52c074b33ba19d76dcdcd86e46b7870b6",
+  "tx_hash": "0xd750ec3e7979a40fe77d2efdf8d76315bab42035b32976056e37e054b8107254",
   "security": false
  },
  {
-  "ts": 1792306000.9883509,
+  "ts": 1792384236.379044,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -193,7 +193,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.018647,
+  "ts": 1792384236.410989,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -215,7 +215,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.05649,
+  "ts": 1792384236.453002,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -231,7 +231,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.0564952,
+  "ts": 1792384236.4530098,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -244,11 +244,11 @@
   "input_hash": "0xa1aa5b4469eed0a3ccaf8464250e2b21acb979ead37b720168acdb8bd987016c",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xfc0c75df096b63fa1f31c832f0b482909b87ac3bdfafd476690d8f16880a5264",
+  "tx_hash": "0xdc25fee20c8402aed5a771fa20fa87fe0788d295a6699e7bc8026bbe2c4f3235",
   "security": false
  },
  {
-  "ts": 1792306001.05666,
+  "ts": 1792384236.4533849,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -265,7 +265,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.0831392,
+  "ts": 1792384236.4822268,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -287,7 +287,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.083356,
+  "ts": 1792384236.482721,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -304,7 +304,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.114431,
+  "ts": 1792384236.518047,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -326,7 +326,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.1148338,
+  "ts": 1792384236.518454,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -343,7 +343,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.144723,
+  "ts": 1792384236.551421,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -365,7 +365,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.18287,
+  "ts": 1792384236.594365,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -381,7 +381,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.1828742,
+  "ts": 1792384236.594372,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -394,11 +394,11 @@
   "input_hash": "0x73c2d5067dca7009a8f2d7d384357cf49a6ebebd9a7f537ada5595496b6994df",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x4eb518b51414c48d142381532babcb83cb5c8e948b1695ac94b40b38b7fa3e15",
+  "tx_hash": "0x47cd771c254b7ffd1d7e34be82298209fc36ff66a11b48b8ce5e8988cc981822",
   "security": false
  },
  {
-  "ts": 1792306001.185109,
+  "ts": 1792384236.596834,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -415,7 +415,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.2152882,
+  "ts": 1792384236.6295922,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -437,7 +437,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.255046,
+  "ts": 1792384236.672149,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -453,7 +453,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.255052,
+  "ts": 1792384236.6721559,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -466,11 +466,11 @@
   "input_hash": "0xcc1cd2af2c3ac2c2f82b4ad3165c501b121665afd01ab52defe3c1ff753c526f",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x35983e0e1f50326bd9e61884cf87439d060458c2188028c57bf0f91072353111",
+  "tx_hash": "0x2a0c515d8680d0be60d6933479af4a74ca3e4fbeee804b26b1a859532b345e03",
   "security": false
  },
  {
-  "ts": 1792306001.255701,
+  "ts": 1792384236.672982,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -487,7 +487,7 @@
    "paid": 4017.6,
    "owed": 2872.58,
    "tier": "T1",
-   "tx_hash": "0x35983e0e1f50326bd9e61884cf87439d060458c2188028c57bf0f91072353111"
+   "tx_hash": "0x2a0c515d8680d0be60d6933479af4a74ca3e4fbeee804b26b1a859532b345e03"
   },
   "plan_id": null,
   "bill_id": null,
@@ -498,7 +498,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.255703,
+  "ts": 1792384236.6729841,
   "actor": "agent",
   "kind": "reconcile",
   "detail": {
@@ -517,7 +517,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.267988,
+  "ts": 1792384236.686435,
   "actor": "contract",
   "kind": "open_receivable",
   "detail": {
@@ -528,11 +528,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xbb891de0b34a5a00e2422bf2d874a71c3152ae9acf003f1f71bb929c16bde1c2",
+  "tx_hash": "0xca4aa6cd94280c1757bb37c1d36182354c37fb659fa05c1c5a1359ab3775428c",
   "security": false
  },
  {
-  "ts": 1792306001.26799,
+  "ts": 1792384236.6864378,
   "actor": "finance_manager",
   "kind": "case_confirm",
   "detail": {
@@ -548,7 +548,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.2680042,
+  "ts": 1792384236.686456,
   "actor": "governor",
   "kind": "cutoff_drop",
   "detail": {
@@ -565,7 +565,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.3057659,
+  "ts": 1792384236.728483,
   "actor": "agent",
   "kind": "file_claim",
   "detail": {
@@ -578,11 +578,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "filed",
-  "tx_hash": "0x2ee5bbaabee8e56dd2f3a0b19972187b2d1b45e96dbe1448c84cbc51c7f7b702",
+  "tx_hash": "0x0d7ece21ddb4b3f8073ca4e0bfd192eb4bdcbd16d1f11cb73b2aba12c39f7638",
   "security": false
  },
  {
-  "ts": 1792306001.305771,
+  "ts": 1792384236.728493,
   "actor": "agent",
   "kind": "probation",
   "detail": {
@@ -599,7 +599,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.314689,
+  "ts": 1792384236.741226,
   "actor": "contract",
   "kind": "claim_paid",
   "detail": {},
@@ -608,11 +608,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xe441f51123d479475301b1d775bcbfdcd3c8fed2bac7e0c42afb9286d641102b",
+  "tx_hash": "0x2655f73b6782489ec099552dc36166b1a6fbd25889cf27844e39df889e0ad3c4",
   "security": false
  },
  {
-  "ts": 1792306001.340817,
+  "ts": 1792384236.7701602,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -629,7 +629,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.370649,
+  "ts": 1792384236.80302,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -652,7 +652,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.3956108,
+  "ts": 1792384236.829514,
   "actor": "agent",
   "kind": "record_offset",
   "detail": {
@@ -665,11 +665,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x55ad8337a312e3c179653dcc7eacc8c2302f62e673e157ce2ac2adbd541186f8",
+  "tx_hash": "0x72faed1c677918944d244e1d0f55cef00a98d4b11ef355569a2266de3ebb7333",
   "security": false
  },
  {
-  "ts": 1792306001.395735,
+  "ts": 1792384236.8296561,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -685,7 +685,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.3957372,
+  "ts": 1792384236.829659,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -700,7 +700,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.3957388,
+  "ts": 1792384236.829661,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -712,11 +712,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x960b28020ef6f108f556f30e66186b7fe7a6a68efbf82018df233f2adbdcd261",
+  "tx_hash": "0x5164b9973df26424f35ed89ce068154310bf68477c0789fa8d455d55f5a00771",
   "security": false
  },
  {
-  "ts": 1792306001.4220538,
+  "ts": 1792384236.85917,
   "actor": "agent",
   "kind": "message",
   "detail": {
@@ -733,7 +733,7 @@
   "security": true
  },
  {
-  "ts": 1792306001.430423,
+  "ts": 1792384236.8689332,
   "actor": "agent",
   "kind": "freeze_payee",
   "detail": {
@@ -745,11 +745,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "frozen",
-  "tx_hash": "0x51fd1ca7bee55450ca56877f430c97aa64ecd59bf2da3c786bfb21a223c20831",
+  "tx_hash": "0x03e82fc81b2b3df95f2eada41348325e9b7be647911a3fde5b2140aef314463a",
   "security": true
  },
  {
-  "ts": 1792306001.430431,
+  "ts": 1792384236.868942,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -766,7 +766,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.430687,
+  "ts": 1792384236.869515,
   "actor": "agent",
   "kind": "email_unknown_sender",
   "detail": {
@@ -782,7 +782,7 @@
   "security": true
  },
  {
-  "ts": 1792306001.509137,
+  "ts": 1792384236.954884,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -798,7 +798,7 @@
   "security": true
  },
  {
-  "ts": 1792306001.5091488,
+  "ts": 1792384236.954897,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -814,7 +814,7 @@
   "security": true
  },
  {
-  "ts": 1792306001.509154,
+  "ts": 1792384236.9549031,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -830,7 +830,7 @@
   "security": true
  },
  {
-  "ts": 1792306001.51749,
+  "ts": 1792384236.963965,
   "actor": "agent",
   "kind": "pause_self",
   "detail": {
@@ -841,11 +841,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paused",
-  "tx_hash": "0x6d08c6eb6d8d1adc58afa22f9c9cdf16dc9e9e05078eb8d57e74cb012ba6b982",
+  "tx_hash": "0x02323ed9cdc1fcf2b27fab3101b759b5786be92dc379945872cc69edf31cc02b",
   "security": true
  },
  {
-  "ts": 1792306001.544631,
+  "ts": 1792384236.9937449,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -862,7 +862,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.574798,
+  "ts": 1792384237.0295732,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -884,7 +884,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.5833101,
+  "ts": 1792384237.039343,
   "actor": "owner",
   "kind": "unpause",
   "detail": {},
@@ -893,11 +893,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xe939a8f66d8487f2051fc22a0cdc9511f019b663b95be54b992e0c607a406cb0",
+  "tx_hash": "0xbd2d3c831780bce674b37c96cc74d3209b1ab6691e3b419d60872df4f33568c5",
   "security": false
  },
  {
-  "ts": 1792306001.6094139,
+  "ts": 1792384237.071234,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -914,7 +914,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.609622,
+  "ts": 1792384237.0714529,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -931,7 +931,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.61025,
+  "ts": 1792384237.072116,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -948,7 +948,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.610357,
+  "ts": 1792384237.072314,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -965,7 +965,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.610359,
+  "ts": 1792384237.072319,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -980,7 +980,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.612771,
+  "ts": 1792384237.074959,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1001,11 +1001,11 @@
   "security": false
  },
  {
-  "ts": 1792306001.612799,
+  "ts": 1792384237.074991,
   "actor": "owner",
   "kind": "answer",
   "detail": {
-   "question": "QQ-06001",
+   "question": "QQ-84237",
    "choice": "ACME"
   },
   "plan_id": null,
@@ -1017,7 +1017,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.6431859,
+  "ts": 1792384237.108854,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1039,7 +1039,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.6733398,
+  "ts": 1792384237.1419299,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1061,7 +1061,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.70322,
+  "ts": 1792384237.174997,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1083,7 +1083,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.7333262,
+  "ts": 1792384237.208724,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1107,7 +1107,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.733485,
+  "ts": 1792384237.2089128,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1124,23 +1124,23 @@
   "security": false
  },
  {
-  "ts": 1792306001.7418802,
+  "ts": 1792384237.2188768,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 739595,
-   "root": "0x04a3642d80e5134c81f9d02a2ae806d950ad0c20447e39096e6cd9255c907353"
+   "root": "0x7fd09cde203718696be269b2a5a345e521504689d85a9a497edc570f7585d97a"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xa166b46e149cb0326aa3695fd16095ec189c1d05fa090598e48271220940fc1c",
+  "tx_hash": "0x1aa52aef4531226dbab0ac60ddd641db3537977c7fb3aee584bb435508114fef",
   "security": false
  },
  {
-  "ts": 1792306001.750494,
+  "ts": 1792384237.228792,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -1155,7 +1155,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.7517152,
+  "ts": 1792384237.230077,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1178,7 +1178,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.751918,
+  "ts": 1792384237.230365,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1195,7 +1195,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.751948,
+  "ts": 1792384237.2304,
   "actor": "owner",
   "kind": "plan_run",
   "detail": {
@@ -1211,7 +1211,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.7912629,
+  "ts": 1792384237.275071,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1227,7 +1227,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.791268,
+  "ts": 1792384237.275079,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1240,11 +1240,11 @@
   "input_hash": "0x516bd0717de415a93f66c901c2c19168b9bffff1f398db5cc8244d2a8d5e91ce",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x0d0449eb1c0eca00d64c89a0516a13e6112c662c0357799a4688f4e5c8642a66",
+  "tx_hash": "0xf1f99b0d5a2dd3fa1ea81a0e14551436726c360770870f9fbbe30e06c3587531",
   "security": false
  },
  {
-  "ts": 1792306001.7912729,
+  "ts": 1792384237.2750862,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1256,11 +1256,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x0d0449eb1c0eca00d64c89a0516a13e6112c662c0357799a4688f4e5c8642a66",
+  "tx_hash": "0xf1f99b0d5a2dd3fa1ea81a0e14551436726c360770870f9fbbe30e06c3587531",
   "security": false
  },
  {
-  "ts": 1792306001.83139,
+  "ts": 1792384237.319641,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1276,7 +1276,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.831394,
+  "ts": 1792384237.319647,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1289,11 +1289,11 @@
   "input_hash": "0xa9f74ed4a62d71b0e160185db19d2bc3964bd94bf6f9217067603a15b4ddd0f5",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xb286bf3ad43d0dddb4334c9f476e4fd615bf9acc0de620ec8a38f14a753b6c27",
+  "tx_hash": "0x5d41278010067cf93363d5386e4da82711bf5d1c0e2e3d024837b4243588a1f2",
   "security": false
  },
  {
-  "ts": 1792306001.831399,
+  "ts": 1792384237.319654,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1305,11 +1305,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xb286bf3ad43d0dddb4334c9f476e4fd615bf9acc0de620ec8a38f14a753b6c27",
+  "tx_hash": "0x5d41278010067cf93363d5386e4da82711bf5d1c0e2e3d024837b4243588a1f2",
   "security": false
  },
  {
-  "ts": 1792306001.871339,
+  "ts": 1792384237.370036,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1325,7 +1325,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.871344,
+  "ts": 1792384237.370042,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1338,11 +1338,11 @@
   "input_hash": "0x42c6bd90ded10b554727872d4ee5b01c9aa3b41f032616c326ffc7ca0b74b258",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x023e3bdcf61d199bafefb7a36c8d8e2b181395d8fe892862630693774815bf90",
+  "tx_hash": "0x28b74d7a8fc1019a74093c23a81688b8b719a9d11c919776589cbea523c89b02",
   "security": false
  },
  {
-  "ts": 1792306001.871349,
+  "ts": 1792384237.370047,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1354,11 +1354,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x023e3bdcf61d199bafefb7a36c8d8e2b181395d8fe892862630693774815bf90",
+  "tx_hash": "0x28b74d7a8fc1019a74093c23a81688b8b719a9d11c919776589cbea523c89b02",
   "security": false
  },
  {
-  "ts": 1792306001.905291,
+  "ts": 1792384237.403898,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1382,7 +1382,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.905312,
+  "ts": 1792384237.403921,
   "actor": "agent",
   "kind": "draft_query",
   "detail": {
@@ -1398,7 +1398,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.905324,
+  "ts": 1792384237.403938,
   "actor": "finance_manager",
   "kind": "send_query",
   "detail": {
@@ -1414,7 +1414,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.9060538,
+  "ts": 1792384237.40466,
   "actor": "agent",
   "kind": "reply",
   "detail": {
@@ -1435,7 +1435,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.921904,
+  "ts": 1792384237.421375,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1451,7 +1451,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.921908,
+  "ts": 1792384237.421379,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -1466,7 +1466,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.921909,
+  "ts": 1792384237.4213812,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -1478,11 +1478,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x63a85f1b679db9433cdca53f737b21137caaf55b900a6ee11d75675f5cbe0f9d",
+  "tx_hash": "0x517bdce9aca2a0c5f0671cf5f63a93251b922be88a2d293b221f129e1ae853c9",
   "security": false
  },
  {
-  "ts": 1792306001.921927,
+  "ts": 1792384237.421399,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -1497,7 +1497,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.922709,
+  "ts": 1792384237.422223,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1520,7 +1520,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.9494662,
+  "ts": 1792384237.451127,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1537,7 +1537,7 @@
   "security": false
  },
  {
-  "ts": 1792306001.9593952,
+  "ts": 1792384237.4619882,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1552,11 +1552,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x246b09de5468b6c6d464a49e0d7568b46bb023d28558118bf09fbb77d3e01867",
+  "tx_hash": "0x65a58681b720caf08a8b750a1ad9cb59bcd2bd5cbad5615072dd167f920ebc67",
   "security": false
  },
  {
-  "ts": 1792306001.993856,
+  "ts": 1792384237.50288,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1573,7 +1573,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.056302,
+  "ts": 1792384237.5738728,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1588,11 +1588,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xabfb79e7ecb5d71dfeb7b7ccb0899227548aabec5c99c94da03f82ffcd82e607",
+  "tx_hash": "0x74381e6d7e8e0974b60f6ed987189211adb7f26d762c40ddafb22996b0262f02",
   "security": false
  },
  {
-  "ts": 1792306002.082471,
+  "ts": 1792384237.601886,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1609,7 +1609,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.082855,
+  "ts": 1792384237.602345,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1626,7 +1626,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.112967,
+  "ts": 1792384237.634805,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1648,7 +1648,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.150992,
+  "ts": 1792384237.676898,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1664,7 +1664,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.150997,
+  "ts": 1792384237.676904,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1677,11 +1677,11 @@
   "input_hash": "0xb7013bceda1c3281e50bba97967bb2dc4fc51ef9a1b67cc86e3da0fbabd1ce4e",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x6c76cdeab9c4c9b7656e23bd3863d1c6525bf13f615d76581db4faed9befd951",
+  "tx_hash": "0x695fd1a5476ea67854ff83a2be7d1f19dda540b9076440ccda85e77ee3410181",
   "security": false
  },
  {
-  "ts": 1792306002.189758,
+  "ts": 1792384237.731266,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1696,11 +1696,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x348b54994a80741da4b4008a0354ea31e8f4ac703a4d0f9cf0fd652c9bf461f6",
+  "tx_hash": "0x48a51ef6be111e44c0110dbb2f3fb3f4da73fb2b1b6dfb449776b0d612d130cf",
   "security": false
  },
  {
-  "ts": 1792306002.2246342,
+  "ts": 1792384237.7729259,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1717,23 +1717,23 @@
   "security": false
  },
  {
-  "ts": 1792306002.2336798,
+  "ts": 1792384237.7832289,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 739596,
-   "root": "0x1dec417e7ba9864f98cfcfb38331cb04707fb5199b1a2fb02687c0977916f497"
+   "root": "0xe397f11ec7fbd33e669efc83b7fc9f10d0b1de210a262d107da7de9b79180e24"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x7dbbed49f38bdd06983f2f37245036fc2fbd47e04101aa9e6baa9332fae7585a",
+  "tx_hash": "0x4fafbcd395f85cdc4c471ef726ed0d9a9a1272cb949191267d4cc02feff54e94",
   "security": false
  },
  {
-  "ts": 1792306002.234668,
+  "ts": 1792384237.784459,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1750,7 +1750,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.264949,
+  "ts": 1792384237.819981,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1772,7 +1772,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.3034072,
+  "ts": 1792384237.862009,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1788,7 +1788,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.303411,
+  "ts": 1792384237.862014,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1801,11 +1801,11 @@
   "input_hash": "0xabaef20d249f57791ea28f3fa05f569bb7fad376b688b62d5b3045579d6cb0b8",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x43b3a3df7091d65c9c1231b81ed82fbb539a5ee7855ec6949d2e93564474ce08",
+  "tx_hash": "0x5f82e7ed15708c97dc7cbf518d290e7b8b3aebc1ee072d2ac2006f3d4ef4bf5e",
   "security": false
  },
  {
-  "ts": 1792306002.303551,
+  "ts": 1792384237.863264,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1822,7 +1822,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.333982,
+  "ts": 1792384237.896008,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1844,7 +1844,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.3722482,
+  "ts": 1792384237.937751,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1860,7 +1860,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.372252,
+  "ts": 1792384237.937757,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1873,11 +1873,11 @@
   "input_hash": "0xfa656071e011f1404040edd985ebcb677af5d8f2d7a182bcd7936427ae81c846",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x5d4d068666a23671a2f1e0769531feefd71dfc9292a1a9a3e3f92f5a0ad0865e",
+  "tx_hash": "0x50d5a756ab728ff2b0859dbf99b8e3f69d0586fa4442e49075475b2be3f21aeb",
   "security": false
  },
  {
-  "ts": 1792306002.372399,
+  "ts": 1792384237.938105,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1894,7 +1894,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.4027011,
+  "ts": 1792384237.970701,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1916,7 +1916,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.402891,
+  "ts": 1792384237.971172,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1933,7 +1933,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.432543,
+  "ts": 1792384238.004031,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1955,7 +1955,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.432748,
+  "ts": 1792384238.0043762,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1972,7 +1972,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.46276,
+  "ts": 1792384238.038474,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1994,7 +1994,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.463111,
+  "ts": 1792384238.0388029,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2011,7 +2011,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.492958,
+  "ts": 1792384238.073008,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2033,7 +2033,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.493163,
+  "ts": 1792384238.0733252,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2050,7 +2050,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.52271,
+  "ts": 1792384238.105977,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2072,7 +2072,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.5228758,
+  "ts": 1792384238.106308,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2089,7 +2089,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.552654,
+  "ts": 1792384238.14029,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2111,7 +2111,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.5528471,
+  "ts": 1792384238.140644,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2128,7 +2128,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.58227,
+  "ts": 1792384238.173305,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2150,7 +2150,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.582437,
+  "ts": 1792384238.173619,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2167,7 +2167,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.61158,
+  "ts": 1792384238.20557,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2189,23 +2189,23 @@
   "security": false
  },
  {
-  "ts": 1792306002.658703,
+  "ts": 1792384238.2574341,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 739597,
-   "root": "0xbfecb6490c20b6f4106ad8fdbfbcc03ba6111be793af5e1d6f5a9e838317d66c"
+   "root": "0x2b256431f5daa70aa2bc353b199774ca3ceb40cdbce602cc00f65d9a2ff2474d"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xfa936eb1ae9c1a32350a55b04ddf43aec8b47a327dc3c3093602fca86640de5a",
+  "tx_hash": "0x47ff0ac5a15711d9b526041be46722bd7fee9ef95c6d78c0c15ecb35b1f7f458",
   "security": false
  },
  {
-  "ts": 1792306002.66047,
+  "ts": 1792384238.258832,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2222,7 +2222,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.6606588,
+  "ts": 1792384238.259084,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2239,7 +2239,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.661224,
+  "ts": 1792384238.259893,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2256,7 +2256,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.6612391,
+  "ts": 1792384238.2598982,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -2271,7 +2271,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.662171,
+  "ts": 1792384238.26082,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -2294,7 +2294,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.692441,
+  "ts": 1792384238.2941172,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2316,7 +2316,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.7218292,
+  "ts": 1792384238.326388,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2338,7 +2338,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.7514539,
+  "ts": 1792384238.362408,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2360,7 +2360,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.780997,
+  "ts": 1792384238.3950841,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2382,7 +2382,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.781009,
+  "ts": 1792384238.3950999,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -2399,7 +2399,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.781049,
+  "ts": 1792384238.3951402,
   "actor": "owner",
   "kind": "plan_run",
   "detail": {
@@ -2415,7 +2415,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.820534,
+  "ts": 1792384238.43805,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -2431,7 +2431,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.820538,
+  "ts": 1792384238.438057,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -2444,11 +2444,11 @@
   "input_hash": "0x4c8892f36acf15b938360d5eca53d840f88d6cf324e10ca3189c19a45f458919",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x93291eeb5b193b31c60c9da3e98503ab6f2184e0907f95d45e12a4919cf85006",
+  "tx_hash": "0xacfcd5a44d632d45ccbd08766d2a8f48a0871ff140801fbaa5af121b4aab96d9",
   "security": false
  },
  {
-  "ts": 1792306002.820543,
+  "ts": 1792384238.438064,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -2460,11 +2460,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x93291eeb5b193b31c60c9da3e98503ab6f2184e0907f95d45e12a4919cf85006",
+  "tx_hash": "0xacfcd5a44d632d45ccbd08766d2a8f48a0871ff140801fbaa5af121b4aab96d9",
   "security": false
  },
  {
-  "ts": 1792306002.859692,
+  "ts": 1792384238.481174,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -2480,7 +2480,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.8596969,
+  "ts": 1792384238.481181,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -2493,11 +2493,11 @@
   "input_hash": "0x43904e2d3a3a135097151965944f96e02f583101b869d7a905be2261b307055e",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xc2003e312761cb0cd3afee685a2b0bc947905bc691f36d2af541ad91885d7a2a",
+  "tx_hash": "0xbed69dd7afcdbe0127c927d386660bc68a104364c4ffd897b63baf5d689f0994",
   "security": false
  },
  {
-  "ts": 1792306002.859702,
+  "ts": 1792384238.481187,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -2509,11 +2509,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xc2003e312761cb0cd3afee685a2b0bc947905bc691f36d2af541ad91885d7a2a",
+  "tx_hash": "0xbed69dd7afcdbe0127c927d386660bc68a104364c4ffd897b63baf5d689f0994",
   "security": false
  },
  {
-  "ts": 1792306002.8597069,
+  "ts": 1792384238.4811919,
   "actor": "owner",
   "kind": "plan_cancel",
   "detail": {
@@ -2528,7 +2528,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.860042,
+  "ts": 1792384238.481473,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2545,7 +2545,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.889993,
+  "ts": 1792384238.515379,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2567,7 +2567,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.955977,
+  "ts": 1792384238.587036,
   "actor": "contract",
   "kind": "revert",
   "detail": {
@@ -2582,7 +2582,7 @@
   "security": true
  },
  {
-  "ts": 1792306002.97084,
+  "ts": 1792384238.602583,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -2598,7 +2598,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.9708421,
+  "ts": 1792384238.602586,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -2613,7 +2613,7 @@
   "security": false
  },
  {
-  "ts": 1792306002.9708428,
+  "ts": 1792384238.602588,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -2625,23 +2625,23 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x908236ee70a0927d43bde68d9c587fb6c15780666ec142ea5fbc6d4d6d157f6e",
+  "tx_hash": "0xcc2bd1e6e4218eb46c970ff42cf13de32207def681a47ec89d08c0ea7fc238c5",
   "security": false
  },
  {
-  "ts": 1792306002.997992,
+  "ts": 1792384238.631975,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
-   "day": 20765,
-   "root": "0x3cd7aca68d1527de5393ab049d84f940f1b71dff1281133626accfabec778d34"
+   "day": 20766,
+   "root": "0x67a1ff4df40ac4925b7431af4110823d1ced34f2abc3a76d5cd06011bde23d0b"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x9d077552a7bad10120fb36a124cfb08c052ff75ea787021cc6970b2664990fc0",
+  "tx_hash": "0xa9cec6fbefe5e45d9420541e885290ef3677794cd00d1aad2b0f458873590b2a",
   "security": false
  }
 ]

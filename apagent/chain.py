@@ -241,7 +241,10 @@ class Chain:
         types = {primary: [{"name": n, "type": t} for n, t in fields]}
         from eth_account.messages import encode_typed_data
         msg = encode_typed_data(self._domain(contract), types, message)
-        return Account.recover_message(msg, signature=signature)
+        try:
+            return Account.recover_message(msg, signature=signature)
+        except Exception:  # malformed signature: treat as signed by nobody, so callers refuse it cleanly
+            return ""
 
     def role_address(self, role: str) -> str:
         """On-chain address for a role (from the deployment), whether or not this process holds its key."""
