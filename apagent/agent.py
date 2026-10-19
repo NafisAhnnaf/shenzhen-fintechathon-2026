@@ -13,7 +13,7 @@ from dataclasses import asdict
 from datetime import date, timedelta
 from typing import Optional
 
-from . import checker, injection, mail, policies
+from . import budgets, checker, injection, mail, policies
 from .audit import AuditLog, input_hash
 from .chain import Chain
 from .config import SETTINGS, Settings
@@ -129,6 +129,9 @@ class Agent:
             self._alert_bank_change(res.supplier.id, bill_id)
 
         d = self.gov.decide(self.led, bill, res, inj["p"], self.led.today, self._chain_state())
+        over = budgets.check(self.led, self.budgets, bill, d.amount) if d.tier == "T1" else None
+        if over:  # spec D5: a budget only adds scrutiny
+            d.tier, d.reasons = "T2", [f"Over budget: {over}"]
         self.decisions[bill_id] = d
         bill.tier, bill.score, bill.reasons = d.tier, d.score, d.reasons
         self.log.add("governor", "decision", {"tier": d.tier, "score": d.score, "cutoff": d.cutoff, "group": d.group,
@@ -453,6 +456,21 @@ class Agent:
         return {"supplier": supplier_id, "active_at": p.get("active_at"), "frozen": p.get("frozen"),
                 "tx": self._tx(tx) if tx else None}
 
+    # ================================================================== budgets (D5)
+    @property
+    def budgets(self) -> dict:
+        return self.__dict__.setdefault("_budgets", {})
+
+    def set_budget(self, centre: str, usd: Optional[float], actor: str = "owner") -> dict:
+        if usd is None:
+            self.budgets.pop(centre, None)
+        else:
+            if usd < 0:
+                raise ValueError("a budget cannot be negative")
+            self.budgets[centre] = round(float(usd), 2)
+        self.log.add(actor, "budget_set", {"centre": centre, "monthly_usd": usd})
+        return {"centre": centre, "monthly_usd": usd}
+
     # ================================================================== market watch: draft purchase orders (C10)
     def draft_po(self, item: str, option: str, months: int = 2, actor: str = "owner") -> dict:
         """A buy-ahead suggestion turned into a draft purchase order (T0: a person places it in the ERP). The
@@ -569,7 +587,7 @@ class Agent:
         cid = f"C-{len(self.led.cases) + 1:04d}"
         c = Case(cid, kind, supplier_id, "open", detail, self.led.today)
         self.led.cases[cid] = c
-        self.log.add("agent", "case_open", {"kind": kind, **detail}, decision="open")
+        self.log.add("agent", "case_open", {"kind": kind, "case": cid, **detail}, decision="open")
         return c
 
     def reconcile(self, supplier_id: str, statement: list[dict]) -> list[Case]:

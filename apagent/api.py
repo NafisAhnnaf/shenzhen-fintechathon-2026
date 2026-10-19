@@ -866,6 +866,33 @@ class DraftPO(BaseModel):
     months: int = 2
 
 
+class BudgetBody(BaseModel):
+    centre: str
+    monthly_usd: Optional[float] = None
+
+
+@app.get("/api/budgets", dependencies=[ANY])
+def budgets_view(month: Optional[str] = None):
+    from . import budgets
+    s = S()
+    with _lock:
+        return _ok({"month": month or s.led.today[:7], "rows": budgets.overview(s.led, s.agent.budgets, month)})
+
+
+@app.post("/api/budgets", dependencies=[OWNER])
+@mutating
+def set_budget(body: BudgetBody):
+    """Set (or clear, with no amount) a cost centre's monthly budget (spec D5)."""
+    return S().agent.set_budget(body.centre, body.monthly_usd)
+
+
+@app.get("/api/notifications")
+def notifications(u: A.User = ANY):
+    from . import views
+    with _lock:
+        return _ok(views.notifications(S(), u.role))
+
+
 @app.get("/api/market-watch", dependencies=[ANY])
 def market_watch():
     """Spec C10: a 90% price range per indexed material, alert signals, and a buy-ahead comparison on alert."""

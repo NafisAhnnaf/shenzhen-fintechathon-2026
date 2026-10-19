@@ -132,3 +132,14 @@ def test_every_card_number_is_tagged(ledger, docs, calib):
     fp = ag.bill_card(ids[2])
     assert fp["fair_price"] and fp["tags"]["fair_price.index_now"]["sources"] == ["market"]
     assert "World Bank" in fp["tags"]["fair_price.index_now"]["label"]
+
+
+def test_budget_sends_a_bill_to_a_person(ledger, docs, calib):
+    """Spec D5: a bill that would take its cost centre over the monthly budget is not paid by the agent alone."""
+    ag = _agent(ledger, calib)
+    ag.set_budget("Consumables", 1000.0)  # Kai Tak's fasteners are consumables; the bill is $1,810.16
+    r = ag.process(ag.intake(demo.read_from_doc(docs["t01_routine"])).bill_id)
+    assert r["tier"] == "T2" and r["reasons"][0].startswith("Over budget: Consumables")
+    ag.set_budget("Consumables", None)
+    r = ag.process(ag.intake(demo.read_from_doc(docs["t13_net30"])).bill_id)
+    assert r["tier"] == "T1"

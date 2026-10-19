@@ -107,3 +107,22 @@ def test_mailbox_reads_bill_attachments_from_registered_suppliers_only(ledger, d
     assert good and good[0]["tier"] == "T1"
     assert bad and bad[0]["action"].startswith("ignored")
     assert s.poll_mailbox() == []  # each message is read once
+
+
+def test_notifications_from_the_journal_and_webhook(ledger, docs, calib, boxes, monkeypatch):
+    """Spec E8: a bill that needs a signature notifies the finance manager in the app and on the chat webhook."""
+    import threading
+
+    from apagent import notify, views
+
+    posted = []
+    monkeypatch.setenv("NOTIFY_WEBHOOK_URL", "https://chat.example/hook")
+    monkeypatch.setattr("httpx.post", lambda url, json=None, timeout=None: posted.append(json))
+    monkeypatch.setattr(threading, "Thread", lambda target, daemon=None: type("T", (), {"start": lambda self: target()})())
+    ag = Agent(ledger, calib, chain=None)
+    ag.process(ag.intake(demo.read_from_doc(docs["t16_fair_price"])).bill_id)
+    s = type("S", (), {"agent": ag})()
+    fm = views.notifications(s, "approver")
+    assert fm and "needs your signature" in fm[0]["text"] and fm[0]["for"] == "finance_manager"
+    assert views.notifications(s, "underwriter") == []
+    assert any("needs your signature" in p["text"]["content"] for p in posted)  # WeCom format by default

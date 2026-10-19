@@ -121,7 +121,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | D2 | Cut-offs by conformal risk control; reserve by betting bounds and Bernstein | Built | `risk/` | AC-8, CAPITAL |
 | D3 | Drift guard and supplier probation after a confirmed mistake | Built | `governor.outcome`, `agent.probation` | task 4 |
 | D4 | Two signatures above a threshold ($25,000 in the demo) for approved payments | Built | `PaymentVault.payApprovedDual`, `agent.cosign` | contract tests, `test_api.py` |
-| D5 | Budgets per cost centre | To build | | |
+| D5 | Monthly budgets per cost centre (from the material); over budget means the agent cannot pay alone | Built | `budgets.py` | `test_agent.py` |
 | D6 | Requests in plain words: intent, one question when unsure, plan, run | Built | `intent/` | tasks 19–21 |
 
 ### 5.4 Pay
@@ -169,7 +169,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | E5 | Month-end close pack | Built | `views.close_pack` | `test_api.py` |
 | E6 | Evidence on a public testnet (Base Sepolia) and FISCO BCOS | Needs keys | `tasks.py` | |
 | E7 | Bank console: pool, locks, premiums, claims to review; the bank approves settings from its own wallet | Built | `views.bank`, `session.held_roles` | `test_api.py`, `test_claims.py` |
-| E8 | Notifications when something needs a signature | To build | | |
+| E8 | Notifications when someone must act: in the app, and on a WeCom, Slack or Teams webhook | Built | `notify.py`, `views.notifications` | `test_mail.py` |
 
 Roadmap (not in this release): one agent serving several companies; CBDC rails such as e-HKD or mBridge;
 automatic buying from market watch.

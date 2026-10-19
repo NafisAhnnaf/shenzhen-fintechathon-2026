@@ -75,6 +75,8 @@ class AuditLog:
         if self.path:
             with self.path.open("a") as f:
                 f.write(json.dumps(asdict(line), default=str) + "\n")
+        from . import notify
+        notify.on_line(line)  # spec E8: a chat message when someone needs to act
         return line
 
     def security(self) -> list[LogLine]:

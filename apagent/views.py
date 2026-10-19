@@ -251,3 +251,21 @@ def supplier_rows(s) -> list[dict]:
 
 def first_of_month(d: str) -> str:
     return date.fromisoformat(d).replace(day=1).isoformat()
+
+
+# ------------------------------------------------------------------ notifications (E8)
+ROLE_FOR = {"owner": "owner", "approver": "finance_manager", "underwriter": "underwriter", "arbiter": "arbiter"}
+
+
+def notifications(s, role: Optional[str] = None, limit: int = 50) -> list[dict]:
+    """What needs someone, newest first, from the journal. The owner sees everything."""
+    from . import notify
+    me = ROLE_FOR.get(role or "", None)
+    out = []
+    for l in reversed(s.agent.log.lines):
+        m = notify.message(l)
+        if m and (role in (None, "owner", "*") or m["for"] == me):
+            out.append(m)
+        if len(out) >= limit:
+            break
+    return out
