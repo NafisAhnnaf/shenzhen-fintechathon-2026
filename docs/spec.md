@@ -57,7 +57,7 @@ Use these words, and only these, in code labels, UI, docs and the deck.
 | Fund or withdraw reserve | ✓ (self-reserve) | | | | ✓ (bonded) | | pool `fund` / `withdraw` |
 
 Keys: the owner, finance manager, bank and arbiter use their own wallets. The agent key is on the API server.
-The governor runs as a separate service with its own key (X5).
+The governor runs as a separate service with its own key (X5). The screens for each feature are listed in section 9.
 
 ## 4. Bill lifecycle
 
@@ -96,7 +96,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | R3 | Bill intake: e-invoice JSON, PDF and photo through the vision reader | Built | `intake.py`, `reader.py` | `test_intake.py` |
 | R4 | Mailbox: poll an IMAP inbox (or a drop folder) for bills (attachments) and supplier replies | Built | `mail.py`, `session.poll_mailbox` | `test_mail.py` |
 | R5 | Supplier statements (CSV/JSON) | Built | `intake.parse_statement` | task 4 |
-| R6 | Per-field reader confidence shown on the bill | To build | | |
+| R6 | Per-field reader confidence on the bill; low-confidence fields listed | Built | `agent.bill_card` | `test_api.py` |
 
 ### 5.2 Check
 
@@ -130,7 +130,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | --- | --- | --- | --- | --- |
 | P1 | Payments by agent and by finance manager through the vault | Built | `PaymentVault.sol`, `chain.py` | B1–B13 |
 | P2 | Bank rail for mainland payees | Built | `_send` | task 15 |
-| P3 | Pay-date planning (early-payment discounts, cash floor) with a schedule screen | Built (screen to build) | `agent.plan_dates` | task 13 |
+| P3 | Pay-date planning (early-payment discounts, cash floor); pay now or on the best date | Built | `agent.plan_dates`, `session.run_due` | task 13, `test_api.py` |
 | P4 | Early-payment offers to suppliers | To build | | |
 | P5 | Rolling 7-day supplier cap in the contract | To build | `_applyCaps` | |
 
@@ -144,8 +144,8 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | X4 | State guards: paid and rejected bills are final; consistency check covers payees and settings | Built | `agent.reject`, `session.consistency` | `test_api.py` |
 | X5 | Governor as a separate service with its own key; re-checks every bill before signing | Built | `governor_service.py` | `test_governor_service.py` |
 | X6 | Independent arbiter key | Built | `deploy.js` | deploy refuses owner, bank or agent |
-| X7 | Supplier onboarding and bank change: call-back checklist, owner signs, cool-down | To build | | |
-| X8 | Try-your-own attack: type any invoice text and send it to both agents | To build | | |
+| X7 | Supplier onboarding and bank change: call-back checklist, owner signs, cool-down restarts | Built | `agent.set_payee` | `test_api.py` |
+| X8 | Try-your-own attack: any text on a routine bill, given to both agents; ours pays nothing | Built | `session.try_attack` | `test_api.py` |
 
 ### 5.6 Resolve
 
@@ -154,9 +154,9 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | V1 | Supplier query and reply classification (credit note, bank-detail request, other) | Built | `agent.draft_query`, `receive_reply` | task 16 |
 | V2 | The agent sends emails itself: payment notices, price queries, duplicate notices, bank-change alerts (SMTP or outbox) | Built | `mail.py`, `agent.send_email` | `test_mail.py` |
 | V3 | Statement reconciliation, receivable, reserve claim, recovery from the next bill | Built | `agent.reconcile` … | tasks 4, 5 |
-| V4 | Claim dispute by the bank and decision by the arbiter | Built in contract (screens to build) | `BondPool.sol` | contract tests |
+| V4 | Claim dispute by the bank and decision by the arbiter, each from its own wallet | Built | `agent.bank_action`, `BondPool.sol` | `test_claims.py` |
 | V5 | Refund request drafted after a confirmed missed credit; the finance manager sends it | Built | `agent.confirm_case`, `release_email` | `test_mail.py` |
-| V6 | Disputes page with a timeline per case | To build | | |
+| V6 | Disputes with a timeline per case (cases, queries, claims, emails) | Built | `views.disputes` | `test_claims.py` |
 
 ### 5.7 Prove
 
@@ -164,11 +164,11 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | --- | --- | --- | --- | --- |
 | E1 | Journal: every action with its actor and transaction | Built | `audit.py` | |
 | E2 | Daily anchor of the journal's Merkle root | Built | `session.close_day` | task anchor |
-| E3 | Payments register: who paid, rail, transaction, filter by period and payer | To build | | |
-| E4 | Verify: Merkle proof of a journal line against its anchor | To build | | |
-| E5 | Month-end close pack | To build | | |
+| E3 | Payments register: who paid, rail, transaction, filter by period and payer, ERP history | Built | `views.payments` | `test_api.py` |
+| E4 | Verify: Merkle proof of a journal line against the root stored on-chain | Built | `audit.merkle_proof`, `views.verify` | `test_api.py` |
+| E5 | Month-end close pack | Built | `views.close_pack` | `test_api.py` |
 | E6 | Evidence on a public testnet (Base Sepolia) and FISCO BCOS | Needs keys | `tasks.py` | |
-| E7 | Bank console: exposure, premiums, settings approval, claim disputes | To build | | |
+| E7 | Bank console: pool, locks, premiums, claims to review; the bank approves settings from its own wallet | Built | `views.bank`, `session.held_roles` | `test_api.py`, `test_claims.py` |
 | E8 | Notifications when something needs a signature | To build | | |
 
 Roadmap (not in this release): one agent serving several companies; CBDC rails such as e-HKD or mBridge;

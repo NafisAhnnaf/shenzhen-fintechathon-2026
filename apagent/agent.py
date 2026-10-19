@@ -348,7 +348,7 @@ class Agent:
             return server_call(*args)
         return TxResult(False, None, "needs the owner's wallet")
 
-    def _verify_once(self, tx_hash: str, role: str, expect):
+    def _verify_once(self, tx_hash: str, role: str, expect, contract=None):
         """verify_sent, and accept each transaction hash only once, so an old transaction cannot be replayed."""
         from .chain import TxResult
         used = self.__dict__.setdefault("used_tx", set())
@@ -356,12 +356,96 @@ class Agent:
         if key in used:
             self.log.add("system", "tx_replay", {"tx": tx_hash, "role": role}, security=True)
             return TxResult(False, tx_hash, "this transaction was already used")
-        tx = self.chain.verify_sent(tx_hash, role, self.chain.vault, expect)
+        tx = self.chain.verify_sent(tx_hash, role, contract or self.chain.vault, expect)
         if not tx.ok:
             self.log.add("system", "bad_owner_tx", {"tx": tx_hash, "role": role, "error": tx.error}, security=True)
             return tx
         used.add(key)
         return tx
+
+    # ================================================================== suppliers: onboarding and bank change (X7)
+    RAIL = {"token": 0, "bank": 1}
+
+    def payee_tx_request(self, supplier_id: str, wallet: str, rail: str) -> dict:
+        """The owner's addPayee transaction. The payee becomes payable only after the cool-down."""
+        from web3 import Web3
+        from .chain import b32
+        w = Web3.to_checksum_address(wallet) if rail == "token" else "0x0000000000000000000000000000000000000000"
+        return {"tx": self.chain.prepare("owner", self.chain.vault.functions.addPayee(b32(supplier_id), w, self.RAIL[rail])),
+                "cool_down_s": self.chain.cool_down}
+
+    def set_payee(self, supplier_id: str, wallet: str, rail: str, callback: dict, tx_hash: Optional[str] = None,
+                  new: Optional[dict] = None) -> dict:
+        """Record a payee the owner added or changed from their wallet. A change to an existing supplier needs the
+        call-back done first: someone phoned the number already in the registry and the supplier confirmed."""
+        from web3 import Web3
+        from .chain import b32
+        from .domain import Supplier
+        existing = self.led.suppliers.get(supplier_id)
+        if existing and not (callback or {}).get("confirmed"):
+            return {"supplier": supplier_id, "error": "Do the call-back first: phone the number in the registry, not one from the message"}
+        if not existing and not new:
+            return {"supplier": supplier_id, "error": "A new supplier needs a name, tax ID, email domain and contact"}
+        w = Web3.to_checksum_address(wallet) if rail == "token" else "0x0000000000000000000000000000000000000000"
+        tx = None
+        if self.chain:
+            fn = self.chain.vault.functions.addPayee(b32(supplier_id), w, self.RAIL[rail])
+            tx = self._owner_tx(fn, tx_hash, lambda: self.chain.add_payee(supplier_id, w, self.RAIL[rail]))
+            if not tx.ok:
+                return {"supplier": supplier_id, "error": tx.error, "needs_signature": tx.error == "needs the owner's wallet"}
+        if existing:
+            existing.wallet, existing.rail = (w if rail == "token" else ""), rail
+        else:
+            self.led.suppliers[supplier_id] = Supplier(id=supplier_id, name=new["name"], tax_id=new["tax_id"],
+                                                       domain=new["domain"].lower(), contact=new["contact"], rail=rail,
+                                                       wallet=w if rail == "token" else "", since=self.led.today,
+                                                       probation_left=self.cfg.probation_bills)
+        for c in self.led.cases.values():
+            if c.supplier_id == supplier_id and c.kind == "bank_change" and c.status == "open":
+                c.status = "confirmed"
+                c.detail["callback"] = callback
+        self.log.add("owner", "payee_set", {"supplier": supplier_id, "rail": rail, "new": not existing,
+                                            "callback": callback}, tx_hash=tx.tx_hash if tx else None, security=True)
+        p = self.chain.payee(supplier_id) if self.chain else {}
+        return {"supplier": supplier_id, "active_at": p.get("active_at"), "frozen": p.get("frozen"),
+                "tx": self._tx(tx) if tx else None}
+
+    # ================================================================== bank and arbiter decisions on claims (V4)
+    def bank_tx_request(self, action: str, bill_id: Optional[str] = None, usd: Optional[float] = None) -> dict:
+        """Unsigned transactions for the bank's or the arbiter's wallet."""
+        from .chain import b32
+        from .config import usd_to_units
+        pf = self.chain.pool.functions
+        if action == "dispute":
+            return {"tx": self.chain.prepare("underwriter", pf.dispute(b32(bill_id)))}
+        if action == "resolve":
+            return {"tx": self.chain.prepare("arbiter", pf.resolve(b32(bill_id), usd_to_units(usd)))}
+        if action == "fund":
+            units = usd_to_units(usd)
+            return {"txs": [self.chain.prepare("underwriter", self.chain.token.functions.approve(self.chain.pool.address, units)),
+                            self.chain.prepare("underwriter", pf.fund(units))]}
+        if action == "unpause":
+            return {"tx": self.chain.prepare("underwriter", pf.unpause())}
+        raise ValueError(f"unknown action {action}")
+
+    def bank_action(self, action: str, tx_hash: str, bill_id: Optional[str] = None, usd: Optional[float] = None) -> dict:
+        """Record a claim dispute (bank), a decision (arbiter), a top-up or an unpause, after checking the transaction."""
+        from .chain import b32
+        from .config import usd_to_units
+        pf = self.chain.pool.functions
+        role, expect = {
+            "dispute": ("underwriter", lambda: pf.dispute(b32(bill_id))),
+            "resolve": ("arbiter", lambda: pf.resolve(b32(bill_id), usd_to_units(usd))),
+            "fund": ("underwriter", lambda: pf.fund(usd_to_units(usd))),
+            "unpause": ("underwriter", lambda: pf.unpause()),
+        }[action]
+        tx = self._verify_once(tx_hash, role, expect(), contract=self.chain.pool)
+        if not tx.ok:
+            return {"error": tx.error}
+        actor = "arbiter" if role == "arbiter" else "underwriter"
+        self.log.add(actor, f"claim_{action}" if bill_id else f"pool_{action}", {"amount": usd}, bill_id=bill_id,
+                     tx_hash=tx_hash)
+        return {"ok": True, "tx": self._tx(tx)}
 
     def owner_tx_request(self, action: str, **kw) -> dict:
         """Unsigned transaction for the owner's wallet: unpause, unfreeze, settings."""
@@ -856,10 +940,17 @@ class Agent:
 
     # ================================================================== anchoring
     def anchor_day(self, day: int) -> dict:
+        """Anchor the Merkle root of every journal line so far. The anchor records how many lines it covers, so
+        any one of them can later be proved against the on-chain root (spec E4)."""
+        n = len(self.log.lines)
         root = self.log.root()
         tx = self.chain.anchor_root(day, root) if self.chain else None
-        self.log.add("agent", "anchor", {"day": day, "root": "0x" + root.hex()}, tx_hash=tx.tx_hash if tx else None)
-        return {"root": "0x" + root.hex(), "tx": self._tx(tx) if tx else None}
+        if tx is None or tx.ok:
+            self.__dict__.setdefault("anchors", []).append({"day": day, "lines": n, "root": "0x" + root.hex(),
+                                                            "tx": tx.tx_hash if tx else None, "date": self.led.today})
+        self.log.add("agent", "anchor", {"day": day, "root": "0x" + root.hex(), "lines": n},
+                     tx_hash=tx.tx_hash if tx else None)
+        return {"root": "0x" + root.hex(), "lines": n, "tx": self._tx(tx) if tx else None}
 
     # ================================================================== views
     def bill_card(self, bill_id: str) -> dict:
@@ -880,7 +971,32 @@ class Agent:
         tags = self._card_tags(card)
         policies.check_card(card, tags)  # S5: an untagged number blocks the card
         card["tags"] = {k: t.to_json() for k, t in tags.items()}
+        from . import views
+        card.update(stage=views.stage(b), paid_by=views.paid_by(b), received=b.received, paid_on=b.paid_on,
+                    source=b.source, po=b.read.po_id, inv_date=b.read.date, currency=b.read.currency,
+                    hold_reason=b.hold_reason, plan_id=b.plan_id, match=self.three_way(b),
+                    confidence=b.read.confidence, low_confidence=sorted(k for k, v in b.read.confidence.items() if v < 0.9),
+                    queries=[q["id"] for q in self.queries.values() if q["bill"] == bill_id],
+                    emails=[e["id"] for e in self._emails() if e.get("bill") == bill_id],
+                    cases=[c.case_id for c in self.led.cases.values() if c.detail.get("bill") == bill_id])
         return card
+
+    def three_way(self, b: Bill) -> list[dict]:
+        """Invoice vs purchase order vs goods received, per invoice line (spec C1). Each figure names its source."""
+        po = self.led.pos.get(b.read.po_id)
+        rows = []
+        for l in b.read.lines:
+            pl = next((x for x in po.lines if x.item == l.item), None) if po else None
+            rec = self.led.received_qty(b.read.po_id, l.item) if po else None
+            before = self.led.billed_qty(b.read.po_id, l.item, exclude=b.bill_id) if po else None
+            rows.append({"item": l.item, "desc": l.desc, "unit": l.unit,
+                         "invoice": {"qty": l.qty, "price": l.price, "amount": l.amount, "source": "supplier_doc"},
+                         "order": {"qty": pl.qty, "price": pl.price, "source": "erp"} if pl else None,
+                         "received": {"qty": rec, "billed_before": before, "source": "erp"} if po else None,
+                         "qty_ok": bool(pl) and rec is not None and l.qty <= rec - (before or 0) + 1e-9,
+                         "price_ok": bool(pl) and abs(l.price - pl.price) <= pl.price * (self.led.suppliers[b.supplier_id].price_tolerance
+                                                                                         if b.supplier_id else 0.01) + 1e-9})
+        return rows
 
     def _card_tags(self, card: dict) -> dict[str, T]:
         """The source of every number a bill card shows (policy S5)."""

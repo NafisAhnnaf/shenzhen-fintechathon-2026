@@ -32,11 +32,19 @@ SERVICE_ROLES = {"agent", "governor", "underwriter"}
 
 
 def held_roles(signing: str) -> Optional[set]:
-    """With a separate governor service (GOVERNOR_URL), this process does not hold the governor key either."""
+    """Keys this process loads in SIGNING=client mode. The bank approves bonded settings and disputes claims from
+    its own wallet (UNDERWRITER_SERVICE=on keeps a server-side bank key for scripted demos). With a separate
+    governor service (GOVERNOR_URL), this process does not hold the governor key either."""
+    import os
     if signing == "server":
         return None
     from .agent import governor_url
-    return SERVICE_ROLES - {"governor"} if governor_url() else SERVICE_ROLES
+    roles = set(SERVICE_ROLES)
+    if os.environ.get("UNDERWRITER_SERVICE", "off").lower() not in ("on", "1", "true", "yes"):
+        roles.discard("underwriter")
+    if governor_url():
+        roles.discard("governor")
+    return roles
 
 
 def ledger_for(erp: ErpAdapter) -> Ledger:
@@ -159,12 +167,64 @@ class Session:
         bill = self.agent.intake(read, "photo" if kind == "photo" else kind)
         if not process:
             return {"bill": bill.bill_id, "source": kind}
-        return {**self.agent.process(bill.bill_id, auto_pay=auto_pay), "source": kind}
+        out = self.agent.process(bill.bill_id, auto_pay=auto_pay and self.pay_timing == "now")
+        if out.get("tier") == "T1" and bill.status == "approved":
+            from . import views
+            out["scheduled"] = next((r["pay_on"] for r in views.schedule(self) if r["bill"] == bill.bill_id), None)
+        return {**out, "source": kind}
 
     def ingest(self, key: str, process: bool = True, auto_pay: bool = True) -> dict:
         """A demo document from data/demo/documents, through the same path as an upload."""
         p = demo.DEMO_DIR / self.docs[key]["file"]
         return self.ingest_file(p.name, p.read_bytes(), process, auto_pay)
+
+    # ------------------------------------------------------------------ pay timing (spec P3)
+    @property
+    def pay_timing(self) -> str:
+        """now: pay a cleared bill at once. best_date: pay on the planner's date (discount window or day before due)."""
+        return self.__dict__.get("_pay_timing", "now")
+
+    def set_pay_timing(self, mode: str) -> dict:
+        if mode not in ("now", "best_date"):
+            raise ValueError("pay timing is 'now' or 'best_date'")
+        self.__dict__["_pay_timing"] = mode
+        self.agent.log.add("owner", "pay_timing", {"mode": mode})
+        return {"pay_timing": mode}
+
+    def run_due(self) -> list[dict]:
+        """Pay the scheduled bills whose date has come."""
+        from . import views
+        out = []
+        for r in views.schedule(self):
+            b = self.led.bills[r["bill"]]
+            if r["stage"] == "scheduled" and r["pay_on"] <= self.led.today:
+                out.append(self.agent.pay_t1(b.bill_id))
+        return out
+
+    # ------------------------------------------------------------------ try-your-own attack (spec X8)
+    def try_attack(self, text: str) -> dict:
+        """Put any text on a routine bill and give it to both agents. The naive wallet follows the text; ours
+        decides without paying anything (the trial bill is removed afterwards; the journal keeps the record)."""
+        import json as _json
+
+        from . import naive
+        from .reader import JsonReader
+
+        n = self.__dict__.get("_trials", 0) + 1
+        self.__dict__["_trials"] = n
+        doc = _json.loads((demo.DOCS_DIR / "t13_net30.json").read_text())
+        doc["inv_no"] = f"{doc['inv_no']}-TRY{n}"
+        doc["lines"][0]["qty"] = max(1, doc["lines"][0]["qty"] - 1)  # not a copy of the real bill
+        doc["total"] = round(sum(l["qty"] * l["price"] for l in doc["lines"]), 2)
+        doc["notes"] = text[:4000]
+        read = JsonReader().read_dict(doc)
+        bill = self.agent.intake(read, "e-invoice", bill_id=f"TRY-{n:04d}")
+        ours = self.agent.process(bill.bill_id, auto_pay=False)
+        card = {k: v for k, v in self.agent.bill_card(bill.bill_id).items() if k in ("reasons", "injection_p", "stage", "tier")}
+        for d in (self.led.bills, self.agent.checks, self.agent.decisions):
+            d.pop(bill.bill_id, None)
+        theirs = naive.run(self.chain, text, read.total) if self.chain else naive.plan_from_text(text, 0, read.total)
+        return {"text": text, "ours": {**ours, **card, "paid": False}, "naive": theirs}
 
     def poll_mailbox(self) -> list[dict]:
         """Read new mail (spec R4). Attachments from a registered supplier's address go through bill intake; other
@@ -275,6 +335,8 @@ class Session:
         self.chain.advance(self.chain.day_seconds * days)
         self.led.today = (date.fromisoformat(self.led.today) + timedelta(days=days)).isoformat()
         self.agent.gov.state.blocked.clear()
+        if self.pay_timing == "best_date":
+            self.run_due()
         return self.led.today
 
 

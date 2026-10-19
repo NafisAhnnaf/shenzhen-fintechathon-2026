@@ -632,6 +632,146 @@ def anchor():
     return S().agent.anchor_day(int(time.time() // 86400))
 
 
+# ------------------------------------------------------------------ screens of the desk (spec section 9)
+class PayeeBody(BaseModel):
+    wallet: str = ""
+    rail: str = "token"
+    tx_hash: Optional[str] = None
+    callback: dict = {}
+    new: Optional[dict] = None
+
+
+class BankBody(BaseModel):
+    tx_hash: str
+    bill: Optional[str] = None
+    amount: Optional[float] = None
+
+
+class Timing(BaseModel):
+    mode: str
+
+
+class Attack(BaseModel):
+    text: str
+
+
+@app.get("/api/payments", dependencies=[ANY])
+def payments_register(start: Optional[str] = None, end: Optional[str] = None, by: Optional[str] = None,
+                      supplier: Optional[str] = None):
+    """Every payment in the period and who made it (spec E3). Dates are ISO (YYYY-MM-DD), inclusive."""
+    from . import views
+    with _lock:
+        return _ok(views.payments(S(), start, end, by, supplier))
+
+
+@app.get("/api/journal", dependencies=[ANY])
+def journal(limit: int = 300, bill: Optional[str] = None, actor: Optional[str] = None, security: bool = False):
+    from . import views
+    with _lock:
+        return _ok(views.journal(S(), limit, bill, actor, security))
+
+
+@app.get("/api/journal/{index}/verify", dependencies=[ANY])
+def verify_line(index: int):
+    """Merkle proof that one journal line is in a root stored on-chain (spec E4)."""
+    from . import views
+    with _lock:
+        try:
+            return _ok(views.verify(S(), index))
+        except KeyError as e:
+            raise HTTPException(404, str(e))
+
+
+@app.get("/api/disputes", dependencies=[ANY])
+def disputes():
+    from . import views
+    with _lock:
+        return _ok(views.disputes(S()))
+
+
+@app.get("/api/schedule", dependencies=[ANY])
+def schedule():
+    from . import views
+    with _lock:
+        return _ok({"pay_timing": S().pay_timing, "rows": views.schedule(S())})
+
+
+@app.post("/api/settings/pay-timing", dependencies=[OWNER])
+@mutating
+def pay_timing(body: Timing):
+    return S().set_pay_timing(body.mode)
+
+
+@app.post("/api/schedule/run", dependencies=[STAFF])
+@mutating
+def run_due():
+    return S().run_due()
+
+
+@app.get("/api/close", dependencies=[ANY])
+def close_pack(month: Optional[str] = None):
+    """The month in numbers (spec E5)."""
+    from . import views
+    with _lock:
+        return _ok(views.close_pack(S(), month))
+
+
+@app.get("/api/suppliers", dependencies=[ANY])
+def suppliers():
+    from . import views
+    with _lock:
+        return _ok(views.supplier_rows(S()))
+
+
+@app.get("/api/payees/{supplier_id}/tx", dependencies=[OWNER])
+def payee_tx(supplier_id: str, wallet: str = "", rail: str = "token"):
+    with _lock:
+        return _ok(S().agent.payee_tx_request(supplier_id, wallet, rail))
+
+
+@app.post("/api/payees/{supplier_id}", dependencies=[OWNER])
+@mutating
+def set_payee(supplier_id: str, body: PayeeBody):
+    """Add a supplier or change its payment details (spec X7): call-back first, owner's transaction, cool-down."""
+    return _err(S().agent.set_payee(supplier_id, body.wallet, body.rail, body.callback, body.tx_hash, body.new))
+
+
+@app.get("/api/bank", dependencies=[ANY])
+def bank_view():
+    """The bank's console (spec E7)."""
+    from . import views
+    with _lock:
+        return _ok(views.bank(S()))
+
+
+@app.get("/api/bank/tx/{action}", dependencies=[need("underwriter", "arbiter")])
+def bank_tx(action: str, bill: Optional[str] = None, amount: Optional[float] = None):
+    with _lock:
+        try:
+            return _ok(S().agent.bank_tx_request(action, bill, amount))
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+
+
+@app.post("/api/bank/{action}", dependencies=[need("underwriter", "arbiter")])
+@mutating
+def bank_action(action: str, body: BankBody, u: A.User = Depends(current_user)):
+    if action not in ("dispute", "resolve", "fund", "unpause"):
+        raise HTTPException(404)
+    if (action == "resolve") != (u.role in ("arbiter", "*")) and u.role != "*":
+        raise HTTPException(403, "Only the arbiter settles a disputed claim; only the bank disputes, funds or unpauses")
+    return S().agent.bank_action(action, body.tx_hash, body.bill, body.amount)
+
+
+@app.post("/api/try-attack", dependencies=[STAFF])
+@mutating
+def try_attack(body: Attack):
+    """Any text on a routine bill, given to both agents (spec X8). Ours pays nothing; the naive wallet may."""
+    if not body.text.strip():
+        raise HTTPException(400, "Type the text to put on the bill")
+    return S().try_attack(body.text)
+
+
 # ------------------------------------------------------------------ demo clock (local chain only)
 @app.post("/api/demo/next-day", dependencies=[DEMO])
 @mutating
