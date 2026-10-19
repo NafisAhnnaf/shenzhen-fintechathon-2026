@@ -6,6 +6,7 @@ the contracts currently deployed (same vault address). consistency() compares th
 from __future__ import annotations
 
 import pickle
+import shutil
 import subprocess
 import time
 from datetime import date, timedelta
@@ -15,7 +16,7 @@ from typing import Optional
 from . import demo
 from .agent import Agent
 from .audit import AuditLog
-from .chain import Chain
+from .chain import DEMO_CLOCK, Chain
 from .config import CHAIN_DIR, DATA_DIR
 from .domain import Ledger
 from .erp import ErpAdapter, make_adapter, merge_into
@@ -221,8 +222,8 @@ class Session:
         return out
 
     def next_day(self, days: int = 1) -> str:
-        """Hardhat: jump a day. FISCO BCOS: wait one demo day (the contract's dayLength)."""
-        if not (self.chain and self.chain.network in ("localhost", "fisco")):
+        """Hardhat: jump a day. FISCO BCOS, Base Sepolia: wait one demo day (the contract's dayLength)."""
+        if not (self.chain and self.chain.network in DEMO_CLOCK):
             raise RuntimeError("the demo clock can only move on a local chain")
         self.close_day()
         self.chain.advance(self.chain.day_seconds * days)
@@ -236,7 +237,8 @@ def reset(network: str = "localhost", log_path: Optional[Path] = None, allow_tes
     """Redeploy the contracts and start the ledger from the demo baseline, together, so they always agree."""
     if network not in ("localhost", "fisco") and not allow_testnet:
         raise RuntimeError("redeploying on a public network costs gas; pass allow_testnet=True")
-    r = subprocess.run(["npx", "hardhat", "run", "scripts/deploy.js", "--network", network], cwd=CHAIN_DIR,
+    # shutil.which finds npx.cmd on Windows, where a bare "npx" is not an executable
+    r = subprocess.run([shutil.which("npx") or "npx", "hardhat", "run", "scripts/deploy.js", "--network", network], cwd=CHAIN_DIR,
                        capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f"deploy failed: {r.stderr[-800:]}")

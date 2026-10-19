@@ -49,8 +49,25 @@ def read_document(filename: str, data: bytes, vlm: Optional[VLMReader] = None) -
             raise ReaderUnavailable("PDF and image bills need the vision reader: set VLM_API_KEY (and VLM_MODEL, VLM_BASE_URL)")
         if ext == ".pdf":
             return vlm.read_images(pdf_pages(data), "image/png"), "pdf"
-        return vlm.read_images([data], IMAGE_TYPES[ext]), "photo"
+        img, mime = shrink_photo(data, IMAGE_TYPES[ext])
+        return vlm.read_images([img], mime), "photo"
     raise BadDocument(f"unsupported file type {ext or '(none)'}: send a .json e-invoice, a .pdf or an image")
+
+
+def shrink_photo(data: bytes, mime: str, max_side: int = 2000) -> tuple[bytes, str]:
+    """Phone photos are often 4000 px and several MB; 2000 px keeps an invoice legible and the request small."""
+    from PIL import Image, ImageOps
+
+    try:
+        img = ImageOps.exif_transpose(Image.open(io.BytesIO(data)))  # phones store rotation in EXIF
+    except Exception as e:
+        raise BadDocument(f"not a readable image: {e}") from e
+    if max(img.size) <= max_side and len(data) <= 4_000_000:
+        return data, mime
+    img.thumbnail((max_side, max_side))
+    buf = io.BytesIO()
+    img.convert("RGB").save(buf, format="JPEG", quality=88)
+    return buf.getvalue(), "image/jpeg"
 
 
 def pdf_pages(data: bytes, scale: float = 2.0, max_pages: int = 4) -> list[bytes]:

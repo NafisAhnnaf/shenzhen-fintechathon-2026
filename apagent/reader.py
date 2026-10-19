@@ -11,6 +11,8 @@ import base64
 import json
 import os
 import random
+import re
+import time
 from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
@@ -181,11 +183,27 @@ class VLMReader:
             "response_format": {"type": "json_schema", "json_schema": {"name": "invoice", "schema": READ_SCHEMA, "strict": True}},
             "temperature": 0,
         }
-        r = httpx.post(f"{self.base_url}/chat/completions", json=body,
-                       headers={"Authorization": f"Bearer {self.api_key}"}, timeout=90)
+        url, headers = f"{self.base_url}/chat/completions", {"Authorization": f"Bearer {self.api_key}"}
+
+        def post():
+            # Free tiers answer 429/503 when busy; a short back-off usually gets through.
+            for wait in (2, 5, 10, 0):
+                r = httpx.post(url, json=body, headers=headers, timeout=90)
+                if r.status_code not in (429, 500, 503) or not wait:
+                    return r
+                time.sleep(wait)
+
+        r = post()
+        if r.status_code == 400:
+            # Some providers (e.g. Gemini's free tier) refuse parts of the strict schema, such as the free-key
+            # confidence map. Retry in plain JSON mode with the schema in the prompt; parse_vlm still checks the shape.
+            content[0] = {"type": "text", "text": f"{VLM_PROMPT} Reply with JSON only, matching this schema: {json.dumps(READ_SCHEMA)}"}
+            body["response_format"] = {"type": "json_object"}
+            r = post()
         r.raise_for_status()
-        d = json.loads(r.json()["choices"][0]["message"]["content"])
-        return parse_vlm(d)
+        text = r.json()["choices"][0]["message"]["content"].strip()
+        text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)  # some models wrap JSON in a code fence
+        return parse_vlm(json.loads(text))
 
 
 def parse_vlm(d: dict) -> Read:

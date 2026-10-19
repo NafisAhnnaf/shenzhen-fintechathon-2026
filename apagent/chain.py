@@ -21,6 +21,9 @@ from .config import CHAIN_DIR, units_to_usd, usd_to_units
 # Hardhat node dev accounts come from its public test mnemonic (never use with real funds).
 HARDHAT_MNEMONIC = "test test test test test test test test test test test junk"
 ROLES = ["owner", "agent", "governor", "approver", "underwriter"]
+# Chains where time cannot be moved forward: the demo clock waits instead, over a short demo day (deploy.js).
+REAL_TIME = ("fisco", "baseSepolia")
+DEMO_CLOCK = ("localhost",) + REAL_TIME
 
 
 def hardhat_keys(n: int = 6) -> list[str]:
@@ -155,14 +158,21 @@ class Chain:
             # The latest FISCO block can be minutes old (blocks only on transactions); the next one gets wall-clock time.
             import time as _t
             return int(_t.time())
+        if self.network == "localhost":
+            # Hardhat mines only on transactions: after an idle spell the latest block is stale and a signature
+            # timed from it can be expired by the next block. The pending block carries the next block's time.
+            return self.w3.eth.get_block("pending").timestamp
         return self.w3.eth.get_block("latest").timestamp
 
     def advance(self, seconds: int) -> None:
-        """Move time forward: instantly on a Hardhat node; on FISCO BCOS time is real, so this waits."""
-        if self.network == "fisco":
+        """Move time forward: instantly on a Hardhat node; on FISCO BCOS and Base Sepolia time is real, so this waits."""
+        if self.network in REAL_TIME:
             import time as _t
             _t.sleep(seconds)
-            self.tick()
+            if self.network == "fisco":
+                self.tick()
+            else:
+                _t.sleep(4)  # Base seals a block every 2 s; let the latest timestamp pass the wait
             return
         if self.network != "localhost":
             raise RuntimeError("time can only move on a local chain")

@@ -65,6 +65,13 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
   const take = useAction((key: string) => api.post<{ bill: string }>(`/inbox/documents/${key}`));
   const email = useAction((name: string) => api.post<any>(`/inbox/emails/${name}`));
   const statement = useAction((name: string) => api.post<Case[]>(`/inbox/statements/${encodeURIComponent(name)}?supplier_id=${name.split("-")[0]}`));
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const isPhone = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) upload.mutate(f, { onSuccess: (r) => onBill(r.bill) });
+    e.target.value = "";
+  };
   const docs = (data?.documents ?? []).filter((d) => !d.taken);
   const count = docs.length + (data?.emails.length ?? 0) + (data?.statements.length ?? 0);
 
@@ -74,20 +81,19 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
         <button className="btn-link" style={{ padding: 0, fontSize: 15, fontWeight: 800, color: "var(--ink)" }} onClick={() => setOpen((o) => !o)} aria-expanded={open}>
           Inbox {count > 0 && <span className="font-normal text-muted">({count})</span>}
         </button>
-        <button className="btn-link" style={{ fontSize: 14 }} onClick={() => fileRef.current?.click()}>
-          {upload.isPending ? "Reading" : "Upload a bill"}
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          className="hidden"
-          accept=".json,.pdf,.png,.jpg,.jpeg,.webp"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) upload.mutate(f, { onSuccess: (r) => onBill(r.bill) });
-            e.target.value = "";
-          }}
-        />
+        <span className="flex gap-3">
+          {isPhone && (
+            <button className="btn-link" style={{ fontSize: 14 }} disabled={upload.isPending} onClick={() => cameraRef.current?.click()}>
+              Take a photo
+            </button>
+          )}
+          <button className="btn-link" style={{ fontSize: 14 }} onClick={() => fileRef.current?.click()}>
+            {upload.isPending ? "Reading" : "Upload a bill"}
+          </button>
+        </span>
+        <input ref={fileRef} type="file" className="hidden" accept=".json,.pdf,.png,.jpg,.jpeg,.webp" onChange={onFile} />
+        {/* capture opens the rear camera directly on a phone */}
+        <input ref={cameraRef} type="file" className="hidden" accept="image/jpeg,image/png" capture="environment" onChange={onFile} />
       </div>
       <ErrorLine error={upload.error || take.error || email.error || statement.error} />
       {open && (

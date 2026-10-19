@@ -16,6 +16,7 @@ from typing import Callable, Optional
 
 from . import naive
 from .audit import input_hash
+from .chain import DEMO_CLOCK
 from .config import DATA_DIR
 from .governor import Decision
 from .reader import VLMReader
@@ -166,7 +167,7 @@ class Runner:
             ev.add("manager confirms with one tap", "finance_manager", {k: v for k, v in out.items() if k != "claim"},
                    (out.get("receivable_tx") or {}).get("tx_hash"))
             ev.add("claim filed with the manager's signature", "agent", out.get("claim"), (out.get("claim") or {}).get("tx_hash"))
-            self.ch.advance(121) if self.network in ("localhost", "fisco") else time.sleep(125)
+            self.ch.advance(121)
             pay = self.ag.execute_claim(r["bill"])
             ev.add("reserve repays the company", "contract", pay, pay.get("tx_hash"))
             return pay["ok"] and out["cutoff"]["after"] < out["cutoff"]["before"] and out["probation"]["probation_left"] > 0
@@ -433,8 +434,8 @@ def main() -> None:
     ap.add_argument("--network", default="localhost")
     a = ap.parse_args()
     r = Runner(a.network)
-    if a.network in ("localhost", "fisco"):
-        r.ch.advance(r.ch.cool_down + 1)  # payee cool-down (on FISCO this waits)
+    if a.network in DEMO_CLOCK:
+        r.ch.advance(r.ch.cool_down + 1)  # payee cool-down (on FISCO and Base Sepolia this waits)
     for day in (r.day1, r.day2, r.day3, r.day4):
         day()
     doc = r.write()
