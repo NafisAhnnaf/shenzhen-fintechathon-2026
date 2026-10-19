@@ -153,20 +153,35 @@ forwards only reads and signed transactions.
 
 ## Base Sepolia
 
-1. Create five separate test keys (owner, agent, governor, approver, underwriter), fund each with a little Base
-   Sepolia ETH, and put them in `chain/.env` (see `chain/.env.example`).
-2. `cd chain && npx hardhat run scripts/deploy.js --network baseSepolia`
-3. Wait 5 minutes (payee cool-down), then `.venv/bin/python -m apagent.tasks --network baseSepolia`.
+1. `cd chain && node scripts/testnet-keys.js` creates the six test keys (owner, agent, governor, approver,
+   underwriter, and an unrelated attacker key for task 9) in `chain/.env`, which git ignores, and prints their addresses.
+2. Get free Base Sepolia ETH from a faucet for the **owner** address, then `node scripts/testnet-keys.js --fund`
+   shares it out (about 0.003 ETH per role; gas on Base is very cheap).
+3. `npx hardhat run scripts/deploy.js --network baseSepolia && cd ..`
+4. `.venv/bin/python -m apagent.tasks --network baseSepolia` waits out the 60-second payee cool-down and runs all task
+   days in one sitting (about 15 minutes). Every hash in `evidence/evidence_baseSepolia.md` links to sepolia.basescan.org.
 
-On a public testnet time cannot be moved forward. The task runner uses real waits for the claim window, but the
-daily caps reset only at midnight UTC: run the four task days on separate days, or edit the runner to stop after each day.
+Time cannot be moved forward on a public testnet, so, as on FISCO, the deployment uses a short demo "day" for the daily
+caps (`DEMO_DAY_SECONDS`, default 180) and the demo clock waits instead of jumping.
 
 ## Backends and keys
 
 - Reader: `SimReader` (calibration), `JsonReader` (clean JSON, the default for the demo), `VLMReader` (any
-  OpenAI-compatible vision model, e.g. Qwen-VL; set `VLM_API_KEY`).
-- Request router: `RuleDecider` (offline, default) or `LLMDecider` (set `DECIDER=llm` and `LLM_API_KEY`). Both return a
-  probability for every option in a closed list; a Jev backend can implement the same `decide` method.
+  OpenAI-compatible vision model; set `VLM_API_KEY`, and `VLM_BASE_URL` / `VLM_MODEL` for a provider other than
+  Qwen-VL on DashScope). Free, no card: a Google AI Studio key with
+  `VLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai` and `VLM_MODEL=gemini-flash-lite-latest`.
+  If a provider refuses the strict schema, the reader retries in plain JSON mode; the output is checked either way.
+  Phone photos are shrunk to 2,000 px before the call. Measure accuracy with `python -m apagent.reader_eval`.
+- Request router: `RuleDecider` (offline, default), `JevDecider` (TypeSafe AI's Jev: `DECIDER=jev`,
+  `TYPESAFE_API_KEY`; one Choice question per decision, options with descriptions) or `LLMDecider` (`DECIDER=llm`,
+  `LLM_API_KEY`). All return a probability for every option in a closed list. The conformal cut-offs are
+  recalibrated automatically the first time a new backend is used (`data/intent_qhat.json`).
+
+## Phone camera in the demo
+
+Start the API with `--host 0.0.0.0`, put the phone on the same network as the laptop (venue Wi-Fi often isolates
+devices: use the phone's hotspot) and open `http://<laptop IP>:8000/desk`. On a phone the inbox shows **Take a photo**,
+which opens the rear camera; the photo goes through the same path as an upload. Uploading needs no wallet.
 
 ## Data
 

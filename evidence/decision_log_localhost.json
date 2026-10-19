@@ -1,6 +1,6 @@
 [
  {
-  "ts": 1792177791.356556,
+  "ts": 1792437071.8179111,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -17,7 +17,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.357609,
+  "ts": 1792437071.8189042,
   "actor": "agent",
   "kind": "injection_flag",
   "detail": {
@@ -33,7 +33,7 @@
   "security": true
  },
  {
-  "ts": 1792177791.3725529,
+  "ts": 1792437071.832481,
   "actor": "agent",
   "kind": "freeze_payee",
   "detail": {
@@ -45,11 +45,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "frozen",
-  "tx_hash": "0x22e597b717b619cbf2de61d7a66b0baaf90f6c8760362ca6dfc675883fa7c3cc",
+  "tx_hash": "0xa9e3ed493add54494208c41ee488fc210312c1407e5abb7e39089a7e7ce055b8",
   "security": true
  },
  {
-  "ts": 1792177791.372565,
+  "ts": 1792437071.832491,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -66,7 +66,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.411283,
+  "ts": 1792437071.86945,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -88,7 +88,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.411315,
+  "ts": 1792437071.869482,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -104,7 +104,7 @@
   "security": true
  },
  {
-  "ts": 1792177791.5085928,
+  "ts": 1792437071.9270568,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -121,7 +121,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.552505,
+  "ts": 1792437071.9799612,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -130,7 +130,7 @@
    "cutoff": 0.8715,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.302 <= cut-off 0.871 for 'routine'"
+    "Checks passed; risk score 0.302 is within the limit 0.871 for routine bills"
    ],
    "amount": 1810.16
   },
@@ -143,7 +143,23 @@
   "security": false
  },
  {
-  "ts": 1792177791.6086679,
+  "ts": 1792437072.039299,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0002"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437072.039306,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -156,11 +172,11 @@
   "input_hash": "0x584448df1e55021d9284d987748176e7dae4b1b517b81845aafc8c59d39b03ef",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x67c87e617950fa37d8174643d7bd78cbc74c97535322ef6535695bae35ff8c8b",
+  "tx_hash": "0x7bc975aa20aff5f15477e27e7c3f8561b6f93c0f0fb14051aedc6cc3c64b36c3",
   "security": false
  },
  {
-  "ts": 1792177791.614203,
+  "ts": 1792437072.045789,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -177,7 +193,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.6563652,
+  "ts": 1792437072.088366,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -186,7 +202,7 @@
    "cutoff": 0.8715,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.334 <= cut-off 0.871 for 'routine'"
+    "Checks passed; risk score 0.334 is within the limit 0.871 for routine bills"
    ],
    "amount": 2397.6
   },
@@ -199,7 +215,23 @@
   "security": false
  },
  {
-  "ts": 1792177791.71216,
+  "ts": 1792437072.146928,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0003"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437072.146938,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -212,11 +244,11 @@
   "input_hash": "0xa1aa5b4469eed0a3ccaf8464250e2b21acb979ead37b720168acdb8bd987016c",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x1729b41e20c314d19ff234d6a12e587a23aaba5289762634c32f0544b6447629",
+  "tx_hash": "0xff3c8080e96163cf069507ef4a2fc8669b764f0deb7d1f9069a84e8c76ec7e52",
   "security": false
  },
  {
-  "ts": 1792177791.713463,
+  "ts": 1792437072.149068,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -233,7 +265,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.7512681,
+  "ts": 1792437072.192619,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -255,7 +287,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.753591,
+  "ts": 1792437072.1960151,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -272,7 +304,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.795705,
+  "ts": 1792437072.23969,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -281,7 +313,7 @@
    "cutoff": 0.8715,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.292 <= cut-off 0.871 for 'routine'"
+    "Checks passed; risk score 0.292 is within the limit 0.871 for routine bills"
    ],
    "amount": 1632.78
   },
@@ -294,7 +326,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.79752,
+  "ts": 1792437072.243407,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -311,7 +343,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.839333,
+  "ts": 1792437072.288667,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -320,7 +352,7 @@
    "cutoff": 0.8715,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.333 <= cut-off 0.871 for 'routine'"
+    "Checks passed; risk score 0.333 is within the limit 0.871 for routine bills"
    ],
    "amount": 2545.64
   },
@@ -333,7 +365,23 @@
   "security": false
  },
  {
-  "ts": 1792177791.895351,
+  "ts": 1792437072.346072,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0006"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437072.346078,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -346,11 +394,11 @@
   "input_hash": "0x73c2d5067dca7009a8f2d7d384357cf49a6ebebd9a7f537ada5595496b6994df",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x4274f74a80de6866361f4aa58f941d64732a7beb82b6fe5e3a88b1318938651d",
+  "tx_hash": "0xec515f57ca36ffd6e8b676e7501202fc2ebb004ab709484f03bdfd83472d210a",
   "security": false
  },
  {
-  "ts": 1792177791.900264,
+  "ts": 1792437072.352333,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -367,7 +415,7 @@
   "security": false
  },
  {
-  "ts": 1792177791.942036,
+  "ts": 1792437072.394804,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -376,7 +424,7 @@
    "cutoff": 0.8715,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.374 <= cut-off 0.871 for 'routine'"
+    "Checks passed; risk score 0.374 is within the limit 0.871 for routine bills"
    ],
    "amount": 4017.6
   },
@@ -389,7 +437,23 @@
   "security": false
  },
  {
-  "ts": 1792177792.000771,
+  "ts": 1792437072.4507918,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0007"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437072.450799,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -402,11 +466,11 @@
   "input_hash": "0xcc1cd2af2c3ac2c2f82b4ad3165c501b121665afd01ab52defe3c1ff753c526f",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x23a5048902e615d436ea06101f6519699c63fa66d39a925207aada887e2c0fb7",
+  "tx_hash": "0x786a774ea653f6c7fc7c53121cfb2b9490c495601246ccdb1fbff34690930244",
   "security": false
  },
  {
-  "ts": 1792177792.0018291,
+  "ts": 1792437072.452678,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -423,7 +487,7 @@
    "paid": 4017.6,
    "owed": 2872.58,
    "tier": "T1",
-   "tx_hash": "0x23a5048902e615d436ea06101f6519699c63fa66d39a925207aada887e2c0fb7"
+   "tx_hash": "0x786a774ea653f6c7fc7c53121cfb2b9490c495601246ccdb1fbff34690930244"
   },
   "plan_id": null,
   "bill_id": null,
@@ -434,7 +498,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.0018308,
+  "ts": 1792437072.452681,
   "actor": "agent",
   "kind": "reconcile",
   "detail": {
@@ -453,7 +517,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.021708,
+  "ts": 1792437072.469532,
   "actor": "contract",
   "kind": "open_receivable",
   "detail": {
@@ -464,11 +528,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x83c5684367b9ff121c5712cdf073533904546cbf61dfeebc2613fd1d2daa1481",
+  "tx_hash": "0x19e32cea73dd3b62966cbd817082f398e67356269012f91cc9b60f899658ca3f",
   "security": false
  },
  {
-  "ts": 1792177792.0217102,
+  "ts": 1792437072.4695349,
   "actor": "finance_manager",
   "kind": "case_confirm",
   "detail": {
@@ -484,7 +548,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.021727,
+  "ts": 1792437072.469553,
   "actor": "governor",
   "kind": "cutoff_drop",
   "detail": {
@@ -501,7 +565,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.079764,
+  "ts": 1792437072.55642,
   "actor": "agent",
   "kind": "file_claim",
   "detail": {
@@ -514,11 +578,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "filed",
-  "tx_hash": "0xb0dee6af3a2a2003b7349e6fe1f732a59c73b2948b825e758dfea73e68bab192",
+  "tx_hash": "0xff32592dfc93ffd2f4ed5d29d61945bc8b51d3f7b417e157391e814528b3504f",
   "security": false
  },
  {
-  "ts": 1792177792.079772,
+  "ts": 1792437072.5564291,
   "actor": "agent",
   "kind": "probation",
   "detail": {
@@ -535,7 +599,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.092837,
+  "ts": 1792437072.569806,
   "actor": "contract",
   "kind": "claim_paid",
   "detail": {},
@@ -544,11 +608,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xeffc86a549666479ef92bdacc6a4a7eba0e0ebcfab5186a9041daaa045b2a7d6",
+  "tx_hash": "0x14bf32a811ea4ab76aa770ad29c635ac79952895ba61b3fa1630f351c71b88a2",
   "security": false
  },
  {
-  "ts": 1792177792.1371741,
+  "ts": 1792437072.611095,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -565,7 +629,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.189955,
+  "ts": 1792437072.65483,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -575,7 +639,7 @@
    "group": "routine",
    "reasons": [
     "Supplier on probation: 5 more bills go to a person",
-    "Supplier 7-day autonomous total would be $5,853.38 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,853.38 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1835.78
   },
@@ -588,7 +652,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.229186,
+  "ts": 1792437072.690432,
   "actor": "agent",
   "kind": "record_offset",
   "detail": {
@@ -601,11 +665,27 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xb964e59a9207597cebb5a8a2efac8581a2dbf9eec2ba6cbcf60e490811e66674",
+  "tx_hash": "0x4aaf6415a3f67ef716c588fb5675624b6d1ce688d12d1d6859df68271edd9ad9",
   "security": false
  },
  {
-  "ts": 1792177792.2291899,
+  "ts": 1792437072.6921458,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0008"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0008",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437072.692149,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -620,7 +700,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.229192,
+  "ts": 1792437072.692151,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -632,11 +712,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xb8029438154f47eb82177f2a87126c35cd95784bca146e7c1540bc9fc9ae6fbe",
+  "tx_hash": "0xec2bc273fbbab251a5f9bfb38b136e0c9adb491db7683221c9e5b9057ade5d41",
   "security": false
  },
  {
-  "ts": 1792177792.275454,
+  "ts": 1792437072.730331,
   "actor": "agent",
   "kind": "message",
   "detail": {
@@ -653,7 +733,7 @@
   "security": true
  },
  {
-  "ts": 1792177792.2902248,
+  "ts": 1792437072.742462,
   "actor": "agent",
   "kind": "freeze_payee",
   "detail": {
@@ -665,11 +745,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "frozen",
-  "tx_hash": "0xc3ab3d9e88f24c628c46aa7c442012025960e1ec2e1cd035f0e9ff8c00614d55",
+  "tx_hash": "0xb75433ba403070d8a61c1788ba06e3b1aba2a621029658843eeb4ebd24c7adb9",
   "security": true
  },
  {
-  "ts": 1792177792.290234,
+  "ts": 1792437072.742469,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -686,7 +766,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.290645,
+  "ts": 1792437072.742836,
   "actor": "agent",
   "kind": "email_unknown_sender",
   "detail": {
@@ -702,7 +782,7 @@
   "security": true
  },
  {
-  "ts": 1792177792.4667652,
+  "ts": 1792437072.854215,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -718,7 +798,7 @@
   "security": true
  },
  {
-  "ts": 1792177792.466779,
+  "ts": 1792437072.85423,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -734,7 +814,7 @@
   "security": true
  },
  {
-  "ts": 1792177792.4667861,
+  "ts": 1792437072.854238,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -750,7 +830,7 @@
   "security": true
  },
  {
-  "ts": 1792177792.4789739,
+  "ts": 1792437072.866307,
   "actor": "agent",
   "kind": "pause_self",
   "detail": {
@@ -761,11 +841,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paused",
-  "tx_hash": "0x6e518a8294d223149a4434a8ca84bf929df2f7aef41d7ba93934defaf28dbffc",
+  "tx_hash": "0xdb8ff976c2f55b2a58baeeedfd34a927ed666635acd21ae25ae74bfaab001f59",
   "security": true
  },
  {
-  "ts": 1792177792.5181189,
+  "ts": 1792437072.905867,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -782,7 +862,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.5624309,
+  "ts": 1792437072.948523,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -804,7 +884,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.574517,
+  "ts": 1792437072.9603999,
   "actor": "owner",
   "kind": "unpause",
   "detail": {},
@@ -813,11 +893,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x9358aa424627bc7c4c336b8957ca566c5efae21ce0b08c1f3d96d532f21c10c0",
+  "tx_hash": "0x855f7b15b9af015c996a19de2200d21dc0c12dd3926755cc9751c5bab2c7faf3",
   "security": false
  },
  {
-  "ts": 1792177792.613316,
+  "ts": 1792437073.0003169,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -834,7 +914,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.614899,
+  "ts": 1792437073.00243,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -851,7 +931,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.616427,
+  "ts": 1792437073.0047622,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -868,13 +948,13 @@
   "security": false
  },
  {
-  "ts": 1792177792.617961,
+  "ts": 1792437073.007037,
   "actor": "agent",
   "kind": "intake",
   "detail": {
    "source": "e-invoice",
    "inv_no": "ACM-2512412",
-   "total": 54111.16
+   "total": 53800.12
   },
   "plan_id": null,
   "bill_id": "B-20251210-0013",
@@ -885,7 +965,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.617964,
+  "ts": 1792437073.007041,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -900,7 +980,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.621423,
+  "ts": 1792437073.010554,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -921,11 +1001,11 @@
   "security": false
  },
  {
-  "ts": 1792177792.621464,
+  "ts": 1792437073.010588,
   "actor": "owner",
   "kind": "answer",
   "detail": {
-   "question": "QQ-77792",
+   "question": "QQ-37073",
    "choice": "ACME"
   },
   "plan_id": null,
@@ -937,7 +1017,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.663627,
+  "ts": 1792437073.054123,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -946,7 +1026,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.271 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.271 is within the limit 0.843 for routine bills"
    ],
    "amount": 1144.45
   },
@@ -959,7 +1039,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.706799,
+  "ts": 1792437073.096769,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -968,7 +1048,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.292 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.292 is within the limit 0.843 for routine bills"
    ],
    "amount": 1487.79
   },
@@ -981,7 +1061,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.7499058,
+  "ts": 1792437073.139756,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -990,7 +1070,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.304 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.304 is within the limit 0.843 for routine bills"
    ],
    "amount": 1716.68
   },
@@ -1003,22 +1083,20 @@
   "security": false
  },
  {
-  "ts": 1792177792.79443,
+  "ts": 1792437073.185791,
   "actor": "governor",
   "kind": "decision",
   "detail": {
    "tier": "T2",
-   "score": 0.4087,
+   "score": 0.4218,
    "cutoff": 0.3074,
    "group": "price_change",
    "reasons": [
-    "Copper rod: price +9.0% while the index justifies +0.0%",
-    "Amount $49,643.28 is above the per-payment cap $5,000",
-    "Risk score 0.409 is above the cut-off 0.307 for 'price_change'",
-    "Supplier 7-day autonomous total would be $49,643.28 (cap $5,000): possible limit splitting",
-    "Daily autonomous caps reached"
+    "Copper rod: price +9.0% while the index justifies +0.6%",
+    "Amount $49,639.64 is above the per-payment cap $5,000",
+    "Risk score 0.422 is above the limit 0.307 for bills with a price change"
    ],
-   "amount": 49643.28
+   "amount": 49639.64
   },
   "plan_id": null,
   "bill_id": "B-20251210-0013",
@@ -1029,12 +1107,12 @@
   "security": false
  },
  {
-  "ts": 1792177792.794621,
+  "ts": 1792437073.185961,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
    "intent": "PAY_SET",
-   "summary": "Pay 4 bill(s) for Acme Metals (HK) Ltd: $4,348.92 alone (T1), $49,643.28 need the manager's signature (T2).",
+   "summary": "Pay Acme Metals (HK) Ltd: 3 bills for $4,348.92 on its own and 1 bill for $49,639.64 after the finance manager signs.",
    "steps": 4
   },
   "plan_id": "P-0001",
@@ -1046,7 +1124,23 @@
   "security": false
  },
  {
-  "ts": 1792177792.8072069,
+  "ts": 1792437073.1977952,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 739595,
+   "root": "0xf0a07c2472536daa114b645c0063424728e62d5cd40a71a4e776459d94dd813b"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xe841bd88ec901b267ba57779ce652cc82872b0b7ddc9df84b2532d9def52356c",
+  "security": false
+ },
+ {
+  "ts": 1792437073.2102752,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -1061,7 +1155,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.8091002,
+  "ts": 1792437073.21199,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1084,12 +1178,12 @@
   "security": false
  },
  {
-  "ts": 1792177792.80941,
+  "ts": 1792437073.2122738,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
    "intent": "PAY_SET",
-   "summary": "Pay 3 bill(s) for Acme Metals (HK) Ltd: $4,348.92 alone (T1), $0.00 need the manager's signature (T2).",
+   "summary": "Pay Acme Metals (HK) Ltd: 3 bills for $4,348.92 on its own.",
    "steps": 4
   },
   "plan_id": "P-0002",
@@ -1101,7 +1195,7 @@
   "security": false
  },
  {
-  "ts": 1792177792.809454,
+  "ts": 1792437073.2123141,
   "actor": "owner",
   "kind": "plan_run",
   "detail": {
@@ -1117,7 +1211,23 @@
   "security": false
  },
  {
-  "ts": 1792177792.866843,
+  "ts": 1792437073.272374,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0010"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437073.2723992,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1130,11 +1240,11 @@
   "input_hash": "0x516bd0717de415a93f66c901c2c19168b9bffff1f398db5cc8244d2a8d5e91ce",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x8636926e23ec9dba50fe0017e86023b53183720601f6116b2d7020cfeffa9cf4",
+  "tx_hash": "0xe579472495f439f06fd920296cde0a10ae1af94baed1497a2b6221a5c3e05b5a",
   "security": false
  },
  {
-  "ts": 1792177792.8668501,
+  "ts": 1792437073.272419,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1146,11 +1256,27 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x8636926e23ec9dba50fe0017e86023b53183720601f6116b2d7020cfeffa9cf4",
+  "tx_hash": "0xe579472495f439f06fd920296cde0a10ae1af94baed1497a2b6221a5c3e05b5a",
   "security": false
  },
  {
-  "ts": 1792177792.926595,
+  "ts": 1792437073.329091,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0011"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437073.329097,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1163,11 +1289,11 @@
   "input_hash": "0xa9f74ed4a62d71b0e160185db19d2bc3964bd94bf6f9217067603a15b4ddd0f5",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xdc0d614d684d80fac23e4a23a03142af1ef485e012f1d519c586e194f3a4be89",
+  "tx_hash": "0x9bc58e3fd9918ab15173cb922eab8332ece3773f017877b0ac9cfb0c7d9ef401",
   "security": false
  },
  {
-  "ts": 1792177792.926603,
+  "ts": 1792437073.329104,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1179,11 +1305,27 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xdc0d614d684d80fac23e4a23a03142af1ef485e012f1d519c586e194f3a4be89",
+  "tx_hash": "0x9bc58e3fd9918ab15173cb922eab8332ece3773f017877b0ac9cfb0c7d9ef401",
   "security": false
  },
  {
-  "ts": 1792177792.982079,
+  "ts": 1792437073.387152,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0012"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437073.3871748,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1196,11 +1338,11 @@
   "input_hash": "0x42c6bd90ded10b554727872d4ee5b01c9aa3b41f032616c326ffc7ca0b74b258",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xcce2d86cf13757d82cf0a2a28b39f0ca5a54e759bdb9d3fcfa40ffa57546ca31",
+  "tx_hash": "0xe3140658fcd12b50041d064f591922879d497fdddd8543257a943efd5fa71f70",
   "security": false
  },
  {
-  "ts": 1792177792.982087,
+  "ts": 1792437073.3871958,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1212,26 +1354,24 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xcce2d86cf13757d82cf0a2a28b39f0ca5a54e759bdb9d3fcfa40ffa57546ca31",
+  "tx_hash": "0xe3140658fcd12b50041d064f591922879d497fdddd8543257a943efd5fa71f70",
   "security": false
  },
  {
-  "ts": 1792177793.027715,
+  "ts": 1792437073.4300768,
   "actor": "governor",
   "kind": "decision",
   "detail": {
    "tier": "T2",
-   "score": 0.4087,
+   "score": 0.4218,
    "cutoff": 0.3074,
    "group": "price_change",
    "reasons": [
-    "Copper rod: price +9.0% while the index justifies +0.0%",
-    "Amount $49,643.28 is above the per-payment cap $5,000",
-    "Risk score 0.409 is above the cut-off 0.307 for 'price_change'",
-    "Supplier 7-day autonomous total would be $53,992.20 (cap $5,000): possible limit splitting",
-    "Daily autonomous caps reached"
+    "Copper rod: price +9.0% while the index justifies +0.6%",
+    "Amount $49,639.64 is above the per-payment cap $5,000",
+    "Risk score 0.422 is above the limit 0.307 for bills with a price change"
    ],
-   "amount": 49643.28
+   "amount": 49639.64
   },
   "plan_id": null,
   "bill_id": "B-20251210-0013",
@@ -1242,7 +1382,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.027735,
+  "ts": 1792437073.4300952,
   "actor": "agent",
   "kind": "draft_query",
   "detail": {
@@ -1258,7 +1398,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.027749,
+  "ts": 1792437073.4301078,
   "actor": "finance_manager",
   "kind": "send_query",
   "detail": {
@@ -1274,7 +1414,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.030472,
+  "ts": 1792437073.433543,
   "actor": "agent",
   "kind": "reply",
   "detail": {
@@ -1283,7 +1423,7 @@
    "injection_p": 0.0759,
    "fields": {
     "credit_note": "CN-7781",
-    "amount": 4467.88
+    "amount": 4160.48
    }
   },
   "plan_id": null,
@@ -1295,11 +1435,27 @@
   "security": false
  },
  {
-  "ts": 1792177793.0527208,
+  "ts": 1792437073.456241,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0013"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437073.456245,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
-   "amount": 49643.28
+   "amount": 49639.64
   },
   "plan_id": null,
   "bill_id": "B-20251210-0013",
@@ -1310,11 +1466,11 @@
   "security": false
  },
  {
-  "ts": 1792177793.052724,
+  "ts": 1792437073.456246,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
-   "amount": 49643.28,
+   "amount": 49639.64,
    "supplier": "ACME"
   },
   "plan_id": null,
@@ -1322,11 +1478,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x3650a8add33c3448cc8ad449d7f9693de081ad0b0d92f3fba27d861a30cdbbec",
+  "tx_hash": "0xcd728f56e3a5680fe22d54e73c5a1253be08a20d3e73b4b77ed94fde34ea54d9",
   "security": false
  },
  {
-  "ts": 1792177793.052743,
+  "ts": 1792437073.4562619,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -1341,7 +1497,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.053833,
+  "ts": 1792437073.4573288,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1364,7 +1520,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.092376,
+  "ts": 1792437073.4947042,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1381,7 +1537,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.1066089,
+  "ts": 1792437073.508533,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1396,11 +1552,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x8ec156fff525285691de0c390ca656520200bc91ca7ed67223676702fcf34217",
+  "tx_hash": "0xd65068ca70fc41f6d6596e46f648767304f9c89a5ed865023a3140d5fed75cc7",
   "security": false
  },
  {
-  "ts": 1792177793.157768,
+  "ts": 1792437073.5569081,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1417,7 +1573,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.247589,
+  "ts": 1792437073.643274,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1432,11 +1588,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x65bcc8fa92cbae21ed7f0cb72539be3b64d2d776b72e628fd4e36a7b2ae0d64c",
+  "tx_hash": "0x0ed44501b633f340f655eaa3d1a1f9c4cc7ac6435ba1ccc98593d15e813d4c35",
   "security": false
  },
  {
-  "ts": 1792177793.283972,
+  "ts": 1792437073.679845,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1453,7 +1609,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.285125,
+  "ts": 1792437073.68316,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1470,7 +1626,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.327853,
+  "ts": 1792437073.727343,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1479,7 +1635,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.303 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.303 is within the limit 0.843 for routine bills"
    ],
    "amount": 1810.8
   },
@@ -1492,7 +1648,23 @@
   "security": false
  },
  {
-  "ts": 1792177793.390344,
+  "ts": 1792437073.782582,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251211-0014"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0014",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437073.782588,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1505,11 +1677,11 @@
   "input_hash": "0xb7013bceda1c3281e50bba97967bb2dc4fc51ef9a1b67cc86e3da0fbabd1ce4e",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x85c6d77c345657e67c57433f2ce07df0485ceeaf4da95c6e878801eefb213561",
+  "tx_hash": "0x34ef34b3a4f8c328146a4faa3ce1a538372501b66d7bf49b7b55cdf1e76337c7",
   "security": false
  },
  {
-  "ts": 1792177793.4476311,
+  "ts": 1792437073.837725,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1524,11 +1696,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x791e8220d06bbd555a5b2302d79234db1775cc700554db6c4008521e22f503a5",
+  "tx_hash": "0x664333066f5929fd027bfc1a2d8ebb4fa83438f0b85fbf9e203537bdd959a6e9",
   "security": false
  },
  {
-  "ts": 1792177793.49736,
+  "ts": 1792437073.8862631,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1545,7 +1717,23 @@
   "security": false
  },
  {
-  "ts": 1792177793.5005639,
+  "ts": 1792437073.898914,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 739596,
+   "root": "0x4656ac34fe7e14bbbb3b8b6c3841f65258bdbeb3e0223e8f648961b8dcc2d435"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x9dd1005aa4386289ee2acd753907bade8d09b646179321d375e8ebc816ba1651",
+  "security": false
+ },
+ {
+  "ts": 1792437073.90341,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1562,7 +1750,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.5449688,
+  "ts": 1792437073.947052,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1571,7 +1759,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.305 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.305 is within the limit 0.843 for routine bills"
    ],
    "amount": 1700.91
   },
@@ -1584,7 +1772,23 @@
   "security": false
  },
  {
-  "ts": 1792177793.6000051,
+  "ts": 1792437074.003284,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251212-0015"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0015",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437074.003289,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1597,11 +1801,11 @@
   "input_hash": "0xabaef20d249f57791ea28f3fa05f569bb7fad376b688b62d5b3045579d6cb0b8",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xdc75a50974d4e4fab14d753a8c5813d2e9681282f4d93188b507d90436bb717c",
+  "tx_hash": "0x371fc851530c1a00945551cbb75b0039671801d7d81eee999ab7c32fddc2dcd1",
   "security": false
  },
  {
-  "ts": 1792177793.601677,
+  "ts": 1792437074.006186,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1618,7 +1822,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.644307,
+  "ts": 1792437074.049325,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1627,7 +1831,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.306 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.306 is within the limit 0.843 for routine bills"
    ],
    "amount": 1721.16
   },
@@ -1640,7 +1844,23 @@
   "security": false
  },
  {
-  "ts": 1792177793.699817,
+  "ts": 1792437074.1046069,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251212-0016"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0016",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437074.1046221,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1653,11 +1873,11 @@
   "input_hash": "0xfa656071e011f1404040edd985ebcb677af5d8f2d7a182bcd7936427ae81c846",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xc1edcbd8e363cd88dd4e6188c5e1daffbdfe47c12a891047de188e13de0ca2d8",
+  "tx_hash": "0xd14db79057dea5fdf255a600c1e108cf60a49a09dc0ea196dc29cf4f092b93d3",
   "security": false
  },
  {
-  "ts": 1792177793.7017732,
+  "ts": 1792437074.107572,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1674,7 +1894,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.745801,
+  "ts": 1792437074.150628,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1683,7 +1903,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,163.48 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,163.48 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1741.41
   },
@@ -1696,7 +1916,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.747463,
+  "ts": 1792437074.1540532,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1713,7 +1933,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.790176,
+  "ts": 1792437074.195939,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1722,7 +1942,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,183.72 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,183.72 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1761.65
   },
@@ -1735,7 +1955,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.791439,
+  "ts": 1792437074.19841,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1752,7 +1972,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.834252,
+  "ts": 1792437074.240253,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1761,7 +1981,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,203.97 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,203.97 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1781.9
   },
@@ -1774,7 +1994,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.836323,
+  "ts": 1792437074.243346,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1791,7 +2011,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.8802838,
+  "ts": 1792437074.286117,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1800,7 +2020,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,224.22 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,224.22 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1802.15
   },
@@ -1813,7 +2033,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.882192,
+  "ts": 1792437074.288407,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1830,7 +2050,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.9246762,
+  "ts": 1792437074.331022,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1839,7 +2059,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,244.47 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,244.47 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1822.4
   },
@@ -1852,7 +2072,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.926105,
+  "ts": 1792437074.3342621,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1869,7 +2089,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.968574,
+  "ts": 1792437074.3771148,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1878,7 +2098,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,264.72 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,264.72 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1842.65
   },
@@ -1891,7 +2111,7 @@
   "security": false
  },
  {
-  "ts": 1792177793.97062,
+  "ts": 1792437074.380288,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1908,7 +2128,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.013184,
+  "ts": 1792437074.422103,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1917,7 +2137,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,284.97 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,284.97 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1862.9
   },
@@ -1930,7 +2150,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.014952,
+  "ts": 1792437074.4252741,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1947,7 +2167,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.057554,
+  "ts": 1792437074.4675488,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1956,7 +2176,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Supplier 7-day autonomous total would be $5,305.22 (cap $5,000): possible limit splitting"
+    "This supplier would get $5,305.22 in 7 days without a signature (limit $5,000): possible limit splitting"
    ],
    "amount": 1883.15
   },
@@ -1969,7 +2189,23 @@
   "security": false
  },
  {
-  "ts": 1792177794.1141708,
+  "ts": 1792437074.534626,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 739597,
+   "root": "0x7e0fb68fd389f0237304d52aa487e92094728acabbbc64a97623dcb05823820a"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xe89ba76ee735cb34c422e0333b1a28eb22e273654757ba1b238a1a02fb58eb11",
+  "security": false
+ },
+ {
+  "ts": 1792437074.5388641,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1986,7 +2222,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.115324,
+  "ts": 1792437074.541893,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2003,7 +2239,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.11625,
+  "ts": 1792437074.544704,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2020,7 +2256,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.116255,
+  "ts": 1792437074.5447092,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -2035,7 +2271,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.117483,
+  "ts": 1792437074.545953,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -2058,7 +2294,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.159675,
+  "ts": 1792437074.589073,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2067,7 +2303,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.273 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.273 is within the limit 0.843 for routine bills"
    ],
    "amount": 1317.81
   },
@@ -2080,7 +2316,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.204206,
+  "ts": 1792437074.631165,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2089,7 +2325,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.319 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.319 is within the limit 0.843 for routine bills"
    ],
    "amount": 2104.21
   },
@@ -2102,7 +2338,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.251582,
+  "ts": 1792437074.672771,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2111,7 +2347,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.262 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.262 is within the limit 0.843 for routine bills"
    ],
    "amount": 1091.42
   },
@@ -2124,7 +2360,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.299144,
+  "ts": 1792437074.716751,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2133,7 +2369,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.255 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.255 is within the limit 0.843 for routine bills"
    ],
    "amount": 902.8
   },
@@ -2146,12 +2382,12 @@
   "security": false
  },
  {
-  "ts": 1792177794.2991629,
+  "ts": 1792437074.71677,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
    "intent": "PAY_SET",
-   "summary": "Pay 4 bill(s) for all suppliers: $5,416.24 alone (T1), $0.00 need the manager's signature (T2).",
+   "summary": "Pay all suppliers: 4 bills for $5,416.24 on its own.",
    "steps": 4
   },
   "plan_id": "P-0004",
@@ -2163,7 +2399,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.2992158,
+  "ts": 1792437074.716817,
   "actor": "owner",
   "kind": "plan_run",
   "detail": {
@@ -2179,7 +2415,23 @@
   "security": false
  },
  {
-  "ts": 1792177794.356404,
+  "ts": 1792437074.779424,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0009"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437074.7794461,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -2192,11 +2444,11 @@
   "input_hash": "0x4c8892f36acf15b938360d5eca53d840f88d6cf324e10ca3189c19a45f458919",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xf1b892c7719c91e7535d6dfee584136f658bbf8e3050cd9535a265b307f51189",
+  "tx_hash": "0x9158c27ce5db27aa7afc88a49a9d5a7f02b0642311d3668db3ed3957a94ec84b",
   "security": false
  },
  {
-  "ts": 1792177794.356411,
+  "ts": 1792437074.779464,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -2208,11 +2460,27 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xf1b892c7719c91e7535d6dfee584136f658bbf8e3050cd9535a265b307f51189",
+  "tx_hash": "0x9158c27ce5db27aa7afc88a49a9d5a7f02b0642311d3668db3ed3957a94ec84b",
   "security": false
  },
  {
-  "ts": 1792177794.414103,
+  "ts": 1792437074.837703,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251213-0025"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0025",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437074.837709,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -2225,11 +2493,11 @@
   "input_hash": "0x43904e2d3a3a135097151965944f96e02f583101b869d7a905be2261b307055e",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xc719fa904b6225886682cb4a71a7752b5ac51b9d969eb4e61720872bbb352706",
+  "tx_hash": "0x0c3987b7a7d2b2a69bc0a5bc827c91f76733e255a16a59b75a78219a8488111c",
   "security": false
  },
  {
-  "ts": 1792177794.414109,
+  "ts": 1792437074.837714,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -2241,11 +2509,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xc719fa904b6225886682cb4a71a7752b5ac51b9d969eb4e61720872bbb352706",
+  "tx_hash": "0x0c3987b7a7d2b2a69bc0a5bc827c91f76733e255a16a59b75a78219a8488111c",
   "security": false
  },
  {
-  "ts": 1792177794.414114,
+  "ts": 1792437074.8377202,
   "actor": "owner",
   "kind": "plan_cancel",
   "detail": {
@@ -2260,7 +2528,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.4161122,
+  "ts": 1792437074.840729,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2277,7 +2545,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.459796,
+  "ts": 1792437074.88305,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2286,7 +2554,7 @@
    "cutoff": 0.8426,
    "group": "routine",
    "reasons": [
-    "Checks passed; risk score 0.260 <= cut-off 0.843 for 'routine'"
+    "Checks passed; risk score 0.260 is within the limit 0.843 for routine bills"
    ],
    "amount": 1088.52
   },
@@ -2299,7 +2567,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.554257,
+  "ts": 1792437074.976597,
   "actor": "contract",
   "kind": "revert",
   "detail": {
@@ -2314,7 +2582,23 @@
   "security": true
  },
  {
-  "ts": 1792177794.576691,
+  "ts": 1792437074.998722,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251213-0028"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0028",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437074.998736,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -2329,7 +2613,7 @@
   "security": false
  },
  {
-  "ts": 1792177794.576693,
+  "ts": 1792437074.998743,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -2341,23 +2625,23 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x3f770a2c12c42e5aabfd1e87d7f688867cdffa426a39de7dcbc7cee26ed23626",
+  "tx_hash": "0x6c16a51c05d182bdb2e615a288384add20e3e866eafcc15b0d05957074e411fe",
   "security": false
  },
  {
-  "ts": 1792177794.61806,
+  "ts": 1792437075.036624,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
-   "day": 20763,
-   "root": "0xf07ffd3f06895f0151260516a2b2c4f14634d394f2e0e4fba8c77300836cc6b0"
+   "day": 20766,
+   "root": "0xd8d92ea02f94821e6c4ebf41b22df717bedbc43603fafda166bbe8fbb429c208"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x8383270063bb0782bf1ad6fff345d9c9857716901d06372c5727cccf280fa922",
+  "tx_hash": "0xd63e61d4b8ad0abe68bfddb4db5b62f062a4e1fdfa8e500df3c074fa8d169a92",
   "security": false
  }
 ]

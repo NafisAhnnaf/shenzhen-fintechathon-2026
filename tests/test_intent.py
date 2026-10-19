@@ -52,3 +52,28 @@ def test_reply_classes():
     assert classify_reply("We will issue a credit note for the difference.") == "credit_note"
     assert classify_reply("Please pay into our new account at HSBC from today.") == "bank_change"
     assert classify_reply("We will look into it.") == "other"
+
+
+def test_jev_request_shape_and_probabilities(monkeypatch):
+    """Jev backend: one Choice question whose criteria are exactly the options; the answer covers every option."""
+    import httpx
+    from apagent.intent.decide import JevDecider, Schema
+    from apagent.intent.router import slot_options
+
+    sent = []
+
+    class Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            opts = list(sent[-1]["questions"]["supplier"]["criteria"])
+            return {"answers": {"supplier": {"type": "choice", "choice": "ACME", "probabilities": {"ACME": 0.9, opts[-1]: 0.1}}}}
+
+    monkeypatch.setattr(httpx, "post", lambda url, json=None, **kw: (sent.append(json), Resp())[1])
+    st = {**request_state(), "text": "pay acme"}
+    opts = slot_options("supplier", st)
+    p = JevDecider(api_key="test").decide(Schema("supplier", opts), st)
+    assert set(sent[0]["questions"]["supplier"]["criteria"]) == set(opts)
+    assert sent[0]["state"] == {"request": "pay acme"}  # S8: no supplier text, no raw state dump
+    assert set(p) == set(opts) and abs(sum(p.values()) - 1) < 1e-9 and max(p, key=p.get) == "ACME"

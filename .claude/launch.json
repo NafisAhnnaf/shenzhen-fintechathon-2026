@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "desk",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": ["NETWORK=localhost", "SIGNING=client", ".venv/bin/uvicorn", "apagent.api:app", "--port", "8000"],
+      "port": 8000
+    },
+    {
+      "name": "chain",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--prefix", "chain", "hardhat", "node", "--config", "chain/hardhat.config.js"],
+      "port": 8545
+    }
+  ]
+}

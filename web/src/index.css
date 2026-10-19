@@ -1,74 +1,15 @@
-@import "@fontsource/plus-jakarta-sans/400.css";
-@import "@fontsource/plus-jakarta-sans/500.css";
-@import "@fontsource/plus-jakarta-sans/600.css";
-@import "@fontsource/plus-jakarta-sans/700.css";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/500.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    background: #f8f9fa;
-    color: #0f172a;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-  body {
-    @apply font-sans text-base antialiased;
-    font-feature-settings: "tnum" 1, "cv11" 1;
-  }
-  :focus-visible {
-    outline: 2px solid #0f766e;
-    outline-offset: 2px;
-    border-radius: 6px;
-  }
-  ::selection {
-    background: #ecfdf5;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation: none !important;
-      transition: none !important;
-    }
-  }
-}
-
 @layer components {
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50;
-  }
-  .btn-primary {
-    @apply btn bg-ledger text-white hover:bg-ledger-hover shadow-sm;
-  }
-  .btn-quiet {
-    @apply btn border border-rule bg-surface text-ink hover:bg-paper hover:border-muted/40 shadow-sm;
-  }
-  .btn-danger {
-    @apply btn border border-oxblood/30 bg-surface text-oxblood hover:bg-oxblood-soft hover:border-oxblood shadow-sm;
-  }
   .field {
-    @apply w-full rounded-lg border border-rule bg-surface px-3.5 py-2.5 text-base placeholder:text-faint focus:border-ledger focus:ring-1 focus:ring-ledger focus:outline-none transition-all;
+    @apply w-full rounded border border-rule bg-surface px-3 py-2 text-base text-ink placeholder:text-faint focus:border-ledger focus:outline-none focus:ring-4 focus:ring-[#6D5BFF]/20;
   }
   .rule-b {
     @apply border-b border-rule;
   }
-  .surface-card {
-    @apply rounded-xl border border-rule bg-surface p-5 shadow-[0_1px_3px_0_rgba(15,23,42,0.04)];
-  }
 }
-
-/* A single reveal when a payment settles: the new journal line arrives and the paid mark settles in. */
-@keyframes settle {
-  from {
-    background: #e6efe9;
-  }
-  to {
-    background: transparent;
-  }
-}
-.settle {
-  animation: settle 1.6s ease-out;
-}
+h1,h2,h3{font-family:var(--f-display);font-weight:600}
+@keyframes settle { from { background: #e4e0ff; } to { background: transparent; } }
+.settle { animation: settle 1.6s ease-out; }

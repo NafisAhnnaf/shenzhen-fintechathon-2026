@@ -28,6 +28,17 @@ HEAD = {"item": "Code", "desc": "Description", "qty": "Qty", "unit": "Unit", "pr
 X = {0: 15, 1: 40, 2: 95, 3: 115, 4: 135, 5: 168}
 
 
+def _columns(c: canvas.Canvas, cols: tuple, rows: list[dict]) -> list[float]:
+    """Column x positions: the fixed grid X, pushed right where a header or value would overlap the next column."""
+    xs, edge = [], 0.0
+    for j, col in enumerate(cols):
+        x = max(X[j] * mm, edge)
+        xs.append(x)
+        wide = max([c.stringWidth(HEAD[col], "Helvetica-Bold", 9)] + [c.stringWidth(r[col], "Helvetica", 9) for r in rows])
+        edge = x + wide + 3 * mm
+    return xs
+
+
 def render(inv: Invoice, path: Path) -> Path:
     L = LAYOUTS[inv.layout % 8]
     c = canvas.Canvas(str(path), pagesize=A4)
@@ -47,17 +58,18 @@ def render(inv: Invoice, path: Path) -> Path:
         c.drawString(15 * mm, h - (53 + 6 * i) * mm, f"{k}:")
         c.drawString(45 * mm, h - (53 + 6 * i) * mm, str(v))
     y = h - 100 * mm
+    rows = [{"item": l.item, "desc": l.desc, "qty": f"{l.qty:g}", "unit": l.unit, "price": f"{l.price:,.2f}",
+             "amount": f"{l.amount:,.2f}"} for l in inv.lines]
+    xs = _columns(c, L["cols"], rows)
     c.setFont("Helvetica-Bold", 9)
     for j, col in enumerate(L["cols"]):
-        c.drawString(X[j] * mm, y, HEAD[col])
+        c.drawString(xs[j], y, HEAD[col])
     c.line(15 * mm, y - 2 * mm, 195 * mm, y - 2 * mm)
     c.setFont("Helvetica", 9)
-    for l in inv.lines:
+    for vals in rows:
         y -= 7 * mm
-        vals = {"item": l.item, "desc": l.desc, "qty": f"{l.qty:g}", "unit": l.unit, "price": f"{l.price:,.2f}",
-                "amount": f"{l.amount:,.2f}"}
         for j, col in enumerate(L["cols"]):
-            c.drawString(X[j] * mm, y, vals[col])
+            c.drawString(xs[j], y, vals[col])
     y -= 12 * mm
     c.setFont("Helvetica-Bold", 10)
     footer_credit = inv.credit and inv.layout == 6
@@ -86,3 +98,41 @@ def render(inv: Invoice, path: Path) -> Path:
     c.showPage()
     c.save()
     return path
+
+
+def photo_from_pdf(pdf: Path, out: Path, seed: int = 3) -> Path:
+    """A phone photo of the first page: tilted, perspective, uneven light, sensor noise, soft focus, JPEG.
+
+    Made from the rendered PDF so the photo and the PDF are the same invoice (task 2: the duplicate arrives as a photo).
+    """
+    import numpy as np
+    import pypdfium2 as pdfium
+    from PIL import Image, ImageFilter
+
+    rng = np.random.default_rng(seed)
+    page = pdfium.PdfDocument(pdf.read_bytes())[0].render(scale=1.6).to_pil().convert("RGB")
+    w, h = page.size
+    # Lay the page on a desk, a little larger than the page, and photograph it at an angle.
+    desk = Image.new("RGB", (int(w * 1.18), int(h * 1.12)), (122, 104, 86))
+    desk.paste(page.rotate(-2.3, expand=False, fillcolor=(122, 104, 86)), (int(w * 0.09), int(h * 0.05)))
+    W, H = desk.size
+    # Perspective: the top edge is further from the camera than the bottom.
+    dx, dy = W * 0.045, H * 0.02
+    src = [(dx, dy), (W - dx * 0.6, 0), (W, H), (0, H - dy)]
+    dst = [(0, 0), (W, 0), (W, H), (0, H)]
+    a = []
+    for (x, y), (u, v) in zip(dst, src):
+        a.append([x, y, 1, 0, 0, 0, -u * x, -u * y])
+        a.append([0, 0, 0, x, y, 1, -v * x, -v * y])
+    coeffs = np.linalg.solve(np.array(a, float), np.array([c for p in src for c in p], float))
+    img = desk.transform((W, H), Image.Transform.PERSPECTIVE, tuple(coeffs), Image.Resampling.BICUBIC)
+    arr = np.asarray(img, dtype=np.float32)
+    # Warm indoor light falling off toward one corner, plus noise.
+    yy, xx = np.mgrid[0:H, 0:W]
+    light = 1.05 - 0.28 * ((xx / W) * 0.6 + (yy / H) * 0.4)
+    arr = arr * light[..., None] * np.array([1.0, 0.97, 0.9])
+    arr += rng.normal(0, 6.0, arr.shape)
+    img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))
+    img = img.resize((int(W * 0.75), int(H * 0.75)), Image.Resampling.LANCZOS)
+    img.save(out, "JPEG", quality=72)
+    return out

@@ -2,8 +2,9 @@
 
 - RuleDecider: deterministic, offline. Keyword and fuzzy-match features, softmax over options.
 - LLMDecider: OpenAI-compatible chat model with a JSON schema whose keys are exactly the options.
-A Jev backend (TypeSafe AI) can implement the same method. Whatever the backend, the answer is always an
-option from the list; a wrong option is handled by the conformal sets and the preview.
+- JevDecider: TypeSafe AI's Jev, one Choice question per schema (DECIDER=jev, TYPESAFE_API_KEY).
+Whatever the backend, the answer is always an option from the list; a wrong option is handled by the conformal
+sets and the preview.
 """
 from __future__ import annotations
 
@@ -16,7 +17,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from ..config import load_env
-from .catalogue import BUNDLES, EXCLUSIONS, INTENTS, TOPICS, WINDOWS
+from .catalogue import BUNDLES, CATALOGUE, EXCLUSIONS, INTENTS, TOPICS, WINDOWS
 
 
 @dataclass
@@ -225,7 +226,7 @@ class LLMDecider:
         key = api_key if api_key is not None else (os.environ.get("LLM_API_KEY") or gemini_key or "")
         is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("LLM_API_KEY"))
         default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-        default_model = "gemini-3.8-flash" if is_gemini else "qwen-plus"
+        default_model = "gemini-flash-lite-latest" if is_gemini else "qwen-plus"
 
         self.base_url = (base_url or os.environ.get("LLM_BASE_URL", default_base_url)).rstrip("/")
         self.model = model or os.environ.get("LLM_MODEL", default_model)
@@ -254,10 +255,98 @@ class LLMDecider:
         return {k: v / z for k, v in p.items()}
 
 
+INTENT_TEXT = {
+    "ASK_STATUS": "Asks how much is owed or which bills are open; reads only, changes nothing",
+    "ASK_WHY": "Asks why a specific bill was held, flagged or not paid",
+    "WHAT_IF": "Asks what would happen (for example to cash) if some bills were paid; a hypothetical, not an order",
+    "PAY_SET": "Orders payment of a supplier's or a group's bills now",
+    "HOLD_SET": "Orders that some bills are not paid yet, put on hold",
+    "RELEASE": "Orders that an existing hold is lifted",
+    "QUERY_SUPPLIER": "Asks the agent to contact a supplier about a bill (price, quantity or credit)",
+    "TIGHTEN": "Asks for extra caution or checks on one supplier",
+    "SET_DIAL": "Changes how much the agent pays on its own overall (more careful, standard, more autonomy)",
+    "PAUSE": "Stops all payments immediately",
+    "RESUME": "Restarts payments after a pause",
+    "UNSUPPORTED": "Anything else: adding or changing payees or bank details, moving funds, trading, raising caps, secrets",
+}
+BUNDLE_TEXT = {"careful": "More careful: fewer payments on its own, more approvals",
+               "standard": "Standard or default settings",
+               "more": "Less careful: pays more on its own, fewer approvals",
+               "most": "Maximum autonomy"}
+JEV_QUESTION = {"intent": "What the accounts-payable request asks the agent to do",
+                "supplier": "Which supplier or group of suppliers the request is about",
+                "bill": "Which bill the request is about",
+                "bundle": "Which autonomy setting the request asks for",
+                "reply": "What the supplier's reply says"}
+REPLY_TEXT = {"credit_note": "The supplier agrees to issue or attaches a credit note",
+              "bank_change": "The supplier asks to pay into new or changed bank details",
+              "other": "Anything else"}
+
+
+def jev_criteria(schema: Schema, state: dict) -> dict[str, str]:
+    """A description for every option: Jev reads the option names and their descriptions."""
+    sups = state.get("suppliers", {})
+    out = {}
+    for o in schema.options:
+        if schema.name == "intent":
+            out[o] = f"{INTENT_TEXT[o]}. Example: {CATALOGUE[o].example}"
+        elif schema.name == "bundle":
+            out[o] = BUNDLE_TEXT[o]
+        elif schema.name == "reply":
+            out[o] = REPLY_TEXT[o]
+        elif schema.name == "supplier":
+            if o == "ALL":
+                out[o] = "All suppliers; the request names no supplier or material"
+            elif o.startswith("MAT:"):
+                code = o[4:]
+                out[o] = f"Every supplier of {' / '.join(MATERIAL_WORDS.get(code, [code]))} ({code})"
+            else:
+                s = sups[o]
+                out[o] = f"The supplier {s['name']} (sells {', '.join(s['materials'])})"
+        elif schema.name == "bill":
+            b = state["bills"][o]
+            name = sups.get(b["supplier_id"], {}).get("name", b["supplier_id"])
+            out[o] = f"Bill {o}, invoice {b['inv_no']} from {name}, status {b.get('status', 'open')}"
+        else:
+            raise KeyError(schema.name)
+    return out
+
+
+class JevDecider:
+    """TypeSafe AI's Jev (System One model): one Choice question over exactly the options, with a probability for
+    every option. Same S8 rule as the LLM backend: the state is the user's request and trusted context only."""
+
+    name = "jev"
+
+    def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
+        self.base_url = (base_url or os.environ.get("JEV_BASE_URL", "https://api.typesafe.ai/v1")).rstrip("/")
+        self.model = model or os.environ.get("JEV_MODEL", "jev-latest")
+        self.api_key = api_key or os.environ.get("TYPESAFE_API_KEY", "")
+
+    def available(self) -> bool:
+        return bool(self.api_key)
+
+    def decide(self, schema: Schema, state: dict) -> dict[str, float]:
+        import httpx
+
+        opts = schema.options
+        q = {"type": "choice", "instructions": JEV_QUESTION.get(schema.name, f"Which {schema.name} the request refers to"),
+             "criteria": jev_criteria(schema, state)}
+        body = {"model": self.model, "state": {"request": state["text"]}, "questions": {schema.name: q}}
+        r = httpx.post(f"{self.base_url}/systemone", json=body, timeout=30,
+                       headers={"Authorization": f"Bearer {self.api_key}"})
+        r.raise_for_status()
+        p = r.json()["answers"][schema.name]["probabilities"]
+        p = {k: max(0.0, float(p.get(k, 0.0))) for k in opts}
+        z = sum(p.values()) or 1.0
+        return {k: v / z for k, v in p.items()}
+
+
 def default_decider():
-    llm = LLMDecider()
-    if os.environ.get("DECIDER", "rules") == "llm" and llm.available():
-        return llm
+    choice = os.environ.get("DECIDER", "rules")
+    for backend in (JevDecider, LLMDecider):
+        if choice == backend.name and backend().available():
+            return backend()
     return RuleDecider()
 
 

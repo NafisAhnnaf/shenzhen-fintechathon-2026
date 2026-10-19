@@ -106,7 +106,7 @@ class Curator:
 def build(seed: int = 7) -> dict:
     """Writes the demo ledger and the December documents as real files:
     data/demo/documents/<key>.json (e-invoice) and <key>.pdf, inbox/*.eml, statements/*.csv."""
-    from .render import render
+    from .render import photo_from_pdf, render
 
     led = history_ledger(seed)
     cu = Curator(led)
@@ -135,6 +135,10 @@ def build(seed: int = 7) -> dict:
     resent.inv_no = "SUN-2512007A"
     resent.layout = 4
     add("t02_resent", resent)
+    # The same invoice photographed on a phone (needs the vision reader; its fields are in t02_pdf.json).
+    photo_from_pdf(DOCS_DIR / "t02_pdf.pdf", DOCS_DIR / "t02_photo.jpg")
+    docs["t02_photo"] = {**docs["t02_pdf"], "file": "documents/t02_photo.jpg", "truth": "documents/t02_pdf.json"}
+    docs["t02_photo"].pop("pdf", None)
     # Task 13: a net-30 bill that should wait to its due date.
     q, p = cu.qty_for("HARBOURLUBE", "LUBE", 1500)
     po = cu.order("HARBOURLUBE", "LUBE", q, p, "2025-12-02")

@@ -14,6 +14,12 @@ EFFECT_TOOLS = {"pay_autonomous", "pay_approved", "send_query", "propose_setting
                 "record_offset", "freeze", "pause", "hold", "probation"}
 PROTECTIVE = {"freeze", "pause", "hold", "probation", "record_offset"}  # S10: may run on untrusted triggers
 PAY_TOOLS = {"pay_autonomous", "pay_approved"}
+# S4: no tool may add a payee or change bank details. The agent has none; the gate refuses them by name too.
+PAYEE_CHANGE_TOOLS = {"add_payee", "change_payee", "update_payee", "set_bank_details", "change_bank_details"}
+# Arguments that decide where money goes, how much, or what the agent may do.
+DECIDING_ARGS = ("payee", "amount", "quantity", "bundle", "recipient", "settings")
+# S8: keys that hold raw supplier text; they never reach the intent router or the planner.
+RAW_TEXT_KEYS = {"raw_text", "free_text", "notes", "reply_text", "email_body"}
 
 
 class PolicyViolation(Exception):
@@ -34,6 +40,14 @@ class ToolCall:
 
 def check(call: ToolCall) -> None:
     a = call.args
+    # S4: bank details from anyone but the owner's settings page only open a call-back task.
+    if call.tool in PAYEE_CHANGE_TOOLS:
+        raise PolicyViolation("S4", "the agent cannot add a payee or change bank details; open a call-back task")
+    # S7: market values can raise a flag or appear on a card, never set a payee, an amount or a quantity.
+    for k in DECIDING_ARGS:
+        v = a.get(k)
+        if isinstance(v, T) and Src.MARKET in v.sources:
+            raise PolicyViolation("S7", f"a market value cannot set {k}")
     if call.tool in PAY_TOOLS:
         payee: T = a["payee"]
         amount: T = a["amount"]
@@ -60,7 +74,7 @@ def check(call: ToolCall) -> None:
     # S8/S3: untrusted values can only push toward more scrutiny.
     if call.tool not in PROTECTIVE:
         for k, v in a.items():
-            if isinstance(v, T) and v.untrusted and k in ("payee", "amount", "bundle", "recipient", "settings"):
+            if isinstance(v, T) and v.untrusted and k in DECIDING_ARGS:
                 raise PolicyViolation("S3", f"untrusted value cannot set {k}")
     # S10: protective actions on untrusted triggers only against the supplier the data came from.
     if call.tool in PROTECTIVE and call.trigger_supplier is not None:
@@ -74,3 +88,49 @@ def card_numbers_ok(numbers: dict) -> None:
     for k, v in numbers.items():
         if not isinstance(v, T):
             raise PolicyViolation("S5", f"untagged number on card: {k}")
+
+
+def _numbers(card: dict, prefix: str = "") -> dict:
+    """Every number on a card, nested dicts flattened to dotted keys (booleans are not numbers)."""
+    out = {}
+    for k, v in card.items():
+        key = f"{prefix}{k}"
+        if isinstance(v, bool) or v is None:
+            continue
+        if isinstance(v, (int, float)):
+            out[key] = v
+        elif isinstance(v, dict):
+            out.update(_numbers(v, key + "."))
+    return out
+
+
+def check_card(card: dict, tags: dict) -> None:
+    """S5 for a whole card: each number on it must equal a tagged value with the same key.
+
+    Supplier numbers are labelled "supplier says", market numbers with their series and date (T.label()).
+    """
+    card_numbers_ok(tags)
+    for k, v in _numbers(card).items():
+        t = tags.get(k)
+        if t is None:
+            raise PolicyViolation("S5", f"untagged number on card: {k}")
+        if not isinstance(t.value, (int, float)) or abs(float(t.value) - float(v)) > 1e-6:
+            raise PolicyViolation("S5", f"number on card does not equal its tagged value: {k}")
+
+
+def check_router_input(state: dict) -> None:
+    """S8: the intent router and the planner see the user's request and trusted state only."""
+    def walk(x, path: str) -> None:
+        if isinstance(x, T):
+            if x.untrusted:
+                raise PolicyViolation("S8", f"untrusted value in router state: {path}")
+            return
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if k in RAW_TEXT_KEYS:
+                    raise PolicyViolation("S8", f"raw supplier text in router state: {path}.{k}")
+                walk(v, f"{path}.{k}")
+        elif isinstance(x, (list, tuple)):
+            for i, v in enumerate(x):
+                walk(v, f"{path}[{i}]")
+    walk(state, "state")

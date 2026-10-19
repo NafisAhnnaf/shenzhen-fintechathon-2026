@@ -18,6 +18,7 @@ from typing import Optional
 import numpy as np
 
 from ..config import DATA_DIR, SETTINGS
+from ..policies import check_router_input
 from . import decide as D
 from .catalogue import CATALOGUE, INTENTS, WHAT_IT_CAN_DO
 from .requests_data import R, request_state, split
@@ -108,6 +109,7 @@ class Router:
 
     # ------------------------------------------------------------------ routing
     def route(self, text: str, state: dict, role: str = "owner") -> Route:
+        check_router_input(state)  # S8: trusted state only, never raw supplier text
         st = {**state, "text": text}
         pi = self.decider.decide(D.Schema("intent", INTENTS), st)
         iset = sorted([k for k, p in pi.items() if p >= 1 - self.q_intent], key=lambda k: -pi[k])

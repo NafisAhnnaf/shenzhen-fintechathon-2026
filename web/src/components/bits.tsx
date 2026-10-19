@@ -7,16 +7,16 @@ import { money, shortHash } from "../lib/format";
 export function TierMark({ tier, status }: { tier: Tier; status?: string }) {
   const k = status === "paid" ? (tier === "T1" ? "alone" : "signed") : status === "rejected" ? "rejected" : tier;
   const map: Record<string, [string, string]> = {
-    alone: ["Paid on its own", "text-ledger border-ledger"],
-    signed: ["Paid with signature", "text-ledger border-ledger"],
-    T1: ["Clear to pay", "text-ledger border-ledger"],
-    T2: ["Needs signature", "text-ochre border-ochre"],
-    hold: ["Held", "text-oxblood border-oxblood"],
-    reject: ["Rejected", "text-oxblood border-oxblood"],
-    rejected: ["Rejected", "text-oxblood border-oxblood"],
+    alone: ["Paid on its own", "b-done"],
+    signed: ["Paid with signature", "b-done"],
+    T1: ["Clear to pay", "b-done"],
+    T2: ["Needs signature", "b-attn"],
+    hold: ["Held", "b-stop"],
+    reject: ["Rejected", "b-stop"],
+    rejected: ["Rejected", "b-stop"],
   };
-  const [label, cls] = map[k ?? ""] ?? ["Not checked", "text-muted border-rule"];
-  return <span className={`border-l-2 pl-1.5 text-sm font-medium ${cls}`}>{label}</span>;
+  const [label, cls] = map[k ?? ""] ?? ["Not checked", "b-idle"];
+  return <span className={`badge ${cls}`}>{label}</span>;
 }
 
 /** A transaction hash: monospace, shortened, linked to the explorer when there is a public one. */
@@ -27,7 +27,7 @@ export function Hash({ h }: { h?: string | null }) {
   // A public explorer when there is one (Base Sepolia); otherwise our own receipt lookup on the connected chain (FISCO, local).
   const href = data?.explorer ? `${data.explorer}/tx/${h}` : `/api/tx/${h}`;
   return (
-    <a className="text-muted underline decoration-rule underline-offset-2 hover:text-ledger hover:decoration-ledger" href={href} target="_blank" rel="noreferrer" title={h}>
+    <a className="hash" href={href} target="_blank" rel="noreferrer" title={h}>
       {text}
     </a>
   );
@@ -47,9 +47,9 @@ export function Figure({ value, source, size = "lg", tone = "ink" }: { value: nu
 
 export function Section({ title, aside, children, className = "" }: { title: string; aside?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={className}>
-      <div className="mb-2 flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-semibold text-ink">{title}</h2>
+    <section className={`card p-6 ${className}`}>
+      <div className="mb-3 flex items-baseline justify-between gap-3">
+        <h2 className="text-xl text-ink">{title}</h2>
         {aside}
       </div>
       {children}
@@ -59,7 +59,7 @@ export function Section({ title, aside, children, className = "" }: { title: str
 
 export function ErrorLine({ error }: { error: unknown }) {
   if (!error) return null;
-  return <p className="mt-2 text-sm text-oxblood">{error instanceof Error ? error.message : String(error)}</p>;
+  return <p className="err mt-2" role="alert">{error instanceof Error ? error.message : String(error)}</p>;
 }
 
 export function Dl({ rows }: { rows: [string, ReactNode][] }) {

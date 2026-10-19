@@ -76,3 +76,20 @@ def window_exceedance(z: np.ndarray, k: float, n_window: int, p_cap: float, tria
         return 0.0
     draws = rng.choice(z, size=(trials, n_window), replace=True).sum(axis=1) * p_cap
     return float(np.mean(draws > k))
+
+
+def stress_exceedance(z: np.ndarray, k: float, n_window: int, p_cap: float, supplier_cap_window: float,
+                      n_hit: int, severity: float, trials: int, rng: np.random.Generator) -> float:
+    """Correlated stress case: one supplier change (e.g. a new invoice layout) hits n_hit payments in one window.
+
+    The n_hit payments fail together, each losing `severity` of P-CAP. The contract's per-supplier weekly cap
+    bounds what one supplier can take alone in a window (supplier_cap_window = P-SUPWEEK * 30/7), so the shock
+    is min(n_hit * P-CAP * severity, supplier_cap_window). The other N - n_hit payments are drawn from held-out z.
+    Returns the share of windows where total claims exceed K.
+    """
+    if len(z) == 0:
+        return 0.0
+    n_hit = min(n_hit, n_window)
+    rest = rng.choice(z, size=(trials, n_window - n_hit), replace=True).sum(axis=1) * p_cap
+    shock = min(n_hit * p_cap * severity, supplier_cap_window)
+    return float(np.mean(rest + shock > k))

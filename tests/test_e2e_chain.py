@@ -2,6 +2,7 @@
 
 Needs `npx hardhat node` running on 127.0.0.1:8545 (see README). Skipped otherwise.
 """
+import shutil
 import subprocess
 
 import httpx
@@ -22,7 +23,7 @@ pytestmark = pytest.mark.skipif(not _node_up(), reason="local hardhat node not r
 
 
 def test_all_scripted_tasks_pass():
-    subprocess.run(["npx", "hardhat", "run", "scripts/deploy.js", "--network", "localhost"], cwd=CHAIN_DIR,
+    subprocess.run([shutil.which("npx") or "npx", "hardhat", "run", "scripts/deploy.js", "--network", "localhost"], cwd=CHAIN_DIR,
                    check=True, capture_output=True)
     from apagent.tasks import Runner
 
@@ -32,3 +33,14 @@ def test_all_scripted_tasks_pass():
         day()
     failed = [(e.task, e.error) for e in r.out if not e.ok]
     assert not failed, failed
+
+
+def test_malformed_signature_is_refused_not_crashed():
+    """A garbage EIP-712 signature recovers to nobody, so approval is refused with a message, never a server error."""
+    from apagent.chain import Chain
+    try:
+        ch = Chain("localhost")
+    except Exception:
+        import pytest
+        pytest.skip("local chain not running")
+    assert ch.recover(ch._pay_msg("B-1", "ACME", 1.0, 1), b"\x00" * 65) == ""

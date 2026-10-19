@@ -6,6 +6,6 @@ export default defineConfig({
   testIgnore: ["**/._*"],
   timeout: 90_000,
   workers: 1,
-  use: { baseURL: process.env.BASE_URL ?? "http://127.0.0.1:8000", viewport: { width: 1440, height: 960 } },
+  use: { channel: process.env.PW_CHANNEL, baseURL: process.env.BASE_URL ?? "http://127.0.0.1:8000", viewport: { width: 1440, height: 960 } },
   reporter: [["list"]],
 });

@@ -697,7 +697,7 @@ class Agent:
         d = self.decisions.get(bill_id)
         res = self.checks.get(bill_id)
         sup = self.led.suppliers.get(b.supplier_id) if b.supplier_id else None
-        return {
+        card = {
             "bill": b.bill_id, "inv_no": b.read.inv_no, "supplier": sup.name if sup else b.read.supplier_name,
             "supplier_id": b.supplier_id, "status": b.status, "tier": b.tier, "group": b.group,
             "supplier_says_total": b.read.total, "amount": b.amount_usd, "amount_tag": "computed:erp_bounded",
@@ -707,3 +707,29 @@ class Agent:
             "mismatches": [asdict(m) for m in res.mismatches] if res else [], "offsets": b.offsets,
             "premium": d.premium if d else None, "erp_ref": b.erp_ref,
         }
+        tags = self._card_tags(card)
+        policies.check_card(card, tags)  # S5: an untagged number blocks the card
+        card["tags"] = {k: t.to_json() for k, t in tags.items()}
+        return card
+
+    def _card_tags(self, card: dict) -> dict[str, T]:
+        """The source of every number a bill card shows (policy S5)."""
+        doc, erp, comp, bnd, mkt = Src.SUPPLIER_DOC, Src.ERP, Src.COMPUTED, Src.ERP_BOUNDED, Src.MARKET
+        src = {"supplier_says_total": {doc}, "amount": {bnd}, "erp_bound": {erp}, "score": {comp, doc},
+               "cutoff": {Src.SETTINGS, comp}, "injection_p": {comp, doc}, "premium": {comp},
+               "resolution.amount": {bnd}, "resolution.held": {comp, doc}, "resolution.credit": {Src.SUPPLIER_MSG}}
+        fp = card.get("fair_price") or {}
+        when = f"{fp.get('series', 'index')}, World Bank monthly"
+        for k in ("p_last", "justified_price", "qty"):
+            src[f"fair_price.{k}"] = {erp, comp} if k == "justified_price" else {erp}
+        src["fair_price.p_invoice"] = {doc}
+        for k in ("actual", "excess", "overcharge"):
+            src[f"fair_price.{k}"] = {doc, comp}
+        for k in ("index_last", "index_now", "justified"):
+            src[f"fair_price.{k}"] = {mkt}
+        tags: dict[str, T] = {}
+        for k, v in policies._numbers(card).items():
+            s = src.get(k)
+            if s is not None:
+                tags[k] = T(v, frozenset(s), note=when if mkt in s else "")
+        return tags

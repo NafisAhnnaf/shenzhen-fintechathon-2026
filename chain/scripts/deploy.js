@@ -15,15 +15,17 @@ const usd = (x) => U((Math.round(x * 100) / 100 / 1000).toFixed(6)); // 1 tUSDC 
 const PARAMS_FILE = path.join(__dirname, "..", "..", "data", "demo", "deploy_params.json");
 const P = fs.existsSync(PARAMS_FILE) ? JSON.parse(fs.readFileSync(PARAMS_FILE, "utf8")) : null;
 
-// FISCO BCOS: block timestamps are in milliseconds, and time cannot be moved forward, so the demo uses a short
-// "day" for the daily caps (DEMO_DAY_SECONDS). Other chains: seconds and 24-hour days.
+// FISCO BCOS and Base Sepolia: time cannot be moved forward, so the demo uses a short "day" for the daily caps
+// (DEMO_DAY_SECONDS) and the scripted tasks finish in one sitting. FISCO block timestamps are in milliseconds.
+// Hardhat: seconds and 24-hour days (time is moved forward instead).
 const IS_FISCO = network.name === "fisco";
+const REAL_TIME = IS_FISCO || network.name === "baseSepolia";
 const TIME_UNIT = IS_FISCO ? 1000 : 1;
-const DAY_SECONDS = IS_FISCO ? Number(process.env.DEMO_DAY_SECONDS || 180) : 86400;
+const DAY_SECONDS = REAL_TIME ? Number(process.env.DEMO_DAY_SECONDS || 180) : 86400;
 
 const DEMO = {
   pCap: usd(P ? P.pCapUsd : 5000), // P-CAP
-  coolDown: IS_FISCO ? 60 : 300, // P-COOL (shorter on FISCO, where time cannot be moved forward)
+  coolDown: REAL_TIME ? 60 : 300, // P-COOL (shorter where time cannot be moved forward)
   window: 300, // P-WINDOW
   disputeTime: 120, // P-DISPUTE
   vaultFunds: usd(P ? P.vaultUsd : 500000),

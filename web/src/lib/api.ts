@@ -122,6 +122,8 @@ export interface Bill {
   offsets: { against: string; amount: number; tx: string | null }[];
   premium: number | null;
   erp_ref: string | null;
+  /** Policy S5: the source of every number on the card, keyed like "amount" or "fair_price.index_now". */
+  tags: Record<string, { value: number; sources: string[]; label: string }>;
 }
 
 export interface LogLine {
