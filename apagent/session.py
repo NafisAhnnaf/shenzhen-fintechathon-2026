@@ -5,6 +5,7 @@ the contracts currently deployed (same vault address). consistency() compares th
 """
 from __future__ import annotations
 
+import json
 import pickle
 import shutil
 import subprocess
@@ -59,15 +60,36 @@ def ledger_for(erp: ErpAdapter) -> Ledger:
     return led
 
 
+def store():
+    """The Postgres store when STATE_STORE=postgres (production, Neon); otherwise None and state goes to a file."""
+    import os
+    from .config import load_env
+    load_env()
+    if os.environ.get("STATE_STORE", "file").lower() != "postgres":
+        return None
+    global _STORE
+    if _STORE is None:
+        from .store import Store
+        _STORE = Store()
+        _STORE.migrate()
+    return _STORE
+
+
+_STORE = None
+DEFAULT_COMPANY = "demo"
+
+
 class Session:
     def __init__(self, network: Optional[str] = "localhost", decider=None, log_path: Optional[Path] = None,
-                 signing: str = "server", erp: Optional[str] = None):
+                 signing: str = "server", erp: Optional[str] = None, company_id: str = DEFAULT_COMPANY,
+                 dep: Optional[dict] = None):
+        self.company_id = company_id
         self.network = network
         self.signing = signing
         self.erp: ErpAdapter = make_adapter(erp)
         self.led = ledger_for(self.erp)
         self.erp_synced = time.time()
-        self.chain = Chain(network, held_roles=held_roles(signing)) if network else None
+        self.chain = Chain(network, held_roles=held_roles(signing), dep=dep) if network else None
         self.agent = Agent(self.led, Calibration.load(), self.chain, log=AuditLog(log_path))
         self.agent.erp = self.erp
         self.router = Router.load(decider)
@@ -85,6 +107,10 @@ class Session:
     def save(self) -> None:
         if not self.network:
             return
+        st = store()
+        if st is not None:
+            st.save(self.company_id, self)
+            return
         STATE_DIR.mkdir(parents=True, exist_ok=True)
         chain, self.chain, self.agent.chain, self.agent.gov.chain = self.chain, None, None, None
         try:
@@ -96,10 +122,31 @@ class Session:
         tmp.write_bytes(blob)
         tmp.replace(target)
 
+    def attach(self, chain: Chain) -> "Session":
+        self.chain = self.agent.chain = self.agent.gov.chain = chain
+        return self
+
     @staticmethod
     def open(network: str = "localhost", log_path: Optional[Path] = None, signing: str = "client",
-             erp: Optional[str] = None) -> "Session":
-        """Reload saved state if it belongs to the deployed contracts; otherwise start from the demo baseline."""
+             erp: Optional[str] = None, company_id: str = DEFAULT_COMPANY) -> "Session":
+        """Reload saved state if it belongs to the deployed contracts; otherwise start from the demo baseline.
+        With the Postgres store, the company's row holds its own deployment and its state is rebuilt from rows."""
+        st = store()
+        if st is not None:
+            co = st.company(company_id)
+            if co is None:
+                dep = json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text())
+                st.create_company(company_id, Ledger.load(demo.DEMO_DIR / "ledger.json").company, network, dep)
+                co = st.company(company_id)
+            chain = Chain(co["network"], held_roles=held_roles(signing), dep=co["deployment"])
+            s = st.load(company_id)
+            if s is not None:
+                s.signing = signing
+                return s.attach(chain)
+            s = Session(co["network"], log_path=log_path, signing=signing, erp=erp, company_id=company_id,
+                        dep=co["deployment"])
+            s.save()
+            return s
         erp_name = make_adapter(erp).name
         p = Session.state_file(network, erp_name)
         chain = Chain(network, held_roles=held_roles(signing))
@@ -341,7 +388,7 @@ class Session:
 
 
 def reset(network: str = "localhost", log_path: Optional[Path] = None, allow_testnet: bool = False,
-          signing: str = "client", erp: Optional[str] = None) -> Session:
+          signing: str = "client", erp: Optional[str] = None, company_id: str = DEFAULT_COMPANY) -> Session:
     """Redeploy the contracts and start the ledger from the demo baseline, together, so they always agree."""
     if network not in ("localhost", "fisco") and not allow_testnet:
         raise RuntimeError("redeploying on a public network costs gas; pass allow_testnet=True")
@@ -352,11 +399,18 @@ def reset(network: str = "localhost", log_path: Optional[Path] = None, allow_tes
         raise RuntimeError(f"deploy failed: {r.stderr[-800:]}")
     adapter = make_adapter(erp)
     Session.state_file(network, adapter.name).unlink(missing_ok=True)
+    st = store()
+    if st is not None:  # the company starts again: fresh contracts, its rows removed
+        dep = json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text())
+        name = Ledger.load(demo.DEMO_DIR / "ledger.json").company
+        st.delete_company(company_id)
+        st.create_company(company_id, name, network, dep)
     if hasattr(adapter, "remove_agent_postings"):
         adapter.remove_agent_postings()  # the ERP goes back to the state the fresh ledger expects
     if log_path and log_path.exists():
         log_path.rename(log_path.with_suffix(f".{int(time.time())}.jsonl"))
-    s = Session(network, log_path=log_path, signing=signing, erp=erp)
+    s = Session(network, log_path=log_path, signing=signing, erp=erp, company_id=company_id,
+                dep=json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text()))
     from .agent import _governor_headers, governor_url
     if governor_url():  # the governor service starts again from the company records, too
         import httpx

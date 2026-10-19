@@ -77,9 +77,8 @@ def test_upload_e_invoice_pays_alone(client):
 def test_pdf_upload_without_reader_is_503(client):
     from apagent import demo
     c, _ = client
-    os.environ.pop("VLM_API_KEY", None)
-    os.environ.pop("GEMINI_API_KEY", None)
-    os.environ.pop("gemini_api_key", None)
+    for k in ("VLM_API_KEY", "GEMINI_API_KEY", "gemini_api_key"):
+        os.environ[k] = ""  # blank, not removed: removing would let .env supply the key again
     p = demo.DOCS_DIR / "t13_net30.pdf"
     r = c.post("/api/documents", files={"file": (p.name, p.read_bytes(), "application/pdf")})
     assert r.status_code == 503

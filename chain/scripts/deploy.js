@@ -118,9 +118,10 @@ async function main() {
     deployedAt: new Date().toISOString(),
   });
 
-  const dir = path.join(__dirname, "..", "deployments");
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, `${network.name}.json`), JSON.stringify(out, null, 2));
+  // DEPLOY_OUT: write the record elsewhere (one deployment per company); default deployments/<network>.json.
+  const target = process.env.DEPLOY_OUT || path.join(__dirname, "..", "deployments", `${network.name}.json`);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, JSON.stringify(out, null, 2));
   for (const [k, v] of Object.entries(out.contracts)) log(k, v);
   log("settings", `${sid} (mode ${b.mode})`);
   console.log(`\nPayees become active after the ${DEMO.coolDown}s cool-down.`);

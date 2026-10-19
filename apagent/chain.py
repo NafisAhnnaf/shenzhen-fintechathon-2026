@@ -72,11 +72,12 @@ class TxResult:
 
 
 class Chain:
-    def __init__(self, network: str = "localhost", rpc: Optional[str] = None, held_roles: Optional[set] = None):
+    def __init__(self, network: str = "localhost", rpc: Optional[str] = None, held_roles: Optional[set] = None,
+                 dep: Optional[dict] = None):
         """held_roles: the keys this process may use. In SIGNING=client mode the owner and the finance manager
-        (approver) sign in their own wallets, so the server does not load their keys."""
-        dep_file = CHAIN_DIR / "deployments" / f"{network}.json"
-        self.dep = json.loads(dep_file.read_text())
+        (approver) sign in their own wallets, so the server does not load their keys.
+        dep: a company's own deployment record (contracts, roles); default: the network's deployment file."""
+        self.dep = dep or json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text())
         rpc = rpc or {"localhost": "http://127.0.0.1:8545",
                       "fisco": os.environ.get("FISCO_RPC", "http://127.0.0.1:8546")}.get(
             network, os.environ.get("BASE_SEPOLIA_RPC", "https://sepolia.base.org"))
