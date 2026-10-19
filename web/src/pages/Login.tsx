@@ -1,120 +1,107 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAccount, useConnect, useDisconnect, type Connector } from "wagmi";
-import { useAppState } from "../lib/hooks";
-import { Art, C, ICON } from "../components/Characters";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
+import { api, type Me } from "../lib/api";
+import { ROLE, shortAddr } from "../lib/format";
+import { usePublic } from "../lib/hooks";
+import { connectorLabel, roleOf } from "../lib/wallet";
+import { ErrorLine } from "../components/ui";
 
-type Who = "owner" | "approver" | "viewer";
-const ROLES: [Who, string, string][] = [
-  ["owner", "Owner", "Sets the limits and the risk dial, unpauses, unfreezes payees."],
-  ["approver", "Finance manager", "Signs held bills, confirms cases, sends supplier queries."],
-  ["viewer", "Look around", "Read everything and try requests. Can't run or sign."],
-];
-
-/** Wallet login: the address decides the role. Local test keys exist only on a local chain. */
+/** Sign in with the wallet. The server reads the role from the deployment record; nobody types a password. */
 export default function Login() {
-  const [who, setWho] = useState<Who>("approver");
-  const { data: st } = useAppState();
-  const { connectors, connectAsync, isPending, variables, error, reset } = useConnect();
+  const { data: pub } = usePublic();
+  const { address, isConnected, connector } = useAccount();
+  const { connectors, connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
-  const { isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  const qc = useQueryClient();
   const nav = useNavigate();
-  const [err, setErr] = useState("");
-  useEffect(() => reset(), [who]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<unknown>(null);
 
-  const local = connectors.filter((c) => c.type === "mock" || c.type === "localKey");
-  const localFor = who === "owner" ? local[0] : who === "approver" ? local[1] : undefined;
-  const browser = connectors.find((c) => c.type === "injected");
-  const phone = connectors.find((c) => c.type === "walletConnect");
+  const mocks = connectors.filter((c) => c.type === "mock");
+  const role = pub && address ? roleOf(address, pub.roles) : null;
 
-  const go = async (c: Connector) => {
-    setErr("");
+  const signIn = async () => {
+    setErr(null);
+    setBusy(true);
     try {
-      if (isConnected) await disconnectAsync();
-      await connectAsync({ connector: c });
-      nav("/desk");
-    } catch (e: any) {
-      setErr(e?.shortMessage || e?.message || String(e));
+      const ch = await api.post<{ nonce: string; message: string }>("/auth/challenge", { address });
+      const signature = await signMessageAsync({ message: ch.message });
+      await api.post<Me & { token: string }>("/auth/login", { nonce: ch.nonce, signature });
+      await qc.invalidateQueries();
+      nav("/bills");
+    } catch (e) {
+      setErr(e);
+    } finally {
+      setBusy(false);
     }
   };
-  const waiting = isPending ? (variables?.connector as Connector | undefined)?.name ?? "your wallet" : null;
 
   return (
-    <div className="login" style={{ minHeight: "100vh" }}>
-      <section className="art">
-        <Link className="logo" to="/" style={{ color: "#F6F5FF" }}>
-          <Art html={C.mark()} />
-          <span>Bonded Payables</span>
-        </Link>
-        <div style={{ display: "flex", gap: 20, alignItems: "flex-end", flexWrap: "wrap" }}>
-          <Art html={C.clerk(waiting ? "think" : "wave", 190)} />
-          <div style={{ flex: "1 1 220px" }}>
-            <h2>{waiting ? "Checking your wallet…" : "Every number shows its ID. So do you."}</h2>
-            <p style={{ marginTop: 12 }}>People sign in with their own wallet. The address decides what you can do; nobody types a password.</p>
+    <div className="center">
+      <div className="login card pad">
+        <div className="brand" style={{ padding: 0 }}>
+          <div className="mark">H</div>
+          <div>
+            <b>{pub?.company.replace(" (fictional)", "") ?? "Payables desk"}</b>
+            <span>Accounts payable</span>
           </div>
         </div>
-        <p style={{ fontSize: 14 }}>{st ? `${st.network === "localhost" ? "Local chain" : st.network} · chain ${st.chain_id} · sample data` : "Connecting to the agent"}</p>
-      </section>
-      <section className="panel">
         <div>
-          <h1 style={{ fontSize: 34 }}>Open the desk</h1>
-          <p className="muted" style={{ marginTop: 8 }}>
-            Choose who you are, then connect.
+          <h1>Sign in with your wallet</h1>
+          <p className="sub">
+            Your wallet address decides what you can do: the owner changes settings, the finance manager approves bills, the bank reviews
+            the reserve. Anyone else can look around.
           </p>
         </div>
-        <div className="roles" role="radiogroup" aria-label="Who are you">
-          {ROLES.map(([k, n, d]) => (
-            <button key={k} className="role" role="radio" aria-checked={who === k} onClick={() => setWho(k)}>
-              <span className="dot" />
-              <span>
-                <b>{n}</b>
-                <br />
-                <span className="muted" style={{ fontSize: 14 }}>
-                  {d}
-                </span>
-              </span>
-            </button>
-          ))}
-        </div>
-        {who === "viewer" ? (
-          <button className="btn btn-primary btn-lg" onClick={() => (isConnected ? disconnectAsync().then(() => nav("/desk")) : nav("/desk"))}>
-            Look around without a wallet
-          </button>
+
+        {!isConnected ? (
+          <div className="stack">
+            {connectors
+              .filter((c) => c.type !== "mock")
+              .map((c) => (
+                <button key={c.uid} className="btn" onClick={() => connectAsync({ connector: c }).catch(setErr)}>
+                  {connectorLabel(c)}
+                </button>
+              ))}
+            {mocks.length > 0 && (
+              <>
+                <h3>Local test accounts</h3>
+                {mocks.map((c, i) => (
+                  <button key={c.uid} className="btn" onClick={() => connectAsync({ connector: c }).catch(setErr)}>
+                    {connectorLabel(c, i)}
+                  </button>
+                ))}
+              </>
+            )}
+          </div>
         ) : (
-          <div className="wallets">
-            <button className="btn btn-quiet" disabled={!browser || isPending} onClick={() => browser && go(browser)}>
-              <Art html={ICON.wallet} />
-              Browser wallet
-            </button>
-            <button className="btn btn-quiet" disabled={!phone || isPending} onClick={() => phone && go(phone)} title={phone ? "" : "Set VITE_WC_PROJECT_ID to enable"}>
-              <Art html={ICON.phone} />
-              Phone wallet
-            </button>
-            <button className="btn btn-quiet" disabled={!localFor || isPending} onClick={() => localFor && go(localFor)} title={localFor ? "" : "Only on a local chain"}>
-              <Art html={ICON.key} />
-              Local test key
-            </button>
+          <div className="stack">
+            <dl className="dl">
+              <dt>Wallet</dt>
+              <dd className="mono">{address && shortAddr(address)}</dd>
+              <dt>Connected with</dt>
+              <dd>{connector?.name}</dd>
+              <dt>Signs in as</dt>
+              <dd>
+                <b>{role ? ROLE[role] ?? role : "Viewer"}</b>
+              </dd>
+            </dl>
+            <div className="row">
+              <button className="btn primary" disabled={busy} onClick={signIn}>
+                {busy ? "Waiting for your wallet" : "Sign in"}
+              </button>
+              <button className="btn" onClick={() => disconnectAsync()}>
+                Use another wallet
+              </button>
+            </div>
+            <p className="note">Your wallet shows a sign-in message. Signing it costs nothing and moves no money.</p>
           </div>
         )}
-        {waiting && (
-          <p style={{ display: "flex", gap: 10, alignItems: "center", fontWeight: 700 }}>
-            <span className="spin dark" />
-            Waiting for {waiting}…
-          </p>
-        )}
-        {(err || error) && (
-          <p className="err" role="alert">
-            {err || error?.message}
-          </p>
-        )}
-        {st && (
-          <p className="muted" style={{ fontSize: 14 }}>
-            Owner {short(st.roles.owner)}, finance manager {short(st.roles.approver)}. A wallet that is neither is a viewer.
-          </p>
-        )}
-      </section>
+        <ErrorLine error={err} />
+      </div>
     </div>
   );
 }
-
-const short = (a?: string) => (a ? `${a.slice(0, 6)}…${a.slice(-4)}` : "–");

@@ -19,7 +19,8 @@ export const ACTOR: Record<string, string> = {
   contract: "Contract",
   finance_manager: "Finance manager",
   owner: "Owner",
-  underwriter: "Underwriter",
+  underwriter: "Bank",
+  arbiter: "Arbiter",
   system: "Policy",
 };
 
@@ -28,8 +29,25 @@ export const ROLE: Record<string, string> = {
   approver: "Finance manager",
   agent: "Agent service",
   governor: "Governor service",
-  underwriter: "Underwriter",
+  underwriter: "Bank",
+  arbiter: "Arbiter",
+  viewer: "Viewer",
+  "*": "Scripted run",
 };
+
+export const STAGE: Record<string, [string, string]> = {
+  received: ["Received", "st-idle"],
+  scheduled: ["Scheduled", "st-info"],
+  needs_approval: ["Needs approval", "st-review"],
+  on_hold: ["On hold", "st-hold"],
+  paid: ["Paid", "st-paid"],
+  rejected: ["Rejected", "st-idle"],
+};
+
+export const PAYER: Record<string, string> = { agent: "Agent", finance_manager: "Finance manager", history: "Before the agent (ERP)" };
+
+const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+export const date = (iso?: string | null) => (iso ? day.format(new Date(`${iso.slice(0, 10)}T00:00:00Z`)) : "–");
 
 /** One plain sentence per journal line. */
 export function describe(l: LogLine, supplierName: (id?: string) => string): string {
@@ -125,6 +143,50 @@ export function describe(l: LogLine, supplierName: (id?: string) => string): str
       return `Held: ${d.reason}`;
     case "answer":
       return `Chose ${supplierName(d.choice) || d.choice}`;
+    case "email_sent":
+      return `Emailed ${d.to}: ${String(d.template).replace(/_/g, " ")}`;
+    case "email_draft":
+      return `Drafted an email for the finance manager: ${String(d.template).replace(/_/g, " ")}`;
+    case "email_failed":
+      return `Email to ${d.to} failed`;
+    case "email_blocked":
+      return `Email refused by policy`;
+    case "mailbox_poll":
+      return `Read ${d.messages} new message(s) from the mailbox`;
+    case "approve_first":
+      return `Signed ${money(d.amount)}; above ${money0(d.threshold)} the owner signs too`;
+    case "payee_set":
+      return `${d.new ? "Added" : "Changed payment details for"} ${supplierName(d.supplier)} after a call-back`;
+    case "signing_key":
+      return d.key ? `Enrolled ${supplierName(d.supplier)}'s invoice-signing key` : `Removed ${supplierName(d.supplier)}'s signing key`;
+    case "budget_set":
+      return d.monthly_usd == null ? `Cleared the ${d.centre} budget` : `Set the ${d.centre} budget to ${money0(d.monthly_usd)} a month`;
+    case "draft_po":
+      return `Drafted purchase order ${d.id}: ${d.qty} ${d.unit} of ${d.item}`;
+    case "offer_draft":
+      return `Drafted early-payment offer ${d.offer}: ${pct(d.pct)} off`;
+    case "offer_accepted":
+      return `Supplier accepted offer ${d.offer}: pay ${money(d.net)}`;
+    case "offer_declined":
+      return `Supplier declined offer ${d.offer}`;
+    case "claim_dispute":
+      return "The bank disputed the claim";
+    case "claim_resolve":
+      return `The arbiter approved ${money(d.amount)} of the claim`;
+    case "pool_fund":
+      return `The bank added ${money(d.amount)} to the reserve`;
+    case "tx_replay":
+      return "Refused a reused transaction";
+    case "bad_owner_tx":
+      return `Refused a transaction: ${d.error}`;
+    case "refused":
+      return `The governor refused to co-sign: ${d.reason}`;
+    case "pay_timing":
+      return d.mode === "now" ? "Bills cleared by the agent are paid at once" : "Bills are paid on their best date";
+    case "pause_self":
+      return `Paused: ${d.reason}`;
+    case "case_dismiss":
+      return "Dismissed the case";
     default:
       return l.kind.replace(/_/g, " ");
   }

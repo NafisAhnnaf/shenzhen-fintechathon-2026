@@ -19,6 +19,11 @@ export function localKey(privateKey: `0x${string}`, label: string, chain: Chain)
         return [account.address];
       case "eth_chainId":
         return numberToHex(chain.id);
+      case "personal_sign": {
+        // Sign-in message: params are [message (hex or text), address].
+        const msg = params[0] as string;
+        return account.signMessage({ message: msg.startsWith("0x") ? { raw: msg as `0x${string}` } : msg });
+      }
       case "eth_signTypedData_v4": {
         const td = typeof params[1] === "string" ? JSON.parse(params[1]) : params[1];
         const { EIP712Domain: _drop, ...types } = td.types;

@@ -1,4 +1,4 @@
-// Thin client for the FastAPI back end (apagent/api.py). Types mirror what the API returns.
+// Client for the FastAPI back end (apagent/api.py). The session cookie from wallet sign-in goes with every call.
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -6,8 +6,11 @@ export class ApiError extends Error {
   }
 }
 
+/** Raised on 401 so the app can send the person to the sign-in page. */
+export const SIGNED_OUT = "desk:signed-out";
+
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const init: RequestInit = { method, headers: {} };
+  const init: RequestInit = { method, headers: {}, credentials: "same-origin" };
   if (body instanceof FormData) init.body = body;
   else if (body !== undefined) {
     init.body = JSON.stringify(body);
@@ -15,7 +18,13 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   }
   const r = await fetch(`/api${path}`, init);
   const text = await r.text();
-  const data = text ? JSON.parse(text) : null;
+  let data: any = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = { detail: text };
+  }
+  if (r.status === 401 && !path.startsWith("/auth/")) window.dispatchEvent(new Event(SIGNED_OUT));
   if (!r.ok) throw new ApiError(r.status, (data && (data.detail || data.error)) || r.statusText);
   return data as T;
 }
@@ -31,7 +40,24 @@ export const api = {
 };
 
 // ------------------------------------------------------------------ types
-export type Tier = "T1" | "T2" | "hold" | "reject" | "history" | null;
+export type Role = "owner" | "approver" | "underwriter" | "arbiter" | "viewer" | "*";
+export type Stage = "received" | "scheduled" | "needs_approval" | "on_hold" | "paid" | "rejected";
+
+export interface Me {
+  address: string;
+  role: Role;
+  label: string;
+}
+
+export interface Public {
+  network: string;
+  chain_id: number;
+  rpc: string;
+  company: string;
+  roles: Record<string, string>;
+  auth: boolean;
+  demo_date: string;
+}
 
 export interface ChainState {
   network: string;
@@ -41,6 +67,7 @@ export interface ChainState {
   pool_balance_usd: number;
   pool_locked_usd: number;
   pool_free_usd: number;
+  pool_owed_usd: number;
   pool_paused: boolean;
   agent_paused: boolean;
   settings_id: number;
@@ -50,14 +77,6 @@ export interface ChainState {
   p_supweek_usd: number;
   r_usd: number;
   p_cap_usd: number;
-}
-
-export interface Supplier {
-  name: string;
-  contact: string;
-  frozen: boolean;
-  probation_left: number;
-  rail: "token" | "bank";
 }
 
 export interface AppState {
@@ -75,26 +94,22 @@ export interface AppState {
   chain_id: number;
   rpc: string;
   explorer: string | null;
-  suppliers: Record<string, Supplier>;
+  suppliers: Record<string, { name: string; contact: string; frozen: boolean; probation_left: number; rail: "token" | "bank" }>;
   open_cases: Case[];
-  consistency: { ok: boolean; checked: number; mismatches: unknown[] };
+  erp: Record<string, any>;
+  pending_settings: Record<string, string>;
+  consistency: { ok: boolean; checked: number; mismatches: Record<string, any>[] };
 }
 
-export interface FairPrice {
+export interface MatchRow {
   item: string;
-  material: string;
-  p_last: number;
-  p_invoice: number;
-  actual: number;
-  justified: number;
-  excess: number;
-  justified_price: number;
-  overcharge: number;
-  qty: number;
-  index_last: number;
-  index_now: number;
-  series: string;
-  flagged: boolean;
+  desc: string;
+  unit: string;
+  invoice: { qty: number; price: number; amount: number };
+  order: { qty: number; price: number } | null;
+  received: { qty: number; billed_before: number } | null;
+  qty_ok: boolean;
+  price_ok: boolean;
 }
 
 export interface Bill {
@@ -102,8 +117,10 @@ export interface Bill {
   inv_no: string;
   supplier: string;
   supplier_id: string | null;
-  status: "received" | "held" | "approved" | "paid" | "rejected";
-  tier: Tier;
+  status: string;
+  stage: Stage;
+  tier: string | null;
+  paid_by: "agent" | "finance_manager" | "history" | null;
   group: string;
   supplier_says_total: number;
   amount: number;
@@ -111,22 +128,36 @@ export interface Bill {
   score: number | null;
   cutoff: number | null;
   reasons: string[];
-  resolution: { action: string; amount: number; held?: number; text: string; credit_note?: string; credit?: number } | null;
-  fair_price: FairPrice | null;
+  resolution: { action: string; amount: number; held?: number; text: string; offer?: string } | null;
+  fair_price: Record<string, any> | null;
   injection_p: number;
   tx_hash: string | null;
   due: string;
   terms: string;
   disputed: boolean;
-  mismatches: { code: string; reason: string }[];
+  mismatches: { code: string; reason: string; detail?: Record<string, any> }[];
   offsets: { against: string; amount: number; tx: string | null }[];
   premium: number | null;
   erp_ref: string | null;
-  /** Policy S5: the source of every number on the card, keyed like "amount" or "fair_price.index_now". */
-  tags: Record<string, { value: number; sources: string[]; label: string }>;
+  received: string;
+  paid_on: string | null;
+  source: string;
+  po: string;
+  inv_date: string;
+  currency: string;
+  fx: { currency: string; total: number; rate: number; date: string } | null;
+  hold_reason: string | null;
+  plan_id: string | null;
+  match: MatchRow[];
+  confidence: Record<string, number>;
+  low_confidence: string[];
+  queries: string[];
+  emails: string[];
+  cases: string[];
 }
 
 export interface LogLine {
+  index?: number;
   ts: number;
   actor: string;
   kind: string;
@@ -137,6 +168,7 @@ export interface LogLine {
   decision: string | null;
   tx_hash: string | null;
   security: boolean;
+  anchored?: boolean;
 }
 
 export interface Case {
@@ -156,7 +188,7 @@ export interface Step {
   amount: number | null;
   tier: string | null;
   reason: string;
-  status: "planned" | "done" | "stopped" | "skipped" | "needs_signature" | "failed";
+  status: "planned" | "done" | "stopped" | "skipped" | "needs_signature" | "failed" | "running";
   result: Record<string, any>;
 }
 
@@ -171,32 +203,29 @@ export interface Plan {
   answer: Record<string, any> | null;
 }
 
-export interface Question {
-  kind: "question";
-  id: string;
-  route: { text: string; outcome: string; question: { kind: string; text: string; options?: any[]; examples?: string[] } };
+export interface RouteReply {
+  kind: "question" | "plan";
+  id?: string;
+  plan?: Plan;
+  route: { text: string; outcome: string; question?: { kind: string; text: string; options?: any[]; examples?: string[] } };
 }
 
-export interface PlanReply {
-  kind: "plan";
-  plan: Plan;
-}
-
-export interface Query {
+export interface Email {
   id: string;
-  bill: string;
+  template: string;
   to: string;
-  topic: string;
+  supplier: string;
+  supplier_name: string;
+  bill: string | null;
+  status: "draft" | "sent" | "failed" | "blocked";
+  actor: string;
+  created: string;
+  sent?: string;
+  auto: boolean;
   subject: string;
   body: string;
-  status: "draft" | "sent" | "resolved" | "needs_manager";
-  amount: number | null;
-}
-
-export interface TxResult {
-  ok: boolean;
-  tx_hash: string | null;
-  error: string | null;
+  via?: string;
+  error?: string;
 }
 
 export interface TypedData {
@@ -231,4 +260,35 @@ export interface BundleCal {
   r_usd: number;
   chen_usd: number;
   max_exposure_usd: number;
+}
+
+export interface PaymentRow {
+  date: string;
+  bill: string;
+  inv_no: string;
+  supplier_id: string;
+  supplier: string;
+  amount: number;
+  by: "agent" | "finance_manager" | "history";
+  rail: "token" | "bank" | null;
+  tx_hash: string | null;
+  erp_ref: string | null;
+  plan_id: string | null;
+}
+
+export interface Payments {
+  from: string | null;
+  to: string | null;
+  today: string;
+  totals: Record<string, { amount: number; count: number }>;
+  rows: PaymentRow[];
+}
+
+export interface Notification {
+  ts: number;
+  for: string;
+  severity: "action" | "alert";
+  text: string;
+  bill: string | null;
+  kind: string;
 }
