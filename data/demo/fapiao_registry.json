@@ -1,0 +1,5 @@
+{
+ "_note": "Simulated fapiao registry for the demo. Not the State Taxation Administration's service.",
+ "25442000000012345678": {"status": "normal", "seller_tax_id": "CN76262352", "total": 18000.00, "date": "2025-12-05"},
+ "25442000000012345679": {"status": "void", "seller_tax_id": "CN76262352", "total": 9000.00, "date": "2025-11-20"}
+}

@@ -128,3 +128,23 @@ def test_price_rise_on_unindexed_item_flagged_by_supplier_history(ledger, docs):
     res = checker.check(ledger, Bill("B-HIST", ledger.today, "test", up))
     hp = next(m.detail for m in res.mismatches if m.code == "price_history")
     assert hp["flagged"] and hp["actual"] > hp["band"] and res.amount.value < up.total
+
+
+def test_fapiao_checks(ledger, docs, monkeypatch):
+    """Spec C6: a quoted fapiao must exist, be valid, come from this seller and match the total."""
+    from dataclasses import replace
+
+    from apagent import fapiao
+
+    assert fapiao.verify("25442000000012345678", "2025-12-05", 18000.0, "CN76262352") is None
+    assert "void" in fapiao.verify("25442000000012345679", "2025-11-20", 9000.0, "CN76262352")
+    assert "another seller" in fapiao.verify("25442000000012345678", "2025-12-05", 18000.0, "CN18354761")
+    assert "is for" in fapiao.verify("25442000000012345678", "2025-12-05", 17000.0, "CN76262352")
+    assert "not found" in fapiao.verify("25442000000099999999", "2025-12-05", 1.0, "CN76262352")
+
+    r = demo.read_from_doc(docs["t15_bank_rail"])  # Ganjiang, a mainland supplier
+    assert "fapiao" not in checker.check(ledger, Bill("B-F0", ledger.today, "test", r)).codes  # not required by default
+    void = replace(r, fapiao_no="25442000000012345679")
+    assert "fapiao" in checker.check(ledger, Bill("B-F1", ledger.today, "test", void)).codes
+    monkeypatch.setenv("FAPIAO_REQUIRED", "on")
+    assert "fapiao" in checker.check(ledger, Bill("B-F2", ledger.today, "test", r)).codes

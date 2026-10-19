@@ -107,7 +107,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | C3 | Market check against World Bank indices (pass-through, lag) | Built | `checker`, `market.py` | task 16, FAIR |
 | C4 | Price check from the supplier's own history when no public index exists (flags 0.2% of the simulated year) | Built | `checker.history_price_check` | `test_checker.py` |
 | C5 | Currencies HKD, CNY, USD: converted at intake at a dated reference rate; original kept on the bill | Built | `fx.py`, `agent.intake` | `test_checker.py` |
-| C6 | Mainland e-invoice (fapiao) check against a verification service (simulated in the demo) | To build | | |
+| C6 | Mainland fapiao check: exists, valid, same seller, same total (provider API, or a simulated registry in the demo); can be required for mainland bills | Built | `fapiao.py` | `test_checker.py` |
 | C7 | Hidden-instruction detector, patterns after decoding | Built | `injection.py` | RED |
 | C8 | Hidden-instruction check by a model (closed choice, no tools) next to the patterns; the higher score wins | Built | `injection.assess` | `test_security.py` |
 | C9 | Supplier-signed e-invoices: an enrolled supplier's unsigned or altered invoice goes to a person | Built | `signing.py`, `checker.match_supplier` | `test_security.py` |

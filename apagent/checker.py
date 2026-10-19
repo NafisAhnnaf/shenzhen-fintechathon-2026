@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from . import market
+from .fapiao import required as fapiao_required
 from .config import SETTINGS, Settings
 from .domain import Bill, Ledger, PurchaseOrder, Supplier
 from .tags import Src, T, bounded
@@ -86,6 +87,13 @@ def match_supplier(led: Ledger, bill: Bill) -> tuple[Optional[Supplier], list[Mi
     registered = sup.bank_account if sup.rail == "bank" else sup.wallet
     if r.bank_account and r.bank_account != registered:
         out.append(Mismatch("bank_change", "Bank details on the bill differ from the registry"))
+    if sup.region == "CN" and (r.fapiao_no or fapiao_required()):  # spec C6
+        from . import fapiao
+        fx = getattr(bill, "fx", None)
+        total = fx["total"] if fx else r.total  # a fapiao is in CNY: compare with the bill as sent
+        problem = fapiao.verify(r.fapiao_no, r.date, total, sup.tax_id) if r.fapiao_no else "no fapiao number on a mainland bill"
+        if problem:
+            out.append(Mismatch("fapiao", f"Fapiao check: {problem}", {"number": r.fapiao_no}))
     if getattr(sup, "signing_key", ""):  # spec C9: an enrolled supplier signs every e-invoice
         from . import signing
         who = signing.signer(r.doc_hash, r.signature) if r.doc_hash and r.signature else None
@@ -340,6 +348,8 @@ def propose_resolution(res: CheckResult, bill: Bill) -> dict:
             steps.append(f"pay net of the recorded credit {m.detail['recorded']:,.2f}")
         elif m.code == "arith":
             steps.append("pay the amount computed from the lines and the order")
+        elif m.code == "fapiao":
+            steps.append("ask the supplier for a valid fapiao before paying")
         elif m.code == "unsigned":
             steps.append("confirm with the supplier that it sent this invoice: it is not signed with the supplier's key")
         elif m.code in ("domain", "tax_id", "currency"):

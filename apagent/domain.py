@@ -141,6 +141,7 @@ class Read:
     raw_text: str = ""  # free text from the document; only the injection flag sees it
     doc_hash: str = ""  # e-invoice: hash of the document as received (spec C9)
     signature: str = ""  # e-invoice: the supplier's signature over doc_hash, if any
+    fapiao_no: str = ""  # mainland e-invoice number, if the bill quotes one (spec C6)
 
     @property
     def min_confidence(self) -> float:
