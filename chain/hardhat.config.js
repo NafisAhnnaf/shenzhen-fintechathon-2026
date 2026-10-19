@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-ethers");
 require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomicfoundation/hardhat-verify");
 require("dotenv").config();
 const path = require("path");
 const { subtask } = require("hardhat/config");
@@ -48,4 +49,7 @@ module.exports = {
       accounts: keys,
     },
   },
+  // Source verification on sepolia.basescan.org through the Etherscan V2 API (one key covers every chain).
+  etherscan: { apiKey: process.env.BASESCAN_API_KEY || "" },
+  sourcify: { enabled: false },
 };

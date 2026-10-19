@@ -1,7 +1,7 @@
 // Base Sepolia role keys: create, show, fund.
 //
 //   node scripts/testnet-keys.js           create any missing role keys in chain/.env, print addresses and balances
-//   node scripts/testnet-keys.js --fund    also send ETH from the owner to every role below FUND_ETH (default 0.003)
+//   node scripts/testnet-keys.js --fund    also send ETH from the owner to every role below FUND_ETH (default 0.0005)
 //
 // Fund the owner address from a faucet first; --fund then shares it out. Test keys only: never mainnet keys.
 const fs = require("fs");
@@ -11,7 +11,9 @@ const { ethers } = require("ethers");
 const ENV = path.join(__dirname, "..", ".env");
 // ATTACKER is an unrelated key for the red-team task that calls the vault from outside (task 9).
 const ROLES = ["OWNER", "AGENT", "GOVERNOR", "APPROVER", "UNDERWRITER", "ARBITER", "ATTACKER"];
-const FUND_ETH = process.env.FUND_ETH || "0.003";
+const FUND_ETH = process.env.FUND_ETH || "0.0005"; // gas on Base Sepolia is about 0.006 gwei: plenty for a role
+// The attacker key is funded only on request (FUND_ATTACKER=on), for the red-team task that calls the vault from outside.
+const FUNDED = ROLES.slice(1).filter((r) => r !== "ATTACKER" || process.env.FUND_ATTACKER === "on");
 
 function readEnv() {
   const src = fs.existsSync(ENV) ? ENV : path.join(__dirname, "..", ".env.example");
@@ -44,7 +46,7 @@ async function main() {
   if (process.argv.includes("--fund")) {
     const owner = wallets.OWNER;
     let nonce = await provider.getTransactionCount(owner.address, "pending");
-    for (const r of ROLES.slice(1)) {
+    for (const r of FUNDED) {
       const bal = await provider.getBalance(wallets[r].address);
       if (bal >= target) continue;
       const tx = await owner.sendTransaction({ to: wallets[r].address, value: target - bal, nonce: nonce++ });

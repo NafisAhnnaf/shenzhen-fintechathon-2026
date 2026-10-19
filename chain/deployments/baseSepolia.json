@@ -1,0 +1,104 @@
+{
+  "network": "baseSepolia",
+  "chainId": 84532,
+  "txs": {
+    "setPool": "0x8359aecffb214ef585604894c76a726aa3ab03b7c780fd470479526ad996ab54",
+    "mintVault": "0x5d7d6bdb04c2ef537344e9286ec07ea3efa4865a6e0c2c1330e086fbbad04c68",
+    "mintNaive": "0x7a9ff980a1d83c85a150367bd3d07298783806ac5bdf40029b4c07ecb070884c",
+    "mintUnderwriter": "0x25ce92ac20a25dbca3ff6cd3f6f2ba7d3f9fc5af46a7b46aa0ea31c00e663f04",
+    "approvePool": "0x674a70838ad370f7cbb1827c9079189cd7daad35d4eb1813fbe97060e42e920f",
+    "fundPool": "0x42143f64dff8d31dc59233ee93bf14aca8b0f6e90583e00336a81737ae3cc5ea",
+    "addPayee_ACME": "0xc3752460ab80ccc47266064f610288c12f1f9e679e50bb12859b3e04a2b1b9b9",
+    "addPayee_LIONROCK": "0xd9e1dd26a8c58588a0b6ef84564cc86d0a9240dbd32978c16831ef4b8e42623a",
+    "addPayee_GANJIANG": "0x773d694a9e3b854d92605541d4b8518299d0d98ab09b2f4c29b90d5638b5971f",
+    "addPayee_TSUENWAN": "0x6fb1f55275349ec2d9b0a4ee00bdd0ddda012e4c2801922995120b5650c92f8f",
+    "addPayee_PEARLDELTA": "0xc72fb4031d7d91359b2877e81c5808b1945edd0f83bf884eabb661ef787245bc",
+    "addPayee_KWONGFAT": "0xf66abfe1affb18484da068f01e0a483f8eeb1cdfd497345d29d96920b1c5988a",
+    "addPayee_SUNKEE": "0xb4ae6d8ac29548fd525fbb43d0859f767e0aede3ef5630c235be1a73f63fc912",
+    "addPayee_KAITAK": "0xea4ff77b39b27695bb934e67003c60958611f7958e015dd95a7bbec18cf13317",
+    "addPayee_HARBOURLUBE": "0x03f8a79abb0d839d91a59c69e176f92f50d668d2f824fafe22359ee8cf5f63e8",
+    "addPayee_SHATINPCB": "0x1974af600e330a47065af2412120c0b2574655af89a461e0d776e30df0aa4fb2",
+    "addPayee_VICPLATING": "0x6c9ee6ac551cdf5918d28e12a61f91c74446da47b94c3f661db4e4efa7c6b5df",
+    "addPayee_MONGKOKWIRE": "0xa3faf6e5f8ed2401d0f17df1221402622055f493724416bbd393478a74f32094",
+    "proposeSettings": "0x146645192400f483054e8d3bd2a3be8ebc6fde3cc845a61344211d277eaf6593",
+    "approveSettings": "0x2f646ef2c6ac9d068f7b6ad63eb623dc8cd0d42ed60e2382490ab9f6ed5332f4",
+    "setDualAbove": "0xcd706317146e06ac2bc090828d93303f9b8fa7dbdb70fdad5d57cbfd8440c4f7"
+  },
+  "contracts": {
+    "token": "0x09e2C53433ed0405674CD692CB0e0B135D7057EF",
+    "vault": "0x8eCfA360cD9d562C83c1491d3e707FB90F3ffFDD",
+    "pool": "0x1555acc58125B51bd05C6855592369CCD993d973",
+    "anchor": "0xC0460b0a9e75e2558C9Fb4Ff872F8b222f2AF53a",
+    "naive": "0xC4217816561fd11e42ef07060C37402A7aAe20cE"
+  },
+  "roles": {
+    "owner": "0xcE591a053305EE1912F81AC4258A61A442076118",
+    "agent": "0x3c87d88AE0CCbefC94b9f2508b281ff2a78e2B86",
+    "governor": "0x0E336fDBe82E3477f52F9107f3145357Bbae4d65",
+    "approver": "0x26BDACDfdCfb5162E4F4529523b5e53C9AeB4657",
+    "underwriter": "0x1A94B27260D6703E0B9AF10Fef3c71EF342439bd",
+    "arbiter": "0x02626620438617f5e9372EF41Ed5cbAD93aDA12A",
+    "attacker": "0x9b1e4F2a7C3d5E6f708192A3b4C5d6E7f8091a2B"
+  },
+  "payees": {
+    "ACME": {
+      "wallet": "0x4c123B1612Dd272D1371c17149d439536b3216FD",
+      "rail": 0
+    },
+    "LIONROCK": {
+      "wallet": "0xeB975729FaE923d5A4Fd12aAbfe228f219e9cb0e",
+      "rail": 0
+    },
+    "GANJIANG": {
+      "wallet": "0x0000000000000000000000000000000000000000",
+      "rail": 1
+    },
+    "TSUENWAN": {
+      "wallet": "0xCcF25Ec84d8dBc74254770F58904DBA41ECCcc3F",
+      "rail": 0
+    },
+    "PEARLDELTA": {
+      "wallet": "0x0000000000000000000000000000000000000000",
+      "rail": 1
+    },
+    "KWONGFAT": {
+      "wallet": "0x13043B026c48BbF33FEfF9243a8f506B40928B5b",
+      "rail": 0
+    },
+    "SUNKEE": {
+      "wallet": "0xA767c76fB008F86bEbB2737F6a6F0fb23c6F5da2",
+      "rail": 0
+    },
+    "KAITAK": {
+      "wallet": "0xEC255404E4FB440034d6608697A8d41beD440E50",
+      "rail": 0
+    },
+    "HARBOURLUBE": {
+      "wallet": "0x54F31af3176813e02EA68Ef786E4d3ceA27d2693",
+      "rail": 0
+    },
+    "SHATINPCB": {
+      "wallet": "0xB484e73cf575Dcad6Ba2b0AeE0ca923732881584",
+      "rail": 0
+    },
+    "VICPLATING": {
+      "wallet": "0xC4FA2815d2802827283e0Ad84173581569969E58",
+      "rail": 0
+    },
+    "MONGKOKWIRE": {
+      "wallet": "0x81006f7E3dfc967A64CB14028D512c9791E558E0",
+      "rail": 0
+    }
+  },
+  "params": {
+    "pCap": "5000000",
+    "coolDown": 60,
+    "window": 300,
+    "disputeTime": 120,
+    "activeSettings": 0,
+    "timeUnit": 1,
+    "dayLength": 180,
+    "dualAbove": "25000000"
+  },
+  "deployedAt": "2026-10-19T23:45:16.798Z"
+}
