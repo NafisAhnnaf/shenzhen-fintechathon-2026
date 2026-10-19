@@ -14,7 +14,11 @@ The agent needs six things from an ERP and gives back one. An adapter (`apagent/
 
 Three ways in, from least to most work:
 
-1. **Export files.** Every ERP can export these lists. Write a mapping file that names the files and columns
+1. **Export files.** Every ERP can export these lists. Put the exports in one folder and let the assistant draft
+   the mapping: `python -m apagent.erp.mapper <folder> --write`. It recognises suppliers, order lines, receipts,
+   billed quantities and returns from the headers, matches columns by the names Odoo, SAP Business One,
+   QuickBooks, Xero, Dynamics, Kingdee and Yonyou use (English and Chinese), and lists any field it could not
+   match instead of guessing. Check the draft once. Or write the mapping file by hand: it names the files and columns
    (see `data/erp/odoo_export/mapping.json` for a real Odoo export, or `apagent/erp/export.py` for the standard
    layout) and run with `ERP=csv`. Options: `bracket_code` takes codes like `[CU-ROD]` out of product names;
    `receipts_net_of_returns` adds returns back when the ERP nets them out.

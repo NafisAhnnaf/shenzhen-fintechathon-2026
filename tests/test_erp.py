@@ -2,6 +2,7 @@
 import json
 import shutil
 import urllib.request
+from pathlib import Path
 
 import pytest
 
@@ -131,3 +132,40 @@ def test_payment_recorded_in_odoo_and_counted_once():
         assert s.led.billed_qty(b.read.po_id, b.read.lines[0].item) == b.read.lines[0].qty  # not double-counted
     finally:
         assert od.remove_agent_postings() >= 1
+
+
+def test_mapper_drafts_the_odoo_mapping_from_headers_alone(tmp_path):
+    """Spec R2: the draft mapping reads the real Odoo export exactly as the hand-written one does."""
+    import json
+    import shutil
+
+    from apagent.erp.csvfiles import CsvAdapter
+    from apagent.erp.mapper import suggest
+
+    src = Path(__file__).resolve().parent.parent / "data" / "erp" / "odoo_export"
+    for p in src.glob("*.csv"):
+        if not p.name.startswith("._"):
+            shutil.copy(p, tmp_path / p.name)
+    draft = suggest(tmp_path)
+    assert not draft["unmatched"] and draft["receipts_net_of_returns"]
+    (tmp_path / "mapping.json").write_text(json.dumps({k: v for k, v in draft.items() if k not in ("unmatched", "notes")}))
+    ours = CsvAdapter(tmp_path, tmp_path / "mapping.json").fetch()
+    theirs = CsvAdapter(src, src / "mapping.json").fetch()
+    assert ours.receipts == theirs.receipts and ours.returns == theirs.returns and ours.billed == theirs.billed
+    assert [(p.po_id, p.supplier_id, [(l.item, l.qty, l.price) for l in p.lines]) for p in ours.pos] == \
+           [(p.po_id, p.supplier_id, [(l.item, l.qty, l.price) for l in p.lines]) for p in theirs.pos]
+
+
+def test_mapper_reads_a_kingdee_style_chinese_export(tmp_path):
+    from apagent.erp.csvfiles import CsvAdapter
+    from apagent.erp.mapper import suggest
+    import json
+
+    (tmp_path / "供应商.csv").write_text("供应商编码,供应商名称,税号,邮箱,银行账号\nSZ01,深圳精密五金,91440300X,ap@szjm.cn,6222 0001\n", encoding="utf-8")
+    (tmp_path / "采购订单.csv").write_text("采购订单号,供应商名称,订单日期,物料编码,物料名称,数量,单价,入库数量,已开票数量\n"
+                                         "PO-1,深圳精密五金,2025-12-01,M-01,螺丝,100,0.8,100,0\n", encoding="utf-8")
+    m = suggest(tmp_path)
+    assert not m["unmatched"] and m["files"]["suppliers"] == "供应商.csv" and m["files"]["order_lines"] == "采购订单.csv"
+    (tmp_path / "mapping.json").write_text(json.dumps({k: v for k, v in m.items() if k not in ("unmatched", "notes")}, ensure_ascii=False))
+    d = CsvAdapter(tmp_path, tmp_path / "mapping.json").fetch()
+    assert d.suppliers[0].id == "SZ01" and d.pos[0].supplier_id == "SZ01" and d.receipts[0].qty == 100

@@ -92,7 +92,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | ID | Feature | Status | Code | Test |
 | --- | --- | --- | --- | --- |
 | R1 | ERP sync: live Odoo 17, CSV/Excel exports with column mapping | Built | `erp/` | `test_erp.py` |
-| R2 | ERP presets for QuickBooks, Xero and Kingdee exports | To build | `erp/csvfiles.py` | |
+| R2 | Mapping assistant for any ERP's exports (Odoo, SAP B1, QuickBooks, Xero, Dynamics, Kingdee, Yonyou column names) | Built | `erp/mapper.py` | `test_erp.py` |
 | R3 | Bill intake: e-invoice JSON, PDF and photo through the vision reader | Built | `intake.py`, `reader.py` | `test_intake.py` |
 | R4 | Mailbox: poll an IMAP inbox (or a drop folder) for bills (attachments) and supplier replies | Built | `mail.py`, `session.poll_mailbox` | `test_mail.py` |
 | R5 | Supplier statements (CSV/JSON) | Built | `intake.parse_statement` | task 4 |
