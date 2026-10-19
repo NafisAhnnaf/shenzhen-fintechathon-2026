@@ -10,7 +10,7 @@ import { Hash } from "../components/bits";
 export default function Activity() {
   const [tab, setTab] = useState<"journal" | "evidence">("journal");
   return (
-    <div className="mx-auto max-w-[760px] px-4 pb-16 pt-8 sm:px-6">
+    <div className="space-y-6">
       <Summary />
       <div className="mt-8 flex gap-5 border-b border-rule text-sm" role="tablist">
         {(

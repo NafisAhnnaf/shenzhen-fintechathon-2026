@@ -129,3 +129,10 @@ Gaps found while writing the security self-assessment (section 10.4 there; none 
 - `e3517e4` Regenerated localhost evidence (22/22) and RED results.
 - `757617c` Bill details in the desk list where each number comes from.
 - `5739893` Numbers computed from a bill are labelled "calculated from the bill"; `.claude/launch.json` for the desk and chain.
+
+## 2026-10-19: frontend built from the prototype design
+
+- `web/` now uses the purple design in `design/prototype`. It adds new routes: `/` (landing), `/login` (wallet login by role), `/desk`, `/activity`, `/risk`, `/security`, `/settings` (payees and unfreeze, reserve mode, ERP re-read, demo next-day/skip/reset), and a not-found page.
+- Banners appear across the app for: server unreachable, ledger/chain mismatch, wallet on the wrong network, agent paused.
+- Characters are in `web/src/components/Characters.tsx`; the design CSS is in `web/src/proto.css`. Tailwind token names are kept and remapped to the new palette.
+- E2E: 12/12 Playwright tests pass against the built app on :8000, after `/api/admin/reset`. Run them with `PW_CHANNEL=chrome npx playwright test` to use the installed Chrome.

@@ -13,9 +13,9 @@ export function Queue({ selected, onBill, onCase }: { selected: string | null; o
   const cases = st?.open_cases ?? [];
 
   return (
-    <aside className="space-y-8">
-      <div>
-        <h2 className="text-sm font-semibold">Needs you</h2>
+    <aside className="qcol">
+      <div className="card">
+        <div className="qh"><h2>Needs you</h2>{needs.length + cases.length > 0 && <span className="badge b-attn">{needs.length + cases.length}</span>}</div>
         <ul className="mt-2">
           {needs.length === 0 && cases.length === 0 && <li className="py-2 text-sm text-muted">Nothing right now.</li>}
           {cases.map((c) => (
@@ -44,13 +44,14 @@ function Row({ title, sub, right, active, onClick, tone }: { title: string; sub:
     <li>
       <button
         onClick={onClick}
-        className={`flex w-full items-baseline justify-between gap-3 rounded px-3 py-2.5 text-left ${active ? "bg-surface shadow-[inset_2px_0_0_#22573F]" : "hover:bg-surface"}`}
+        className="qitem"
+        aria-current={active}
       >
         <span className="min-w-0">
           <span className="block truncate">{title}</span>
-          <span className={`block text-sm ${tone === "ochre" ? "text-ochre" : "text-oxblood"}`}>{sub}</span>
+          <small className={tone === "ochre" ? "text-ochre" : "text-oxblood"}>{sub}</small>
         </span>
-        {right && <span className="shrink-0 text-sm">{right}</span>}
+        {right && <span className="num shrink-0">{right}</span>}
       </button>
     </li>
   );
@@ -58,7 +59,7 @@ function Row({ title, sub, right, active, onClick, tone }: { title: string; sub:
 
 function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (id: string) => void }) {
   const { data } = useQuery({ queryKey: ["inbox"], queryFn: () => api.get<Inbox>("/inbox"), refetchInterval: 5000 });
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
   const upload = useAction((f: File) => api.upload<{ bill: string }>("/documents", f));
   const take = useAction((key: string) => api.post<{ bill: string }>(`/inbox/documents/${key}`));
@@ -68,12 +69,12 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
   const count = docs.length + (data?.emails.length ?? 0) + (data?.statements.length ?? 0);
 
   return (
-    <div>
-      <div className="flex items-baseline justify-between">
-        <button className="text-sm font-semibold hover:underline" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+    <div className="card">
+      <div className="qh">
+        <button className="btn-link" style={{ padding: 0, fontSize: 15, fontWeight: 800, color: "var(--ink)" }} onClick={() => setOpen((o) => !o)} aria-expanded={open}>
           Inbox {count > 0 && <span className="font-normal text-muted">({count})</span>}
         </button>
-        <button className="text-sm text-ledger hover:underline" onClick={() => fileRef.current?.click()}>
+        <button className="btn-link" style={{ fontSize: 14 }} onClick={() => fileRef.current?.click()}>
           {upload.isPending ? "Reading" : "Upload a bill"}
         </button>
         <input
@@ -90,30 +91,30 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
       </div>
       <ErrorLine error={upload.error || take.error || email.error || statement.error} />
       {open && (
-        <ul className="mt-2 max-h-[50vh] overflow-y-auto text-sm">
+        <ul className="max-h-[56vh] overflow-y-auto">
           {docs.map((d) => (
             <li key={d.key}>
-              <button className="flex w-full justify-between gap-3 rounded px-3 py-2 text-left hover:bg-surface" disabled={take.isPending} onClick={() => take.mutate(d.key, { onSuccess: (r) => onBill(r.bill) })}>
-                <span className="truncate">{d.supplier}</span>
-                <span className="shrink-0 text-muted">{money(d.total)}</span>
+              <button className="qitem" disabled={take.isPending} onClick={() => take.mutate(d.key, { onSuccess: (r) => onBill(r.bill) })}>
+                <span className="min-w-0"><span className="block truncate">{d.supplier}</span><small className="text-muted" style={{ fontWeight: 600 }}>Bill {d.inv_no}</small></span>
+                <span className="num shrink-0">{money(d.total)}</span>
               </button>
             </li>
           ))}
           {(data?.emails ?? []).map((n) => (
             <li key={n}>
-              <button className="w-full rounded px-3 py-2 text-left text-muted hover:bg-surface" disabled={email.isPending} onClick={() => email.mutate(n)}>
-                Email: {n.replace(/\.eml$/, "").replace(/_/g, " ")}
+              <button className="qitem" disabled={email.isPending} onClick={() => email.mutate(n)}>
+                <span><small className="text-ledger">Email</small>{n.replace(/\.eml$/, "").replace(/_/g, " ")}</span>
               </button>
             </li>
           ))}
           {(data?.statements ?? []).map((n) => (
             <li key={n}>
               <button
-                className="w-full rounded px-3 py-2 text-left text-muted hover:bg-surface"
+                className="qitem"
                 disabled={statement.isPending}
                 onClick={() => statement.mutate(n, { onSuccess: (cs) => cs[0] && onCase(cs[0].case_id) })}
               >
-                Statement: {n.replace(/\.csv$/, "")}
+                <span><small className="text-ledger">Statement</small>{n.replace(/\.csv$/, "")}</span>
               </button>
             </li>
           ))}

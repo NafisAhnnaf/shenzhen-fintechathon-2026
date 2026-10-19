@@ -68,22 +68,22 @@ function FairPriceView({ fp }: { fp: FairPrice }) {
   const option = {
     animation: false,
     grid: { left: 44, right: 8, top: 10, bottom: 22 },
-    xAxis: { type: "category", data: pts.map((p) => p[0].slice(5)), axisLine: { lineStyle: { color: "#DCE0DB" } }, axisLabel: { color: "#8D9893", fontSize: 10 }, axisTick: { show: false } },
-    yAxis: { type: "value", scale: true, splitLine: { show: false }, axisLabel: { color: "#8D9893", fontSize: 10, formatter: (v: number) => `${(v / 1000).toFixed(1)}k` } },
+    xAxis: { type: "category", data: pts.map((p) => p[0].slice(5)), axisLine: { lineStyle: { color: "#DAD6FB" } }, axisLabel: { color: "#8F8BB5", fontSize: 10 }, axisTick: { show: false } },
+    yAxis: { type: "value", scale: true, splitLine: { show: false }, axisLabel: { color: "#8F8BB5", fontSize: 10, formatter: (v: number) => `${(v / 1000).toFixed(1)}k` } },
     tooltip: { trigger: "axis", valueFormatter: (v: number) => `$${v.toLocaleString("en-US", { maximumFractionDigits: 0 })}/t` },
     series: [
       {
         type: "line",
         data: pts.map((p) => p[1]),
         symbol: "none",
-        lineStyle: { color: "#1D2421", width: 1.5 },
+        lineStyle: { color: "#1E1B4B", width: 1.5 },
         markPoint: {
           symbol: "circle",
           symbolSize: 7,
           label: { show: false },
           data: [
-            { coord: [at(fp.index_last), fp.index_last], itemStyle: { color: "#8D9893" } },
-            { coord: [at(fp.index_now), fp.index_now], itemStyle: { color: "#22573F" } },
+            { coord: [at(fp.index_last), fp.index_last], itemStyle: { color: "#8F8BB5" } },
+            { coord: [at(fp.index_now), fp.index_now], itemStyle: { color: "#4B3BD6" } },
           ],
         },
       },

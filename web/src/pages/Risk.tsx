@@ -19,8 +19,8 @@ export default function Risk() {
   const chosen = dial.bundles.find((b) => b.name === (pick ?? dial.active))!;
 
   return (
-    <div className="mx-auto max-w-[1100px] px-4 pb-16 pt-8 sm:px-6">
-      <h1 className="text-2xl font-medium tracking-tight">How much the agent may pay on its own</h1>
+    <div className="space-y-6">
+      <h1 className="text-3xl">How much the agent may pay on its own</h1>
       <p className="mt-2 max-w-[60ch] text-muted">
         Pick a loss budget. The agent pays more on its own as the budget grows, and a reserve covers its mistakes.
       </p>
@@ -41,7 +41,7 @@ export default function Risk() {
                 <span className="font-medium">{NAMES[b.name]}</span>
                 {active && <span className="text-sm text-ledger">Active</span>}
               </div>
-              <div className="mt-3 text-2xl font-medium tracking-tight">{pct(b.t1_share, 0)}</div>
+              <div className="mt-3 text-3xl">{pct(b.t1_share, 0)}</div>
               <div className="text-sm text-muted">of bills paid on its own</div>
               <div className="mt-3 text-sm">Loss budget {pct(b.beta, 1)}</div>
             </button>
@@ -51,7 +51,7 @@ export default function Risk() {
 
       <Detail b={chosen} active={chosen.name === dial.active} mode={st?.chain.mode ?? "bonded"} />
 
-      <Section title="Reserve needed for each setting" className="mt-12">
+      <Section title="Reserve needed for each setting" className="">
         <p className="mb-4 max-w-[60ch] text-sm text-muted">
           Pooling payments needs a fraction of what reserving each payment separately would.
         </p>
@@ -118,7 +118,7 @@ function Frontier({ bundles }: { bundles: BundleCal[] }) {
   const option = {
     animation: false,
     grid: { left: 64, right: 24, top: 48, bottom: 44 },
-    legend: { top: 0, left: 0, itemWidth: 14, textStyle: { color: "#5F6B66", fontSize: 12 } },
+    legend: { top: 0, left: 0, itemWidth: 14, textStyle: { color: "#6B6799", fontSize: 12 } },
     tooltip: { trigger: "axis", valueFormatter: (v: number) => `$${Math.round(v).toLocaleString("en-US")}` },
     xAxis: {
       type: "category",
@@ -126,15 +126,15 @@ function Frontier({ bundles }: { bundles: BundleCal[] }) {
       name: "Share of bills paid on its own",
       nameLocation: "middle",
       nameGap: 26,
-      nameTextStyle: { color: "#5F6B66" },
-      axisLine: { lineStyle: { color: "#DCE0DB" } },
+      nameTextStyle: { color: "#6B6799" },
+      axisLine: { lineStyle: { color: "#DAD6FB" } },
       axisTick: { show: false },
-      axisLabel: { color: "#5F6B66" },
+      axisLabel: { color: "#6B6799" },
     },
-    yAxis: { type: "value", splitLine: { lineStyle: { color: "#EEF0ED" } }, axisLabel: { color: "#5F6B66", formatter: (v: number) => `$${v / 1000}k` } },
+    yAxis: { type: "value", splitLine: { lineStyle: { color: "#EEECFF" } }, axisLabel: { color: "#6B6799", formatter: (v: number) => `$${v / 1000}k` } },
     series: [
-      { name: "Our pooled reserve", type: "line", data: bundles.map((b) => b.K_usd), lineStyle: { color: "#22573F", width: 2 }, itemStyle: { color: "#22573F" }, symbolSize: 7 },
-      { name: "Reserving each payment on its own", type: "line", data: bundles.map((b) => b.chen_usd), lineStyle: { color: "#9A6A16", width: 2 }, itemStyle: { color: "#9A6A16" }, symbolSize: 7 },
+      { name: "Our pooled reserve", type: "line", data: bundles.map((b) => b.K_usd), lineStyle: { color: "#4B3BD6", width: 2 }, itemStyle: { color: "#4B3BD6" }, symbolSize: 7 },
+      { name: "Reserving each payment on its own", type: "line", data: bundles.map((b) => b.chen_usd), lineStyle: { color: "#7A2E9E", width: 2 }, itemStyle: { color: "#7A2E9E" }, symbolSize: 7 },
     ],
   };
   return <ReactECharts option={option} style={{ height: 320 }} notMerge />;

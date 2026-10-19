@@ -5,6 +5,7 @@ import { CasePanel } from "./CasePanel";
 import { Queue } from "./Queue";
 import { PlanPanel, QuestionPanel } from "./PlanPanel";
 import { RequestBar } from "./RequestBar";
+import { Art, C } from "../../components/Characters";
 
 export type Focus =
   | { kind: "none" }
@@ -24,19 +25,19 @@ export default function Desk() {
   }, [focus]);
 
   return (
-    <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-6 sm:px-6">
+    <div>
       <RequestBar
         value={draft}
         onChange={setDraft}
         onReply={(r) => setFocus(r.kind === "plan" ? { kind: "plan", reply: r } : { kind: "question", reply: r })}
       />
-      <div className="mt-6 grid gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+      <div className="desk">
         <Queue
           selected={focus.kind === "bill" || focus.kind === "case" ? focus.id : null}
           onBill={openBill}
           onCase={(id) => setFocus({ kind: "case", id })}
         />
-        <section ref={panel} className="min-w-0 scroll-mt-4" aria-live="polite">
+        <section ref={panel} className="card detail scroll-mt-20" aria-live="polite">
           {focus.kind === "none" && <Empty />}
           {focus.kind === "bill" && <BillPanel id={focus.id} />}
           {focus.kind === "case" && <CasePanel id={focus.id} />}
@@ -52,9 +53,10 @@ export default function Desk() {
 
 function Empty() {
   return (
-    <div className="max-w-[52ch] pt-2">
-      <p className="text-xl">Pick something from the list, or ask the agent above.</p>
-      <p className="mt-2 text-muted">It shows you a plan before any money moves.</p>
+    <div className="empty">
+      <Art html={C.clerk("idle", 120)} />
+      <h2>Pick something from the list, or ask the agent above.</h2>
+      <p className="muted">It shows you a plan before any money moves.</p>
     </div>
   );
 }

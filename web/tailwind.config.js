@@ -1,34 +1,37 @@
-/** Ledger palette: cool paper, green-black ink, one ledger green for action, ochre and oxblood for states. */
+/** Lavender palette from design/prototype: one violet for action, blue for done, plum for stop. Old token names kept. */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        paper: "#F5F6F3",
+        paper: "#F6F5FF",
         surface: "#FFFFFF",
-        ink: "#1D2421",
-        muted: "#5F6B66",
-        faint: "#8D9893",
-        rule: "#DCE0DB",
-        ledger: { DEFAULT: "#22573F", soft: "#E6EFE9" },
-        ochre: { DEFAULT: "#9A6A16", soft: "#F5ECDC" },
-        oxblood: { DEFAULT: "#8E2B2B", soft: "#F4E3E1" },
+        sunk: "#EEECFF",
+        ink: "#1E1B4B",
+        body: "#4A4775",
+        muted: "#6B6799",
+        faint: "#8F8BB5",
+        rule: "#DAD6FB",
+        ledger: { DEFAULT: "#4B3BD6", soft: "#E4E0FF" },
+        done: { DEFAULT: "#1F4CB8", soft: "#DCE8FF" },
+        ochre: { DEFAULT: "#3C2EB8", soft: "#E4E0FF" },
+        oxblood: { DEFAULT: "#7A2E9E", soft: "#F1E4FB" },
       },
       fontFamily: {
-        sans: ['"Instrument Sans"', "system-ui", "sans-serif"],
+        sans: ['"Nunito Sans"', "Segoe UI", "system-ui", "sans-serif"],
+        display: ["Fredoka", '"Trebuchet MS"', "sans-serif"],
         mono: ['"IBM Plex Mono"', "ui-monospace", "monospace"],
       },
       fontSize: {
-        // A modular scale on 15px body (ratio about 1.2)
         xs: ["12px", "16px"],
-        sm: ["13px", "18px"],
-        base: ["15px", "22px"],
-        lg: ["18px", "24px"],
+        sm: ["14px", "20px"],
+        base: ["16px", "24px"],
+        lg: ["18px", "26px"],
         xl: ["22px", "28px"],
         "2xl": ["28px", "34px"],
         "3xl": ["40px", "44px"],
       },
-      borderRadius: { DEFAULT: "6px", sm: "4px" },
+      borderRadius: { DEFAULT: "10px", sm: "6px", lg: "16px" },
     },
   },
   plugins: [],

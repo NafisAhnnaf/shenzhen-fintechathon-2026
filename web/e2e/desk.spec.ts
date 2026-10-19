@@ -2,36 +2,49 @@ import { expect, test, type Page } from "@playwright/test";
 
 const SHOTS = process.env.SHOTS ?? "/tmp/shots";
 
-async function connect(page: Page, who: "owner" | "finance manager") {
-  const disconnect = page.getByRole("button", { name: "Disconnect" });
-  if (await disconnect.isVisible()) await disconnect.click();
-  await page.getByRole("button", { name: "Connect wallet" }).click();
-  await page.getByRole("button", { name: `Local dev account: ${who}` }).click();
-  await expect(page.getByText(who === "owner" ? "Owner" : "Finance manager", { exact: false }).first()).toBeVisible();
+const NAV: Record<string, string> = { "/desk": "Desk", "/risk": "Risk", "/security": "Security", "/activity": "Activity", "/settings": "Settings" };
+
+/** Log in through the wallet login page with a local dev account, then go to a page with the header nav. */
+async function connect(page: Page, who: "owner" | "finance manager", to = "/desk") {
+  await page.goto("/login");
+  await page.getByRole("radio", { name: who === "owner" ? /^Owner/ : /^Finance manager/ }).click();
+  await page.getByRole("button", { name: "Local test key" }).click();
+  await page.waitForURL("**/desk");
+  await expect(page.locator(".rolechip")).toContainText(who === "owner" ? "Owner" : "Finance manager");
+  if (to !== "/desk") await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: NAV[to] }).click();
 }
 
 /** Open a document from the inbox by its key, through the UI. */
 async function openDoc(page: Page, key: string) {
   const inbox = await (await page.request.get("/api/inbox")).json();
   const d = inbox.documents.find((x: any) => x.key === key);
-  await page.getByRole("button", { name: /^Inbox/ }).click();
   const total = `$${d.total.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
   await page.getByRole("button", { name: new RegExp(`${d.supplier.replace(/[()]/g, ".")}.*${total.replace(/[$.]/g, "\\$&")}`) }).click();
 }
 
 test.describe.serial("payables desk", () => {
   test("routine bill paid alone", async ({ page }) => {
-    await page.goto("/");
+    await connect(page, "finance manager");
     await expect(page.getByText("Pick something from the list")).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/01-desk-empty.png` });
-    await connect(page, "finance manager");
     await openDoc(page, "t01_routine");
     await expect(page.getByText("Paid by the agent on its own.")).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/02-bill-paid-alone.png` });
   });
 
+  test("inbox: look-alike email, bank-change email, statement opens a case", async ({ page }) => {
+    await connect(page, "finance manager");
+    await page.request.post("/api/inbox/documents/t04_missed_credit");
+    await page.getByRole("button", { name: /lionrock bank change/i }).click();
+    await expect(page.getByText("Asked to change bank details").first()).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("button", { name: /SHATINPCB-2025-12/ }).click();
+    await expect(page.getByText(/Overpaid/).first()).toBeVisible({ timeout: 20_000 });
+    await page.screenshot({ path: `${SHOTS}/13-case.png` });
+    await page.getByRole("button", { name: "Confirm and sign" }).click();
+    await expect(page.getByText("Owed back, recorded on-chain")).toBeVisible({ timeout: 30_000 });
+  });
+
   test("fair price: query, reply, signed approval", async ({ page }) => {
-    await page.goto("/");
     await connect(page, "finance manager");
     await openDoc(page, "t16_fair_price");
     await expect(page.getByText(/Needs your signature. The price is up/)).toBeVisible();
@@ -40,7 +53,7 @@ test.describe.serial("payables desk", () => {
     await page.getByRole("button", { name: /^Send to/ }).click();
     await expect(page.getByText(/Query sent/)).toBeVisible();
     const qid = (await page.getByText(/Query sent/).textContent())!.match(/Q-\d{3}/)![0];
-    const over = (await page.getByText("Over the fair price").locator("..").textContent())!.match(/\$([\d,]+\.\d{2})/)![1];
+    const over = (await page.getByText("Over the fair price", { exact: true }).first().locator("..").textContent())!.match(/\$([\d,]+\.\d{2})/)![1];
     await page.getByLabel(/Paste their email/).fill(`From: Acme Accounts <accounts@acme-hk.com>\nSubject: Re: ${qid}\n\nCredit note CN-7781 for USD ${over} is attached.`);
     await page.getByRole("button", { name: "Record reply" }).click();
     await expect(page.getByText("The supplier sent a credit note")).toBeVisible();
@@ -50,7 +63,6 @@ test.describe.serial("payables desk", () => {
   });
 
   test("request: one question, then a plan that runs", async ({ page }) => {
-    await page.goto("/");
     await connect(page, "owner");
     for (const k of ["t19_acme_0", "t19_acme_1"]) await page.request.post(`/api/inbox/documents/${k}?process=false`);
     await page.getByLabel("Tell the agent what to do").fill("Pay the copper supplier");
@@ -66,8 +78,7 @@ test.describe.serial("payables desk", () => {
   });
 
   test("risk: owner switches on-chain", async ({ page }) => {
-    await page.goto("/risk");
-    await connect(page, "owner");
+    await connect(page, "owner", "/risk");
     await page.getByRole("radio", { name: /Careful/ }).click();
     await page.screenshot({ path: `${SHOTS}/08-risk.png`, fullPage: true });
     await page.getByRole("button", { name: "Switch to careful" }).click();
@@ -90,10 +101,51 @@ test.describe.serial("payables desk", () => {
     await expect(page.getByText("Our records and the chain agree")).toBeVisible();
   });
 
+  test("refusals: payee change and owner-only request", async ({ page }) => {
+    await connect(page, "finance manager");
+    await page.getByRole("button", { name: "Add a new bank account for Acme" }).click();
+    await page.getByRole("button", { name: "Plan", exact: true }).click();
+    await expect(page.getByText(/can't|cannot|not something/i).first()).toBeVisible();
+    await page.screenshot({ path: `${SHOTS}/12-refusal.png` });
+  });
+
+  test("security: pause, banner, owner resumes", async ({ page }) => {
+    await connect(page, "owner", "/security");
+    await page.getByRole("button", { name: "Pause the agent" }).click();
+    await expect(page.getByText("The agent is paused.").first()).toBeVisible({ timeout: 15_000 });
+    await page.screenshot({ path: `${SHOTS}/14-paused.png` });
+    await page.getByRole("button", { name: "Resume" }).click();
+    await expect(page.getByText("The agent is running.")).toBeVisible({ timeout: 30_000 });
+  });
+
+  test("settings: payees, unfreeze, demo controls", async ({ page }) => {
+    await connect(page, "owner", "/settings");
+    await expect(page.getByRole("heading", { name: "Payees" })).toBeVisible();
+    await page.screenshot({ path: `${SHOTS}/15-settings.png`, fullPage: true });
+    await page.getByRole("button", { name: /^Unfreeze Lion Rock/ }).click();
+    await expect(page.getByRole("button", { name: /^Unfreeze Lion Rock/ })).toHaveCount(0, { timeout: 30_000 });
+    await page.getByRole("button", { name: "Move to the next day" }).click();
+    await expect(page.getByText(/anchored on-chain/)).toBeVisible({ timeout: 30_000 });
+  });
+
+  test("landing, viewer, not found", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("can't be conned");
+    await page.screenshot({ path: `${SHOTS}/00-landing.png` });
+    await page.getByRole("link", { name: "Open the desk" }).first().click();
+    await page.getByRole("radio", { name: /^Look around/ }).click();
+    await page.getByRole("button", { name: "Look around without a wallet" }).click();
+    await expect(page.locator(".rolechip")).toContainText("Viewer");
+    await page.goto("/nowhere");
+    await expect(page.getByText("Page not found")).toBeVisible();
+  });
+
   test("phone width", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/");
+    await page.goto("/desk");
     await expect(page.getByText("Needs you")).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
     await page.screenshot({ path: `${SHOTS}/11-phone.png` });
   });
 });
