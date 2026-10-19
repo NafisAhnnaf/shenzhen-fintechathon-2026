@@ -226,7 +226,7 @@ class LLMDecider:
         key = api_key if api_key is not None else (os.environ.get("LLM_API_KEY") or gemini_key or "")
         is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("LLM_API_KEY"))
         default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-        default_model = "gemini-flash-lite-latest" if is_gemini else "qwen-plus"
+        default_model = "gemini-3.6-flash" if is_gemini else "qwen-plus"
 
         self.base_url = (base_url or os.environ.get("LLM_BASE_URL", default_base_url)).rstrip("/")
         self.model = model or os.environ.get("LLM_MODEL", default_model)

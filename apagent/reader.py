@@ -168,7 +168,7 @@ class VLMReader:
         key = api_key if api_key is not None else (os.environ.get("VLM_API_KEY") or gemini_key or "")
         is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("VLM_API_KEY"))
         default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-        default_model = "gemini-flash-lite-latest" if is_gemini else "qwen-vl-max"
+        default_model = "gemini-3.6-flash" if is_gemini else "qwen-vl-max"
 
         self.base_url = (base_url or os.environ.get("VLM_BASE_URL", default_base_url)).rstrip("/")
         self.model = model or os.environ.get("VLM_MODEL", default_model)

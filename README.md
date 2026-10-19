@@ -191,7 +191,7 @@ caps (`DEMO_DAY_SECONDS`, default 180) and the demo clock waits instead of jumpi
 - Reader: `SimReader` (calibration), `JsonReader` (clean JSON, the default for the demo), `VLMReader` (any
   OpenAI-compatible vision model; set `VLM_API_KEY`, and `VLM_BASE_URL` / `VLM_MODEL` for a provider other than
   Qwen-VL on DashScope). Free, no card: a Google AI Studio key with
-  `VLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai` and `VLM_MODEL=gemini-flash-lite-latest`.
+  `VLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai` and `VLM_MODEL=gemini-3.6-flash`.
   If a provider refuses the strict schema, the reader retries in plain JSON mode; the output is checked either way.
   Phone photos are shrunk to 2,000 px before the call. Measure accuracy with `python -m apagent.reader_eval`.
 - Request router: `RuleDecider` (offline, default), `JevDecider` (TypeSafe AI's Jev: `DECIDER=jev`,
