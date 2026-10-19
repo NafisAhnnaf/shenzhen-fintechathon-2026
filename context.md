@@ -57,10 +57,62 @@ Need something only the team has:
 - **Jev**: no Jev backend exists. Either add a `JevDecider` behind `decide()` with a key, or say "Jev-ready interface".
 
 Not code, still to do (plan section 14):
-- Technical document, security self-assessment, deck, demo video (section 11 script).
+- Deck (plan in `pptx.md`: 13 slides + appendix, scripts, assets, rehearsal), demo video (section 11 script).
+  Technical document and security self-assessment are written (see log).
+
+Gaps found while writing the security self-assessment (section 10.4 there; none blocks the demo):
+- R1 router state carries supplier-supplied invoice numbers untagged; R2 S5 checks bill cards only, and the
+  fair-price justified price lacks the `market` tag; R5 contract supplier cap uses fixed weekly buckets (governor is
+  rolling); R6 API has no authentication and a self-declared role; R7 arbiter defaults to the owner address.
 - Dry run from a clean clone; Playwright browser tests (`cd web && npx playwright install chromium && npx playwright test`).
 
 ## Log
+
+### 2026-10-19 · clickable prototype
+
+- `design/prototype/` (index.html, README.md, assets/ with animated character SVGs and favicon) and
+  `design/payables-desk-prototype.zip`: landing, wallet login, desk, bills, cases, risk, security, activity,
+  settings, with sample data and a prototype-states panel. Online: https://claude.ai/artifact/66yyDr5y9PSM1xsDcmRyyu.
+
+### 2026-10-18 · frontend design handoff
+
+- UI spec canvas for the web app (12 boards: foundations, desk, plans, questions, bills, cases, risk, security,
+  activity, phone, system states), light blue-purple theme: https://claude.ai/artifact/8rknqW24q6hSnzTb1oHJck.
+  States marked “Proposed, not in the API yet” need backend work before they can be built.
+
+### 2026-10-18 · illustrated deck
+
+- Illustrated version (light blue-purple theme, vector characters, click-through animations):
+  https://claude.ai/artifact/68FsXa8fHG3vWCx9WrAAYC. The earlier plain deck stays at the link below.
+
+### 2026-10-18 · deck built
+
+- The deck from `pptx.md` is built as a shared slides artifact (13 slides + appendix, speaker notes):
+  https://claude.ai/artifact/UwffoQLnmF2bqHfpfFW8K2 (share it from its Share menu; edit there; exports to PPTX/PDF).
+
+### 2026-10-18 · deck story
+
+- `pptx.md` rewritten as one story, "The New Hire": the AI clerk's first month (day stamps, a cast with a
+  recurring con artist, workplace metaphors only, a callback ending), with a fact sheet correcting claims from the
+  team's draft.
+
+### 2026-10-18 · deck plan
+
+- `pptx.md`: plan for the 10-minute deck. One-liner, eight creative ideas (heist opening, recurring character,
+  "every number has a passport", trust dial, hash receipts, mistake comic strip, live "Rob us" and phone-photo
+  moments for the final), 13 slides with timing, on-screen content, script and source file, 8 appendix slides
+  for Q&A, palette and type, asset capture list, build steps, rehearsal plan.
+
+### 2026-10-18 · submission documents (uncommitted)
+
+- `docs/security_self_assessment.md`: tiers T0/P/T1/T2/T3 with app and contract enforcement, S1-S10 with the
+  enforcing code and refusing test, B1-B13, RED with method notes (naive column partly by construction; the contract
+  column is exercised only by the direct-call and no-signature rows), Jev/LLM/VLM data handling ("Jev-ready
+  interface"), known risks (plan section 5, S3 exception, stress case, gaps R1-R10, plan section 15 status).
+- `docs/technical_document.md`: architecture and both flows, request layer (catalogue, `decide()`, conformal
+  clarification with alpha_I 3% / alpha_S 5%), checker, risk core with the CRC and K(beta) derivations, AC-8 and
+  CAPITAL, fair-price check (task 16 worked example), contracts, ERP adapters, stated limits; market watch under
+  future work. Numbers checked against `results/` and `evidence/`.
 
 ### 2026-10-18 · branch `fix/plan-gaps`
 
