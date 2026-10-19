@@ -60,6 +60,13 @@ TEMPLATES: dict[str, tuple[str, str, bool]] = {
         "number we have on file to confirm. Until then, payments to you are paused.\nIf you did not send this "
         "request, someone may be impersonating your company.\n\n" + SIGNOFF,
         True),
+    "early_payment_offer": (
+        "Early payment offer for invoice {inv_no} ({ref})",
+        "Dear {supplier},\n\nInvoice {inv_no} for {amount} is due on {due}. We can pay it now instead if you accept "
+        "a discount of {pct} ({discount}): you would receive {net} within one business day.\nTo accept, reply to this "
+        "email with the word ACCEPT and our reference {ref}. The offer stands until {expires}. If you prefer, do "
+        "nothing and we pay the full amount on the due date.\n\n" + SIGNOFF,
+        False),
     "refund_request": (
         "Refund of {amount} for invoice {inv_no}",
         "Dear {supplier},\n\nOur reconciliation of your statement shows a credit of {amount} against invoice "

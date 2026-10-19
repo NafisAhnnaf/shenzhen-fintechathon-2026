@@ -126,3 +126,23 @@ def test_notifications_from_the_journal_and_webhook(ledger, docs, calib, boxes, 
     assert fm and "needs your signature" in fm[0]["text"] and fm[0]["for"] == "finance_manager"
     assert views.notifications(s, "underwriter") == []
     assert any("needs your signature" in p["text"]["content"] for p in posted)  # WeCom format by default
+
+
+def test_early_payment_offer_flow(ledger, docs, calib, boxes):
+    """Spec P4: offer drafted with a discount that beats the credit rate; the manager sends it; ACCEPT from the
+    supplier's registered domain re-proposes the bill at the discounted amount for a signature."""
+    ag = Agent(ledger, calib, chain=None)
+    b = ag.intake(demo.read_from_doc(docs["t13_net30"]))
+    ag.process(b.bill_id, auto_pay=False)
+    cands = ag.offer_candidates()
+    assert any(c["bill"] == b.bill_id for c in cands)
+    o = ag.make_offer(b.bill_id)
+    assert o["status"] == "draft" and o["annual_return"] > ag.cfg.credit_rate
+    assert ag.release_email(o["email"])["status"] == "sent" and ag.offers[o["ref"]]["status"] == "sent"
+    sup = ledger.suppliers[ledger.bills[b.bill_id].supplier_id]
+    reply = f"From: Accounts <{sup.contact}>\nSubject: Re: Early payment offer ({o['ref']})\n\nWe ACCEPT, please pay."
+    out = ag.receive_email(reply)
+    assert out["status"] == "accepted"
+    bill = ledger.bills[b.bill_id]
+    assert bill.status == "held" and bill.tier == "T2" and abs(bill.resolution["amount"] - o["net"]) < 0.01
+    assert ag.approval_amount(b.bill_id) == o["net"]

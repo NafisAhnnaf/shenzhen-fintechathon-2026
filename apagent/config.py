@@ -91,6 +91,8 @@ class Settings:
     capital_rate: float = 0.10  # rho, per year
     cash_floor_usd: float = 150_000.0
     credit_rate: float = 0.08  # annual rate on the credit line
+    offer_target_rate: float = 0.20  # early-payment offers aim for this annualised return (spec P4)
+    offer_min_days: int = 15  # only offer when paying at least this many days early
     alpha_intent: float = 0.03
     alpha_slot: float = 0.05
     injection_threshold: float = 0.5

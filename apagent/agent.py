@@ -456,6 +456,81 @@ class Agent:
         return {"supplier": supplier_id, "active_at": p.get("active_at"), "frozen": p.get("frozen"),
                 "tx": self._tx(tx) if tx else None}
 
+    # ================================================================== early-payment offers (P4)
+    @property
+    def offers(self) -> dict:
+        return self.__dict__.setdefault("_offers", {})
+
+    def offer_terms(self, bill: Bill) -> Optional[dict]:
+        """The discount that makes paying now worth it: the target annual return over the days gained, between
+        0.5% and 2%. None if the bill is not a candidate (due soon, already discounted, or cash would dip)."""
+        if bill.status not in ("approved", "held", "received") or not bill.supplier_id or bill.read.terms != "net30":
+            return None
+        if self.led.suppliers[bill.supplier_id].frozen or bill.tier in ("hold", "reject"):
+            return None
+        days = (date.fromisoformat(bill.read.due_date) - date.fromisoformat(self.led.today)).days
+        if days < self.cfg.offer_min_days:
+            return None
+        amount = round(bill.resolution["amount"] if bill.resolution else bill.amount_usd, 2)
+        if amount <= 0 or self.led.cash_usd - amount < self.cfg.cash_floor_usd:
+            return None
+        pct = min(0.02, max(0.005, round(self.cfg.offer_target_rate * days / 365, 3)))
+        discount = round(amount * pct, 2)
+        annual = pct / (1 - pct) * 365 / days
+        return {"bill": bill.bill_id, "amount": amount, "pct": pct, "discount": discount, "net": round(amount - discount, 2),
+                "days_early": days, "annual_return": round(annual, 4), "beats_credit_rate": annual > self.cfg.credit_rate}
+
+    def offer_candidates(self) -> list[dict]:
+        out = []
+        for b in self.led.bills.values():
+            if b.bill_id.startswith("H") or any(o["bill"] == b.bill_id for o in self.offers.values()):
+                continue
+            t = self.offer_terms(b)
+            if t and t["beats_credit_rate"]:
+                out.append({**t, "supplier": self.led.suppliers[b.supplier_id].name, "inv_no": b.read.inv_no,
+                            "due": b.read.due_date})
+        return sorted(out, key=lambda o: -o["discount"])
+
+    def make_offer(self, bill_id: str, actor: str = "finance_manager") -> dict:
+        """Draft the offer email; the finance manager sends it (it changes what we pay, policy S11)."""
+        bill = self.led.bills[bill_id]
+        t = self.offer_terms(bill)
+        if not t:
+            return {"bill": bill_id, "error": "not a candidate for an early-payment offer"}
+        ref = f"OF-{len(self.offers) + 1:03d}"
+        expires = (date.fromisoformat(self.led.today) + timedelta(days=3)).isoformat()
+        em = self.send_email("early_payment_offer", bill.supplier_id, {
+            "inv_no": T.of(mail.safe_id(bill.read.inv_no, bill_id), Src.SUPPLIER_DOC),
+            "amount": T.of(f"${t['amount']:,.2f}", Src.ERP_BOUNDED), "due": T.of(bill.read.due_date, Src.SUPPLIER_DOC),
+            "pct": T.of(f"{t['pct']:.1%}", Src.COMPUTED), "discount": T.of(f"${t['discount']:,.2f}", Src.COMPUTED),
+            "net": T.of(f"${t['net']:,.2f}", Src.COMPUTED), "ref": T.of(ref, Src.COMPUTED),
+            "expires": T.of(expires, Src.COMPUTED)}, bill_id=bill_id, actor=actor, draft_only=True)
+        self.offers[ref] = {"ref": ref, **t, "supplier_id": bill.supplier_id, "email": em["id"], "status": "draft",
+                            "expires": expires, "created": self.led.today}
+        self.log.add(actor, "offer_draft", {"offer": ref, "pct": t["pct"], "discount": t["discount"]}, bill_id=bill_id)
+        return self.offers[ref]
+
+    def offer_reply(self, ref: str, text: str) -> dict:
+        """ACCEPT: the bill is proposed at the discounted amount for the finance manager to sign. The reply text
+        only selects 'accepted' or not; the amount comes from our own offer."""
+        o = self.offers[ref]
+        bill = self.led.bills[o["bill"]]
+        if o["status"] not in ("sent", "draft") or self.led.today > o["expires"]:
+            return {"offer": ref, "status": o["status"], "note": "offer no longer open"}
+        if not re.search(r"\baccept(ed)?\b", text, re.I) or re.search(r"\b(not|don't|do not|cannot)\s+accept", text, re.I):
+            o["status"] = "declined"
+            self.log.add("agent", "offer_declined", {"offer": ref}, bill_id=bill.bill_id)
+            return {"offer": ref, "status": "declined"}
+        o["status"] = "accepted"
+        net = min(o["net"], bill.erp_bound)
+        bill.resolution = {**(bill.resolution or {}), "action": "pay_partial", "amount": net, "held": 0.0,
+                           "text": f"The supplier accepted early payment ({ref}): pay {net:,.2f} now, {o['pct']:.1%} off.",
+                           "tag": "computed:erp_bounded", "offer": ref}
+        bill.status, bill.tier = "held", "T2"
+        self.money["discounts_taken"] += o["discount"]
+        self.log.add("agent", "offer_accepted", {"offer": ref, "net": net}, bill_id=bill.bill_id, decision="T2")
+        return {"offer": ref, "status": "accepted", "resolution": bill.resolution}
+
     # ================================================================== budgets (D5)
     @property
     def budgets(self) -> dict:
@@ -763,6 +838,9 @@ class Agent:
             inj = injection.assess(m["body"])
             self.log.add("agent", "email_unknown_sender", {"from": m["from"], "injection_p": inj["p"]}, security=True)
             return {"from": m["from"], "supplier": None, "action": "logged: sender is not a registered supplier"}
+        offer = re.search(r"\bOF-\d{3}\b", f"{m['subject']} {m['body']}")
+        if offer and offer.group(0) in self.offers and self.offers[offer.group(0)]["supplier_id"] == sid:
+            return {"from": m["from"], "supplier": sid, "offer": offer.group(0), **self.offer_reply(offer.group(0), m["body"])}
         ref = re.search(r"\bQ-\d{3}\b", f"{m['subject']} {m['body']}")
         if ref and ref.group(0) in self.queries and self.led.bills[self.queries[ref.group(0)]["bill"]].supplier_id == sid:
             return {"from": m["from"], "supplier": sid, "reply_to": ref.group(0), **self.receive_reply(ref.group(0), m["body"])}
@@ -813,7 +891,11 @@ class Agent:
         if rec["status"] not in ("draft", "failed"):
             return {**rec, "error": f"email is {rec['status']}"}
         rec["actor"] = actor
-        return self._deliver(rec, self.__dict__.get("_email_values", {}).get(email_id, {}), approved_by=actor)
+        out = self._deliver(rec, self.__dict__.get("_email_values", {}).get(email_id, {}), approved_by=actor)
+        for o in self.offers.values():  # an offer counts from the moment its email goes out
+            if o["email"] == email_id and out["status"] == "sent":
+                o["status"] = "sent"
+        return out
 
     def _notify_payment(self, bill: Bill, tx_hash: Optional[str]) -> None:
         ref = tx_hash or "recorded"

@@ -866,6 +866,24 @@ class DraftPO(BaseModel):
     months: int = 2
 
 
+class OfferBody(BaseModel):
+    bill: str
+
+
+@app.get("/api/offers", dependencies=[ANY])
+def offers():
+    """Spec P4: bills worth paying early for a discount, and the offers made."""
+    with _lock:
+        ag = S().agent
+        return _ok({"candidates": ag.offer_candidates(), "offers": list(ag.offers.values())})
+
+
+@app.post("/api/offers", dependencies=[STAFF])
+@mutating
+def make_offer(body: OfferBody):
+    return S().agent.make_offer(body.bill)
+
+
 class BudgetBody(BaseModel):
     centre: str
     monthly_usd: Optional[float] = None

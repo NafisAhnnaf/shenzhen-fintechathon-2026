@@ -131,7 +131,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | P1 | Payments by agent and by finance manager through the vault | Built | `PaymentVault.sol`, `chain.py` | B1–B13 |
 | P2 | Bank rail for mainland payees | Built | `_send` | task 15 |
 | P3 | Pay-date planning (early-payment discounts, cash floor); pay now or on the best date | Built | `agent.plan_dates`, `session.run_due` | task 13, `test_api.py` |
-| P4 | Early-payment offers to suppliers | To build | | |
+| P4 | Early-payment offers: discount from a 20% annual target over the days gained (0.5-2%), sent by the finance manager, accepted by reply | Built | `agent.offer_terms`, `make_offer`, `offer_reply` | `test_mail.py` |
 | P5 | Rolling 7-day supplier cap in the contract | Built | `PaymentVault.supplierRolling` | contract tests |
 
 ### 5.5 Protect
