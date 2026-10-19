@@ -402,6 +402,47 @@ def take_email(name: str):
     return S().agent.receive_email(p.read_text())
 
 
+# ------------------------------------------------------------------ email the agent sends and reads (spec V2, R4)
+@app.get("/api/mail", dependencies=[ANY])
+def mail_status():
+    from . import mail
+    return {"outgoing": mail.mailer().describe(), "incoming": mail.mailbox().describe(), "auto": mail.auto_email_on(),
+            "auto_templates": sorted(mail.AUTO_TEMPLATES)}
+
+
+@app.get("/api/outbox", dependencies=[ANY])
+def outbox():
+    return _ok(list(reversed(S().agent._emails())))
+
+
+@app.post("/api/outbox/{email_id}/send", dependencies=[FM])
+@mutating
+def release_email(email_id: str):
+    """The finance manager sends a drafted email that changes what we pay (policy S11)."""
+    return S().agent.release_email(email_id)
+
+
+@app.post("/api/mailbox/poll", dependencies=[STAFF])
+@mutating
+def poll_mailbox():
+    return S().poll_mailbox()
+
+
+def _poll_forever(every: float) -> None:
+    while True:
+        time.sleep(every)
+        try:
+            with _lock:
+                if S().poll_mailbox():
+                    S().save()
+        except Exception as e:  # noqa: BLE001 - keep polling; the error is in the journal
+            S().agent.log.add("system", "mailbox_error", {"error": str(e)[:200]})
+
+
+if float(os.environ.get("MAILBOX_POLL_SECONDS", "0") or 0) > 0:
+    threading.Thread(target=_poll_forever, args=(float(os.environ["MAILBOX_POLL_SECONDS"]),), daemon=True).start()
+
+
 # ------------------------------------------------------------------ statements, cases, claims
 @app.post("/api/statements/{supplier_id}", dependencies=[STAFF])
 @mutating

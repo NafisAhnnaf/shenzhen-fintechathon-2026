@@ -1,6 +1,6 @@
 [
  {
-  "ts": 1792437484.6003132,
+  "ts": 1792437908.025125,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -17,7 +17,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.6013708,
+  "ts": 1792437908.0261078,
   "actor": "agent",
   "kind": "injection_flag",
   "detail": {
@@ -33,7 +33,7 @@
   "security": true
  },
  {
-  "ts": 1792437484.6157749,
+  "ts": 1792437908.03985,
   "actor": "agent",
   "kind": "freeze_payee",
   "detail": {
@@ -45,11 +45,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "frozen",
-  "tx_hash": "0x582a79dd27db36370a7c2893683d28877400eaa3afc367af16c205e4301de998",
+  "tx_hash": "0x9fe3bae9ae7aefdec88008ea69ac75ebf3be5e3e0010798a2709476815630f7a",
   "security": true
  },
  {
-  "ts": 1792437484.615784,
+  "ts": 1792437908.03986,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -66,7 +66,25 @@
   "security": false
  },
  {
-  "ts": 1792437484.6535628,
+  "ts": 1792437908.0575192,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0001",
+   "template": "bank_change_alert",
+   "to": "accounts@tsuen-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0001",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.101562,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -88,7 +106,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.653592,
+  "ts": 1792437908.101598,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -104,7 +122,7 @@
   "security": true
  },
  {
-  "ts": 1792437484.710881,
+  "ts": 1792437908.1608682,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -121,7 +139,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.755432,
+  "ts": 1792437908.242469,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -143,7 +161,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.81483,
+  "ts": 1792437908.318965,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -159,7 +177,25 @@
   "security": false
  },
  {
-  "ts": 1792437484.814837,
+  "ts": 1792437908.323144,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0002",
+   "template": "payment_notice",
+   "to": "accounts@kai-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.3231528,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -172,11 +208,11 @@
   "input_hash": "0x584448df1e55021d9284d987748176e7dae4b1b517b81845aafc8c59d39b03ef",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xeee720eeaf30771be04177f5b2847dbb1842f22f1cd40c57119167f8711b60f6",
+  "tx_hash": "0xd342577f1d7cde6c911b95e5a486a9f7dcd46cd1bdec4c9e41542746ab8c7b9a",
   "security": false
  },
  {
-  "ts": 1792437484.820725,
+  "ts": 1792437908.329458,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -193,7 +229,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.8651478,
+  "ts": 1792437908.376467,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -215,7 +251,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.9229639,
+  "ts": 1792437908.435068,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -231,7 +267,25 @@
   "security": false
  },
  {
-  "ts": 1792437484.922973,
+  "ts": 1792437908.4406762,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0003",
+   "template": "payment_notice",
+   "to": "accounts@sun-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.440684,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -244,11 +298,11 @@
   "input_hash": "0xa1aa5b4469eed0a3ccaf8464250e2b21acb979ead37b720168acdb8bd987016c",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x251234e42915d55fac65f633a84acdc6f600b2164f4248be88bb30f15fbc6dda",
+  "tx_hash": "0xbfc54f3f16c83776088f6ff3771d38e29962dcf29aa7716b04a742946764aa7c",
   "security": false
  },
  {
-  "ts": 1792437484.926431,
+  "ts": 1792437908.444049,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -265,7 +319,7 @@
   "security": false
  },
  {
-  "ts": 1792437484.968311,
+  "ts": 1792437908.482656,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -287,7 +341,23 @@
   "security": false
  },
  {
-  "ts": 1792437484.972037,
+  "ts": 1792437908.482686,
+  "actor": "system",
+  "kind": "policy_block",
+  "detail": {
+   "tool": "send_email",
+   "reason": "only identifiers from a supplier document may be quoted (amount)"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0004",
+  "input_hash": null,
+  "policy": "S6",
+  "decision": "blocked",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792437908.488197,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -304,7 +374,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.0181131,
+  "ts": 1792437908.5317812,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -326,7 +396,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.021075,
+  "ts": 1792437908.5359948,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -343,7 +413,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.06975,
+  "ts": 1792437908.579493,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -365,7 +435,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.131028,
+  "ts": 1792437908.638152,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -381,7 +451,25 @@
   "security": false
  },
  {
-  "ts": 1792437485.1310358,
+  "ts": 1792437908.643452,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0005",
+   "template": "payment_notice",
+   "to": "accounts@ganjiang.cn",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.6434581,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -394,11 +482,11 @@
   "input_hash": "0x73c2d5067dca7009a8f2d7d384357cf49a6ebebd9a7f537ada5595496b6994df",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x97e51eccc866f0ebe45538b72db88e06f3c43720972dd7ed04088e340e4deeb5",
+  "tx_hash": "0x573926a8b064dec9122efeb8dbaabe93cb3300500eb4473860baf41af6580c31",
   "security": false
  },
  {
-  "ts": 1792437485.138437,
+  "ts": 1792437908.650162,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -415,7 +503,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.314467,
+  "ts": 1792437908.695105,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -437,7 +525,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.374186,
+  "ts": 1792437908.753207,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -453,7 +541,25 @@
   "security": false
  },
  {
-  "ts": 1792437485.3741922,
+  "ts": 1792437908.758548,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0006",
+   "template": "payment_notice",
+   "to": "accounts@shatin-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.7585542,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -466,11 +572,11 @@
   "input_hash": "0xcc1cd2af2c3ac2c2f82b4ad3165c501b121665afd01ab52defe3c1ff753c526f",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xfe3f9921fefeec7524736b6be35d3d181c75623824e71c136b2722feeb9ba0da",
+  "tx_hash": "0xe5ddcf4fb36b4bf6b873c7a541ece4e961026119a576454f1c2aa8c6d1c2c960",
   "security": false
  },
  {
-  "ts": 1792437485.375061,
+  "ts": 1792437908.761514,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -487,7 +593,7 @@
    "paid": 4017.6,
    "owed": 2872.58,
    "tier": "T1",
-   "tx_hash": "0xfe3f9921fefeec7524736b6be35d3d181c75623824e71c136b2722feeb9ba0da"
+   "tx_hash": "0xe5ddcf4fb36b4bf6b873c7a541ece4e961026119a576454f1c2aa8c6d1c2c960"
   },
   "plan_id": null,
   "bill_id": null,
@@ -498,7 +604,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.3750641,
+  "ts": 1792437908.761516,
   "actor": "agent",
   "kind": "reconcile",
   "detail": {
@@ -517,7 +623,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.394318,
+  "ts": 1792437908.779684,
   "actor": "contract",
   "kind": "open_receivable",
   "detail": {
@@ -528,11 +634,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x61aaccc45db81fbed405c538603e2c997f764699b7d3690fe92db611550e8336",
+  "tx_hash": "0xdc2bc6efe3828e7de289507a8c5be5fc88155b14e85f6f576e52ccac9ce6b280",
   "security": false
  },
  {
-  "ts": 1792437485.3943198,
+  "ts": 1792437908.779687,
   "actor": "finance_manager",
   "kind": "case_confirm",
   "detail": {
@@ -548,7 +654,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.3943338,
+  "ts": 1792437908.779702,
   "actor": "governor",
   "kind": "cutoff_drop",
   "detail": {
@@ -565,7 +671,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.451091,
+  "ts": 1792437908.836184,
   "actor": "agent",
   "kind": "file_claim",
   "detail": {
@@ -578,11 +684,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "filed",
-  "tx_hash": "0x83ba4ab3c3554b800640131b527b00a4c46b2480a422ea06d610f490de127dc0",
+  "tx_hash": "0xc5a0c404f46fccae1418e8192da904b5bc71a896d4fefb7d63246609eba4b4d5",
   "security": false
  },
  {
-  "ts": 1792437485.4510982,
+  "ts": 1792437908.8361962,
   "actor": "agent",
   "kind": "probation",
   "detail": {
@@ -599,7 +705,24 @@
   "security": false
  },
  {
-  "ts": 1792437485.465473,
+  "ts": 1792437908.836221,
+  "actor": "agent",
+  "kind": "email_draft",
+  "detail": {
+   "email": "M-0007",
+   "template": "refund_request",
+   "to": "accounts@shatin-hk.com"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.84977,
   "actor": "contract",
   "kind": "claim_paid",
   "detail": {},
@@ -608,11 +731,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xaa910a4d84719a0a767b70babbd8491ce58f59843c6900aa79f6c1ec36777153",
+  "tx_hash": "0x07fb8f52243b8c79012e0cc4352d63d495e521ff56880860b4d1bb9beea04104",
   "security": false
  },
  {
-  "ts": 1792437485.5066292,
+  "ts": 1792437908.89074,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -629,7 +752,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.54934,
+  "ts": 1792437908.933194,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -652,7 +775,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.584264,
+  "ts": 1792437908.968013,
   "actor": "agent",
   "kind": "record_offset",
   "detail": {
@@ -665,11 +788,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xee9bd615c9b2dbc35e604d565fc5699e51a9a40ff8f93ae1a0f584c527fa44da",
+  "tx_hash": "0xe580144b36750cf33e003c9078675755c079099d63c47ac9c51ac833e4be9083",
   "security": false
  },
  {
-  "ts": 1792437485.5856462,
+  "ts": 1792437908.969214,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -685,7 +808,25 @@
   "security": false
  },
  {
-  "ts": 1792437485.585661,
+  "ts": 1792437908.974664,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0008",
+   "template": "payment_notice",
+   "to": "accounts@shatin-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0008",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437908.974668,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -700,7 +841,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.585668,
+  "ts": 1792437908.974669,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -712,11 +853,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x1eab68d21f22d6d2ede7a448e17915e47a1510601feef10ad733cfd907f9d474",
+  "tx_hash": "0x114203b4144d0e9c5d537547cb504c71b3074905b5a951de73887ba23a8269aa",
   "security": false
  },
  {
-  "ts": 1792437485.624765,
+  "ts": 1792437909.014886,
   "actor": "agent",
   "kind": "message",
   "detail": {
@@ -733,7 +874,7 @@
   "security": true
  },
  {
-  "ts": 1792437485.6377301,
+  "ts": 1792437909.02724,
   "actor": "agent",
   "kind": "freeze_payee",
   "detail": {
@@ -745,11 +886,29 @@
   "input_hash": null,
   "policy": null,
   "decision": "frozen",
-  "tx_hash": "0x00be41ab8ea30ba4f370bfd02d7de2ab8dfe5afc03da160ab173599dea797cce",
+  "tx_hash": "0x3b1febaf3e8598df4694eddfe2ceaaf4bf2161c31b5cb5ad06255aa1e9065b02",
   "security": true
  },
  {
-  "ts": 1792437485.637738,
+  "ts": 1792437909.0331268,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0009",
+   "template": "bank_change_alert",
+   "to": "accounts@lion-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.033132,
   "actor": "agent",
   "kind": "case_open",
   "detail": {
@@ -766,7 +925,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.638125,
+  "ts": 1792437909.0345962,
   "actor": "agent",
   "kind": "email_unknown_sender",
   "detail": {
@@ -782,7 +941,7 @@
   "security": true
  },
  {
-  "ts": 1792437485.753907,
+  "ts": 1792437909.155651,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -798,7 +957,7 @@
   "security": true
  },
  {
-  "ts": 1792437485.753922,
+  "ts": 1792437909.155664,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -814,7 +973,7 @@
   "security": true
  },
  {
-  "ts": 1792437485.75393,
+  "ts": 1792437909.155672,
   "actor": "system",
   "kind": "policy_block",
   "detail": {
@@ -830,7 +989,7 @@
   "security": true
  },
  {
-  "ts": 1792437485.765952,
+  "ts": 1792437909.167796,
   "actor": "agent",
   "kind": "pause_self",
   "detail": {
@@ -841,11 +1000,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paused",
-  "tx_hash": "0xb3a8a2424e9681a6f490437ca1d00fb0fe83bc27b9236c37f28857f2cd25d69c",
+  "tx_hash": "0x9048251e1dad4edd48c874ffdcd924c4b1f71373e891958aec128c52b48d7adb",
   "security": true
  },
  {
-  "ts": 1792437485.807769,
+  "ts": 1792437909.209208,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -862,7 +1021,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.8515708,
+  "ts": 1792437909.253102,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -884,7 +1043,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.865655,
+  "ts": 1792437909.266207,
   "actor": "owner",
   "kind": "unpause",
   "detail": {},
@@ -893,11 +1052,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x956f58c65d20bc4afb30a958250cd36c3ff088aca06d7f09f905e16ba7e6fc9c",
+  "tx_hash": "0xe99160bb752641decdcd60b06eb4be488bb3300765d2f77a9129a2b7b7040961",
   "security": false
  },
  {
-  "ts": 1792437485.9321,
+  "ts": 1792437909.306108,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -914,7 +1073,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.93676,
+  "ts": 1792437909.310434,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -931,7 +1090,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.949835,
+  "ts": 1792437909.3143601,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -948,7 +1107,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.952398,
+  "ts": 1792437909.317662,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -965,7 +1124,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.952405,
+  "ts": 1792437909.317665,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -980,7 +1139,7 @@
   "security": false
  },
  {
-  "ts": 1792437485.9565818,
+  "ts": 1792437909.321068,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1001,11 +1160,11 @@
   "security": false
  },
  {
-  "ts": 1792437485.956645,
+  "ts": 1792437909.3211021,
   "actor": "owner",
   "kind": "answer",
   "detail": {
-   "question": "QQ-37485",
+   "question": "QQ-37909",
    "choice": "ACME"
   },
   "plan_id": null,
@@ -1017,7 +1176,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.0102122,
+  "ts": 1792437909.369282,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1039,7 +1198,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.055615,
+  "ts": 1792437909.413515,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1061,7 +1220,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.101076,
+  "ts": 1792437909.458448,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1083,7 +1242,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.151252,
+  "ts": 1792437909.507193,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1107,7 +1266,58 @@
   "security": false
  },
  {
-  "ts": 1792437486.1514292,
+  "ts": 1792437909.507206,
+  "actor": "agent",
+  "kind": "draft_query",
+  "detail": {
+   "query": "Q-001",
+   "to": "accounts@acme-hk.com"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.5138502,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0010",
+   "template": "query",
+   "to": "accounts@acme-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.513854,
+  "actor": "agent",
+  "kind": "send_query",
+  "detail": {
+   "query": "Q-001",
+   "to": "accounts@acme-hk.com",
+   "email": "M-0010"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": "sent",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.514039,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1124,23 +1334,23 @@
   "security": false
  },
  {
-  "ts": 1792437486.163722,
+  "ts": 1792437909.526305,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 739595,
-   "root": "0xe39058fc70d6479d9d30bff0664c290bb2543e875fa9011cf1fff67be481caa9"
+   "root": "0x266b59c80d55ac95e18b96d225e307cc42d083d21dcf0e525a714f11cf27a39b"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x3ca6bb00a617969b5358dae2205bc45cfc93582a7067e3c5f187528878a30ae2",
+  "tx_hash": "0x0b270e8e1af83de9936f0f50074393a960b967dc084d278a7055092053a68b69",
   "security": false
  },
  {
-  "ts": 1792437486.176515,
+  "ts": 1792437909.539127,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -1155,7 +1365,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.1782641,
+  "ts": 1792437909.540828,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1178,7 +1388,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.178554,
+  "ts": 1792437909.5411258,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1195,7 +1405,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.178594,
+  "ts": 1792437909.541164,
   "actor": "owner",
   "kind": "plan_run",
   "detail": {
@@ -1211,7 +1421,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.237513,
+  "ts": 1792437909.60097,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1227,7 +1437,25 @@
   "security": false
  },
  {
-  "ts": 1792437486.237518,
+  "ts": 1792437909.60624,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0011",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.606247,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1240,11 +1468,11 @@
   "input_hash": "0x516bd0717de415a93f66c901c2c19168b9bffff1f398db5cc8244d2a8d5e91ce",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xd219b805d0610d322f5a43a89654e45495070f684b39c0842983e00cc2489a23",
+  "tx_hash": "0x3a6b5cb587dd15ee9f39adc632a58ce3277ca48813411e6d99a1f05a27774d1f",
   "security": false
  },
  {
-  "ts": 1792437486.237524,
+  "ts": 1792437909.606255,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1256,11 +1484,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xd219b805d0610d322f5a43a89654e45495070f684b39c0842983e00cc2489a23",
+  "tx_hash": "0x3a6b5cb587dd15ee9f39adc632a58ce3277ca48813411e6d99a1f05a27774d1f",
   "security": false
  },
  {
-  "ts": 1792437486.295594,
+  "ts": 1792437909.664948,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1276,7 +1504,25 @@
   "security": false
  },
  {
-  "ts": 1792437486.2956002,
+  "ts": 1792437909.66968,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0012",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.6696892,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1289,11 +1535,11 @@
   "input_hash": "0xa9f74ed4a62d71b0e160185db19d2bc3964bd94bf6f9217067603a15b4ddd0f5",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xbdbd2bc87626f04c2d5c8a1b95ba38796b3ac20c20691c5d360966d5a139b4af",
+  "tx_hash": "0x61c88b9aa29a24d7a09089b92d6227f5a33b56dc331c7e8dbbacc28ed1955fa2",
   "security": false
  },
  {
-  "ts": 1792437486.295606,
+  "ts": 1792437909.669697,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1305,11 +1551,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xbdbd2bc87626f04c2d5c8a1b95ba38796b3ac20c20691c5d360966d5a139b4af",
+  "tx_hash": "0x61c88b9aa29a24d7a09089b92d6227f5a33b56dc331c7e8dbbacc28ed1955fa2",
   "security": false
  },
  {
-  "ts": 1792437486.354184,
+  "ts": 1792437909.731487,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1325,7 +1571,25 @@
   "security": false
  },
  {
-  "ts": 1792437486.35419,
+  "ts": 1792437909.735795,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0013",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.7358022,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1338,11 +1602,11 @@
   "input_hash": "0x42c6bd90ded10b554727872d4ee5b01c9aa3b41f032616c326ffc7ca0b74b258",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x1ff981936499becbfe2c1eaafcc62f137c1a10f537e87cd39152757ed0ce4123",
+  "tx_hash": "0xfee73eb1a8c833104ffd072ac472c11a0b720c8dbb2ed1a42912e07849f0b5d1",
   "security": false
  },
  {
-  "ts": 1792437486.354196,
+  "ts": 1792437909.735808,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -1354,11 +1618,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x1ff981936499becbfe2c1eaafcc62f137c1a10f537e87cd39152757ed0ce4123",
+  "tx_hash": "0xfee73eb1a8c833104ffd072ac472c11a0b720c8dbb2ed1a42912e07849f0b5d1",
   "security": false
  },
  {
-  "ts": 1792437486.4009018,
+  "ts": 1792437909.813716,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1382,39 +1646,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.400922,
-  "actor": "agent",
-  "kind": "draft_query",
-  "detail": {
-   "query": "Q-001",
-   "to": "accounts@acme-hk.com"
-  },
-  "plan_id": null,
-  "bill_id": "B-20251210-0013",
-  "input_hash": null,
-  "policy": null,
-  "decision": null,
-  "tx_hash": null,
-  "security": false
- },
- {
-  "ts": 1792437486.400935,
-  "actor": "finance_manager",
-  "kind": "send_query",
-  "detail": {
-   "query": "Q-001",
-   "to": "accounts@acme-hk.com"
-  },
-  "plan_id": null,
-  "bill_id": "B-20251210-0013",
-  "input_hash": null,
-  "policy": null,
-  "decision": "sent",
-  "tx_hash": null,
-  "security": false
- },
- {
-  "ts": 1792437486.405474,
+  "ts": 1792437909.818391,
   "actor": "agent",
   "kind": "reply",
   "detail": {
@@ -1435,7 +1667,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.42801,
+  "ts": 1792437909.8809469,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1451,7 +1683,25 @@
   "security": false
  },
  {
-  "ts": 1792437486.428013,
+  "ts": 1792437909.884932,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0014",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437909.8849401,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -1466,7 +1716,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.428014,
+  "ts": 1792437909.884942,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -1478,11 +1728,11 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xecf1ee6c89726a680209e4f57f93870046289a6cd570935c72ef02bde276048b",
+  "tx_hash": "0x4ea68534132e566245d850454544785cfd148059a5257fdfafead23064c1597b",
   "security": false
  },
  {
-  "ts": 1792437486.42803,
+  "ts": 1792437909.884968,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -1497,7 +1747,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.429099,
+  "ts": 1792437909.886249,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -1520,7 +1770,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.4664772,
+  "ts": 1792437909.927393,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -1537,7 +1787,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.481517,
+  "ts": 1792437909.943073,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1552,11 +1802,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x3f547c19192c8e20da20e816ab6f0cbf2cb9ce9325085cf31f4513d27cea3473",
+  "tx_hash": "0x2a5b90598e71934a242968f3ee195fa5de93db985126837949d577c16a0ed8c1",
   "security": false
  },
  {
-  "ts": 1792437486.5316842,
+  "ts": 1792437910.001524,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1573,7 +1823,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.622514,
+  "ts": 1792437910.122357,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1588,11 +1838,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x80f9ccd730fd4c7286e089cbd65a787d99404a42f40fcdfbadf5e1197dcb254b",
+  "tx_hash": "0x474bde83b735c6329dea3dfa53fed403205b9349306c8859be49243827d8fc8c",
   "security": false
  },
  {
-  "ts": 1792437486.660321,
+  "ts": 1792437910.164546,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1609,7 +1859,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.6641421,
+  "ts": 1792437910.168328,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1626,7 +1876,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.70767,
+  "ts": 1792437910.220735,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1648,7 +1898,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.765385,
+  "ts": 1792437910.284294,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1664,7 +1914,25 @@
   "security": false
  },
  {
-  "ts": 1792437486.765391,
+  "ts": 1792437910.289023,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0015",
+   "template": "payment_notice",
+   "to": "accounts@victoria-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0014",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437910.289032,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1677,11 +1945,11 @@
   "input_hash": "0xb7013bceda1c3281e50bba97967bb2dc4fc51ef9a1b67cc86e3da0fbabd1ce4e",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x7ca5881e412a325ab45e53d6637726d4eea56b07f144527fac29de2cf03e3c43",
+  "tx_hash": "0x9f7562a2c7b8c056b57fda45bc8436341cae69e43cf8905a7cd5eb516165f5f0",
   "security": false
  },
  {
-  "ts": 1792437486.8213289,
+  "ts": 1792437910.351485,
   "actor": "owner",
   "kind": "settings_proposed",
   "detail": {
@@ -1696,11 +1964,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xae3843ec9150528dd833ba243ede4478964b428426da7b02ed11f9255606feac",
+  "tx_hash": "0xbcb7c816f9381b8574faa5c82efaa9b701b030f7e21cdd9ddeb25425c5441f8c",
   "security": false
  },
  {
-  "ts": 1792437486.87185,
+  "ts": 1792437910.4115999,
   "actor": "contract",
   "kind": "settings_active",
   "detail": {
@@ -1717,23 +1985,23 @@
   "security": false
  },
  {
-  "ts": 1792437486.884925,
+  "ts": 1792437910.4254951,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 739596,
-   "root": "0xbffa34a335f2e641bfa7dd9efd4ab7b1b348342a674514208e38091aa1f8b73b"
+   "root": "0x446f417ec3028008aafbb0cd6cdc4a87d4d2bc213e288910b7f8c51f86520060"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0xb9c10280b611c44755fd560c22bb3daadce38bfc339b1d859db8436dd89aa93c",
+  "tx_hash": "0xc4dab7b583e592c3496d784c5953b4f2ca53b2cf3be9df2b24fc373ac1153078",
   "security": false
  },
  {
-  "ts": 1792437486.8904588,
+  "ts": 1792437910.431537,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1750,7 +2018,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.934284,
+  "ts": 1792437910.47896,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1772,7 +2040,7 @@
   "security": false
  },
  {
-  "ts": 1792437486.9916852,
+  "ts": 1792437910.542763,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1788,7 +2056,25 @@
   "security": false
  },
  {
-  "ts": 1792437486.991693,
+  "ts": 1792437910.546515,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0016",
+   "template": "payment_notice",
+   "to": "accounts@kwong-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0015",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437910.5465238,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1801,11 +2087,11 @@
   "input_hash": "0xabaef20d249f57791ea28f3fa05f569bb7fad376b688b62d5b3045579d6cb0b8",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xa896e3fd27bf94722324eae9633adca707fac7b7cf65911560a116df0906c473",
+  "tx_hash": "0x24f1dee6803ea60db78d480ffc71394e26a8409ab6335da58fd3f2abb9567c49",
   "security": false
  },
  {
-  "ts": 1792437486.995308,
+  "ts": 1792437910.549324,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1822,7 +2108,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.038898,
+  "ts": 1792437910.5985322,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1844,7 +2130,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.16182,
+  "ts": 1792437910.662635,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -1860,7 +2146,25 @@
   "security": false
  },
  {
-  "ts": 1792437487.161841,
+  "ts": 1792437910.668597,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0017",
+   "template": "payment_notice",
+   "to": "accounts@kwong-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0016",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437910.668604,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -1873,11 +2177,11 @@
   "input_hash": "0xfa656071e011f1404040edd985ebcb677af5d8f2d7a182bcd7936427ae81c846",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0xabc7421e0daa7e0afee5a54f37c62b075d3b38e399e4e2b2debb8b9b3c523fab",
+  "tx_hash": "0xa0798eaf0e77ae8cf4f367e427960c0d8289c002fc6d9764febd854299ae421f",
   "security": false
  },
  {
-  "ts": 1792437487.164686,
+  "ts": 1792437910.671396,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1894,7 +2198,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.209347,
+  "ts": 1792437910.728514,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1916,7 +2220,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.214318,
+  "ts": 1792437910.732286,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1933,7 +2237,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.258081,
+  "ts": 1792437910.779626,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1955,7 +2259,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.2617989,
+  "ts": 1792437910.784754,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -1972,7 +2276,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.304662,
+  "ts": 1792437910.8332438,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -1994,7 +2298,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.307706,
+  "ts": 1792437910.838219,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2011,7 +2315,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.35409,
+  "ts": 1792437910.883352,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2033,7 +2337,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.3592079,
+  "ts": 1792437910.887606,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2050,7 +2354,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.4026072,
+  "ts": 1792437910.9370399,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2072,7 +2376,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.406507,
+  "ts": 1792437910.941053,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2089,7 +2393,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.449409,
+  "ts": 1792437910.9878788,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2111,7 +2415,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.453669,
+  "ts": 1792437910.992801,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2128,7 +2432,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.496002,
+  "ts": 1792437911.045242,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2150,7 +2454,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.4990962,
+  "ts": 1792437911.0507011,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2167,7 +2471,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.542153,
+  "ts": 1792437911.2158499,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2189,23 +2493,23 @@
   "security": false
  },
  {
-  "ts": 1792437487.609816,
+  "ts": 1792437911.296268,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 739597,
-   "root": "0x97defca5b8617d0707989a0613cd42d7726826aea21160024dd391a2ed13360b"
+   "root": "0x9ff0df8140d1361420a486031d73622e006207765640f37d985e0b7b066b8823"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x98cfcedcc7591535e15bcefb110f1698212c6239b16ba04b84ffba147440ea31",
+  "tx_hash": "0xfcf0cf107dc1ae3282bec324c92e14d5b69c3299a5dc0971ac31d3b766ee35d6",
   "security": false
  },
  {
-  "ts": 1792437487.614597,
+  "ts": 1792437911.30186,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2222,7 +2526,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.617974,
+  "ts": 1792437911.305799,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2239,7 +2543,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.621579,
+  "ts": 1792437911.309859,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2256,7 +2560,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.621587,
+  "ts": 1792437911.309864,
   "actor": "owner",
   "kind": "request",
   "detail": {
@@ -2271,7 +2575,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.62303,
+  "ts": 1792437911.3112059,
   "actor": "agent",
   "kind": "route",
   "detail": {
@@ -2294,7 +2598,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.668274,
+  "ts": 1792437911.362616,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2316,7 +2620,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.711872,
+  "ts": 1792437911.411691,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2338,7 +2642,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.754838,
+  "ts": 1792437911.461888,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2360,7 +2664,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.801304,
+  "ts": 1792437911.517629,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2382,7 +2686,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.801321,
+  "ts": 1792437911.517648,
   "actor": "agent",
   "kind": "plan_preview",
   "detail": {
@@ -2399,7 +2703,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.8013692,
+  "ts": 1792437911.5177002,
   "actor": "owner",
   "kind": "plan_run",
   "detail": {
@@ -2415,7 +2719,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.8592482,
+  "ts": 1792437911.58363,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -2431,7 +2735,25 @@
   "security": false
  },
  {
-  "ts": 1792437487.859267,
+  "ts": 1792437911.588568,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0018",
+   "template": "payment_notice",
+   "to": "accounts@sun-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437911.588577,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -2444,11 +2766,11 @@
   "input_hash": "0x4c8892f36acf15b938360d5eca53d840f88d6cf324e10ca3189c19a45f458919",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x31daa7639fe5c6c293a0ad6257ba6f8cb1c1bef8555691d1784784e8b8dea78b",
+  "tx_hash": "0xf0e0d5e73b28421865a205189bee83ae86cf54fae042fd067316b35b1f0bbc1d",
   "security": false
  },
  {
-  "ts": 1792437487.8592849,
+  "ts": 1792437911.588584,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -2460,11 +2782,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x31daa7639fe5c6c293a0ad6257ba6f8cb1c1bef8555691d1784784e8b8dea78b",
+  "tx_hash": "0xf0e0d5e73b28421865a205189bee83ae86cf54fae042fd067316b35b1f0bbc1d",
   "security": false
  },
  {
-  "ts": 1792437487.91778,
+  "ts": 1792437911.6534069,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -2480,7 +2802,25 @@
   "security": false
  },
  {
-  "ts": 1792437487.9177861,
+  "ts": 1792437911.65944,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0019",
+   "template": "payment_notice",
+   "to": "accounts@mong-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0025",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437911.6594481,
   "actor": "contract",
   "kind": "pay_autonomous",
   "detail": {
@@ -2493,11 +2833,11 @@
   "input_hash": "0x43904e2d3a3a135097151965944f96e02f583101b869d7a905be2261b307055e",
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x9d79ee4f63b9c5b434796b25fb1d51a862d23aec895c890cde372224730ff8fa",
+  "tx_hash": "0x88607e400f6d29a116f78b9d2d352a5103b39ac5e54a727844d212c94400db40",
   "security": false
  },
  {
-  "ts": 1792437487.917791,
+  "ts": 1792437911.6594539,
   "actor": "agent",
   "kind": "step_pay",
   "detail": {
@@ -2509,11 +2849,11 @@
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x9d79ee4f63b9c5b434796b25fb1d51a862d23aec895c890cde372224730ff8fa",
+  "tx_hash": "0x88607e400f6d29a116f78b9d2d352a5103b39ac5e54a727844d212c94400db40",
   "security": false
  },
  {
-  "ts": 1792437487.917797,
+  "ts": 1792437911.659461,
   "actor": "owner",
   "kind": "plan_cancel",
   "detail": {
@@ -2528,7 +2868,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.92131,
+  "ts": 1792437911.662932,
   "actor": "agent",
   "kind": "intake",
   "detail": {
@@ -2545,7 +2885,7 @@
   "security": false
  },
  {
-  "ts": 1792437487.967201,
+  "ts": 1792437911.716309,
   "actor": "governor",
   "kind": "decision",
   "detail": {
@@ -2567,7 +2907,7 @@
   "security": false
  },
  {
-  "ts": 1792437488.064308,
+  "ts": 1792437911.821774,
   "actor": "contract",
   "kind": "revert",
   "detail": {
@@ -2582,7 +2922,7 @@
   "security": true
  },
  {
-  "ts": 1792437488.0873358,
+  "ts": 1792437911.8460338,
   "actor": "agent",
   "kind": "erp_payment",
   "detail": {
@@ -2598,7 +2938,25 @@
   "security": false
  },
  {
-  "ts": 1792437488.087339,
+  "ts": 1792437911.852109,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0020",
+   "template": "payment_notice",
+   "to": "accounts@harbour-hk.com",
+   "via": "outbox"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0028",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792437911.852114,
   "actor": "finance_manager",
   "kind": "approve",
   "detail": {
@@ -2613,7 +2971,7 @@
   "security": false
  },
  {
-  "ts": 1792437488.087341,
+  "ts": 1792437911.852115,
   "actor": "contract",
   "kind": "pay_approved",
   "detail": {
@@ -2625,23 +2983,23 @@
   "input_hash": null,
   "policy": null,
   "decision": "paid",
-  "tx_hash": "0x09daf60061f4dc9a675688c96993455be530f0dd5d110c5608c50ac7f798aae9",
+  "tx_hash": "0x110ad4ebfb4ff91c416623c0466b162db76ea2342d91ad0cff9c06e334f9c05e",
   "security": false
  },
  {
-  "ts": 1792437488.126268,
+  "ts": 1792437911.901257,
   "actor": "agent",
   "kind": "anchor",
   "detail": {
    "day": 20766,
-   "root": "0x46615cf776aadc17fab1d4e287a4978b135e3e32780dfaaa6e5d3f10e44509bc"
+   "root": "0x9c9b18af5aac78582537041bb6d0637ee9051be384439f0211ee0bb3397c0273"
   },
   "plan_id": null,
   "bill_id": null,
   "input_hash": null,
   "policy": null,
   "decision": null,
-  "tx_hash": "0x7c91c5c5ea44f064c4a2c746d5d928203418a1ccd3ddcfb5f7111d60f6e6c550",
+  "tx_hash": "0x2bce36f47fc4b6718984535535890dcf8116cccd12397d1ffb6194ce80e90aed",
   "security": false
  }
 ]

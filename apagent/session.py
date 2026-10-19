@@ -166,6 +166,35 @@ class Session:
         p = demo.DEMO_DIR / self.docs[key]["file"]
         return self.ingest_file(p.name, p.read_bytes(), process, auto_pay)
 
+    def poll_mailbox(self) -> list[dict]:
+        """Read new mail (spec R4). Attachments from a registered supplier's address go through bill intake; other
+        messages go to the reply path (query replies, bank-detail requests). Each message is read once."""
+        from . import mail
+        from .intake import BadDocument, ReaderUnavailable, parse_email, supplier_by_sender
+
+        seen = self.__dict__.setdefault("mail_seen", set())
+        out = []
+        for key, raw in mail.mailbox().fetch(seen):
+            seen.add(key)
+            text, files = mail.split_message(raw)
+            sender = parse_email(text)["from"]
+            if not files:
+                out.append({"message": key, **self.agent.receive_email(text)})
+                continue
+            sid = supplier_by_sender(self.led, sender)
+            if sid is None:
+                self.agent.log.add("agent", "email_unknown_sender", {"from": sender, "attachments": len(files)}, security=True)
+                out.append({"message": key, "from": sender, "action": "ignored: sender is not a registered supplier"})
+                continue
+            for name, data in files:
+                try:
+                    out.append({"message": key, "file": name, **self.ingest_file(name, data)})
+                except (BadDocument, ReaderUnavailable) as e:
+                    out.append({"message": key, "file": name, "error": str(e)})
+        if out:
+            self.agent.log.add("agent", "mailbox_poll", {"messages": len({o["message"] for o in out})})
+        return out
+
     def statement(self, supplier_id: str, filename: str, data: bytes) -> list:
         return self.agent.reconcile(supplier_id, parse_statement(filename, data))
 

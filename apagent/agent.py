@@ -13,7 +13,7 @@ from dataclasses import asdict
 from datetime import date, timedelta
 from typing import Optional
 
-from . import checker, injection, policies
+from . import checker, injection, mail, policies
 from .audit import AuditLog, input_hash
 from .chain import Chain
 from .config import SETTINGS, Settings
@@ -118,6 +118,7 @@ class Agent:
         if "bank_change" in res.codes and res.supplier:
             self.freeze_supplier(res.supplier.id, "Bank details on a bill differ from the registry", trigger=res.supplier.id)
             self.open_case("bank_change", res.supplier.id, {"bill": bill_id, "callback": res.supplier.contact})
+            self._alert_bank_change(res.supplier.id, bill_id)
 
         d = self.gov.decide(self.led, bill, res, inj["p"], self.led.today, self._chain_state())
         self.decisions[bill_id] = d
@@ -128,6 +129,8 @@ class Agent:
         if d.tier == "reject":
             bill.status = "rejected"
             self.money["duplicates_blocked"] += bill.read.total
+            if res.duplicate_of and bill.supplier_id:
+                self._notify_duplicate(bill, res.duplicate_of)
             return {"bill": bill_id, "tier": "reject", "reasons": d.reasons}
         if d.tier == "hold":
             bill.status = "held"
@@ -135,7 +138,11 @@ class Agent:
             return {"bill": bill_id, "tier": "hold", "reasons": d.reasons}
         if d.tier == "T2":
             bill.status = "held"
-            return {"bill": bill_id, "tier": "T2", "reasons": d.reasons, "resolution": bill.resolution}
+            out = {"bill": bill_id, "tier": "T2", "reasons": d.reasons, "resolution": bill.resolution}
+            if bill.fair_price and mail.auto_email_on():  # ask the supplier about the price straight away
+                q = self.draft_query(bill_id, "price")
+                out["query"] = self.send_query(q["id"], actor="agent")["id"]
+            return out
         if auto_pay:
             return self.pay_t1(bill_id, plan_id=plan_id)
         bill.status = "approved"
@@ -286,6 +293,8 @@ class Agent:
         if ded:
             self._record_offsets(bill, ded)
         self._post_to_erp(bill, tier, tx_hash)
+        if mail.auto_email_on():
+            self._notify_payment(bill, tx_hash)
 
     def _post_to_erp(self, bill: Bill, tier: str, tx_hash: Optional[str]) -> None:
         """Record the payment in the company's ERP. The payment has already settled on-chain, so a failure here is
@@ -498,6 +507,11 @@ class Agent:
             if self._claim_needed(bill):
                 out["claim"] = self.file_claim(bill.bill_id, amount, sig=claim_sig, expiry=expiry)
         out["probation"] = self.probation(c.supplier_id, reason=f"confirmed error on {bill.bill_id}")
+        # A refund request is drafted for the finance manager; recovery from the next bill happens anyway (V5).
+        out["refund_draft"] = self.send_email("refund_request", c.supplier_id, {
+            "inv_no": T.of(mail.safe_id(bill.read.inv_no, bill.bill_id), Src.SUPPLIER_DOC),
+            "amount": T.of(f"${amount:,.2f}", Src.ERP_BOUNDED), "date": T.of(bill.paid_on or self.led.today, Src.ERP),
+            "ref": T.of(case_id, Src.COMPUTED)}, bill_id=bill.bill_id, draft_only=True)["id"]
         return out
 
     def file_claim(self, bill_id: str, amount: float, cause: str = "overpayment", sig: Optional[bytes] = None,
@@ -554,6 +568,7 @@ class Agent:
         out = {"class": cls, "injection_p": inj["p"]}
         if cls == "bank_change":
             out["freeze"] = self.freeze_supplier(supplier_id, "Supplier message asks to change bank details", trigger=supplier_id)
+            out["alert"] = self._alert_bank_change(supplier_id)
             out["case"] = self.open_case("bank_change", supplier_id, {"message": "bank-detail change request",
                                                                       "callback": self.led.suppliers[supplier_id].contact}).case_id
         return out
@@ -574,8 +589,86 @@ class Agent:
             return {"from": m["from"], "supplier": sid, "reply_to": ref.group(0), **self.receive_reply(ref.group(0), m["body"])}
         return {"from": m["from"], "supplier": sid, **self.inbox(sid, m["body"])}
 
+    # ================================================================== email (spec V2, policy S11)
+    def _emails(self) -> list:
+        return self.__dict__.setdefault("emails", [])
+
+    def send_email(self, template: str, supplier_id: str, values: dict, bill_id: Optional[str] = None,
+                   actor: str = "agent", approved_by: Optional[str] = None, draft_only: bool = False) -> dict:
+        """Fill a template with typed values and send it to the supplier's registered contact. draft_only keeps it
+        for the finance manager (templates that change what we pay)."""
+        sup = self.led.suppliers[supplier_id]
+        rec = {"id": f"M-{len(self._emails()) + 1:04d}", "template": template, "to": sup.contact, "supplier": supplier_id,
+               "supplier_name": sup.name, "bill": bill_id, "status": "draft", "actor": actor, "created": self.led.today,
+               "auto": template in mail.AUTO_TEMPLATES}
+        plain = {k: v.value for k, v in values.items()}
+        plain.update(supplier=sup.name, company=self.led.company.replace(" (fictional)", ""))
+        rec["subject"], rec["body"] = mail.render(template, plain)
+        self.__dict__.setdefault("_email_values", {})[rec["id"]] = values
+        self._emails().append(rec)
+        if draft_only:
+            self.log.add(actor, "email_draft", {"email": rec["id"], "template": template, "to": sup.contact}, bill_id=bill_id)
+            return rec
+        return self._deliver(rec, values, approved_by)
+
+    def _deliver(self, rec: dict, values: dict, approved_by: Optional[str]) -> dict:
+        args = {"recipient": T.of(rec["to"], Src.REGISTRY), "template": T.of(rec["template"], Src.SETTINGS), **values}
+        if self._gate(ToolCall("send_email", args, approved_by=approved_by), rec["bill"]):
+            rec["status"] = "blocked"
+            return rec
+        m = mail.mailer()
+        try:
+            rec["message_id"] = m.send(mail.build(rec["to"], rec["subject"], rec["body"], rec["id"]))
+            rec["status"], rec["via"], rec["sent"] = "sent", m.name, self.led.today
+        except Exception as e:  # noqa: BLE001 - any mail failure is recorded, never fatal
+            rec["status"], rec["error"] = "failed", str(e)[:200]
+        self.log.add(rec["actor"] if not approved_by else approved_by, f"email_{rec['status']}",
+                     {"email": rec["id"], "template": rec["template"], "to": rec["to"], "via": m.name}, bill_id=rec["bill"])
+        return rec
+
+    def release_email(self, email_id: str, actor: str = "finance_manager") -> dict:
+        """The finance manager sends a drafted email (a refund request, for example)."""
+        rec = next((e for e in self._emails() if e["id"] == email_id), None)
+        if rec is None:
+            raise KeyError(email_id)
+        if rec["status"] not in ("draft", "failed"):
+            return {**rec, "error": f"email is {rec['status']}"}
+        rec["actor"] = actor
+        return self._deliver(rec, self.__dict__.get("_email_values", {}).get(email_id, {}), approved_by=actor)
+
+    def _notify_payment(self, bill: Bill, tx_hash: Optional[str]) -> None:
+        ref = tx_hash or "recorded"
+        if self.led.suppliers[bill.supplier_id].rail == "bank":
+            ref = f"bank transfer, ledger {tx_hash}" if tx_hash else "bank transfer"
+        self.send_email("payment_notice", bill.supplier_id, {
+            "inv_no": T.of(mail.safe_id(bill.read.inv_no, bill.bill_id), Src.SUPPLIER_DOC),
+            "amount": T.of(f"${bill.amount_usd:,.2f}", Src.ERP_BOUNDED), "date": T.of(self.led.today, Src.ERP),
+            "ref": T.of(ref, Src.COMPUTED)}, bill_id=bill.bill_id)
+
+    def _notify_duplicate(self, bill: Bill, dup_bill: str) -> None:
+        if not mail.auto_email_on():
+            return
+        first = self.led.bills.get(dup_bill)
+        self.send_email("duplicate_notice", bill.supplier_id, {
+            "inv_no": T.of(mail.safe_id(bill.read.inv_no, bill.bill_id), Src.SUPPLIER_DOC),
+            "billed": T.of(f"${bill.read.total:,.2f}", Src.SUPPLIER_DOC),
+            "dup_of": T.of(mail.safe_id(first.read.inv_no, dup_bill) if first else dup_bill, Src.ERP)}, bill_id=bill.bill_id)
+
+    def _alert_bank_change(self, supplier_id: str, bill_id: Optional[str] = None) -> Optional[str]:
+        """Tell the real supplier, at the registered address, that someone asked to change their bank details.
+        Once per supplier per day; never a reply to the message that asked."""
+        if not mail.auto_email_on():
+            return None
+        if any(e["template"] == "bank_change_alert" and e["supplier"] == supplier_id and e["created"] == self.led.today
+               for e in self._emails()):
+            return None
+        return self.send_email("bank_change_alert", supplier_id, {}, bill_id=bill_id)["id"]
+
     # ================================================================== supplier query
     def draft_query(self, bill_id: str, topic: str = "price") -> dict:
+        for q in self.queries.values():  # one open query per bill and topic
+            if q["bill"] == bill_id and q["topic"] == topic and q["status"] in ("draft", "sent"):
+                return q
         bill = self.led.bills[bill_id]
         sup = self.led.suppliers[bill.supplier_id]
         fp = bill.fair_price
@@ -588,9 +681,10 @@ class Agent:
         else:
             body = f"Re invoice {bill.read.inv_no}: please explain the {topic} on this invoice."
         qid = f"Q-{len(self.queries) + 1:03d}"
-        body += f"\n\nPlease quote our reference {qid} in your reply."
-        q = {"id": qid, "bill": bill_id, "to": sup.contact, "topic": topic, "subject": f"{qid}: invoice {bill.read.inv_no}",
-             "body": body, "status": "draft", "amount": fp["overcharge"] if fp else None}
+        q = {"id": qid, "bill": bill_id, "to": sup.contact, "topic": topic, "text": body,
+             "subject": f"{qid}: invoice {bill.read.inv_no}",
+             "body": body + f"\n\nPlease quote our reference {qid} in your reply.", "status": "draft",
+             "amount": fp["overcharge"] if fp else None}
         self.queries[qid] = q
         self.log.add("agent", "draft_query", {"query": qid, "to": sup.contact}, bill_id=bill_id)
         return q
@@ -600,11 +694,21 @@ class Agent:
         bill = self.led.bills[q["bill"]]
         call = ToolCall("send_query", {"recipient": T.of(self.led.suppliers[bill.supplier_id].contact, Src.REGISTRY),
                                        "bill": T.of(bill.bill_id, Src.ERP)})
+        if q["status"] != "draft":
+            return q
         if self._gate(call, bill.bill_id):
             return {"error": "policy"}
+        inv = mail.safe_id(bill.read.inv_no, bill.bill_id)
+        em = self.send_email("query", bill.supplier_id, {"qid": T.of(qid, Src.COMPUTED), "inv_no": T.of(inv, Src.SUPPLIER_DOC),
+                                                         "text": T.of(q.get("text", q["body"]), Src.COMPUTED)},
+                             bill_id=bill.bill_id, actor=actor)
+        if em["status"] != "sent":
+            return {**q, "error": em.get("error") or em["status"]}
         q["status"] = "sent"
+        q["email"] = em["id"]
         bill.disputed = True
-        self.log.add(actor, "send_query", {"query": qid, "to": q["to"]}, bill_id=bill.bill_id, decision="sent")
+        self.log.add(actor, "send_query", {"query": qid, "to": q["to"], "email": em["id"]}, bill_id=bill.bill_id,
+                     decision="sent")
         return q
 
     def receive_reply(self, qid: str, reply_text: str, fields: Optional[dict] = None) -> dict:
@@ -624,6 +728,7 @@ class Agent:
         if cls == "bank_change" or inj["p"] >= self.cfg.injection_threshold:
             out["action"] = self.freeze_supplier(bill.supplier_id, "Supplier reply asks to change bank details",
                                                  trigger=bill.supplier_id)
+            self._alert_bank_change(bill.supplier_id, bill.bill_id)
             self.open_case("bank_change", bill.supplier_id, {"bill": bill.bill_id, "query": qid})
             return out
         if cls == "credit_note" and fields.get("amount") is None:

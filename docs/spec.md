@@ -94,7 +94,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | R1 | ERP sync: live Odoo 17, CSV/Excel exports with column mapping | Built | `erp/` | `test_erp.py` |
 | R2 | ERP presets for QuickBooks, Xero and Kingdee exports | To build | `erp/csvfiles.py` | |
 | R3 | Bill intake: e-invoice JSON, PDF and photo through the vision reader | Built | `intake.py`, `reader.py` | `test_intake.py` |
-| R4 | Mailbox: poll an IMAP inbox for bills (attachments) and supplier replies | To build | | |
+| R4 | Mailbox: poll an IMAP inbox (or a drop folder) for bills (attachments) and supplier replies | Built | `mail.py`, `session.poll_mailbox` | `test_mail.py` |
 | R5 | Supplier statements (CSV/JSON) | Built | `intake.parse_statement` | task 4 |
 | R6 | Per-field reader confidence shown on the bill | To build | | |
 
@@ -152,10 +152,10 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | ID | Feature | Status | Code | Test |
 | --- | --- | --- | --- | --- |
 | V1 | Supplier query and reply classification (credit note, bank-detail request, other) | Built | `agent.draft_query`, `receive_reply` | task 16 |
-| V2 | The agent sends emails itself (templates, registered contact only, see S11) | To build | | |
+| V2 | The agent sends emails itself: payment notices, price queries, duplicate notices, bank-change alerts (SMTP or outbox) | Built | `mail.py`, `agent.send_email` | `test_mail.py` |
 | V3 | Statement reconciliation, receivable, reserve claim, recovery from the next bill | Built | `agent.reconcile` … | tasks 4, 5 |
 | V4 | Claim dispute by the bank and decision by the arbiter | Built in contract (screens to build) | `BondPool.sol` | contract tests |
-| V5 | Refund request when no later bill exists to deduct from | To build | | |
+| V5 | Refund request drafted after a confirmed missed credit; the finance manager sends it | Built | `agent.confirm_case`, `release_email` | `test_mail.py` |
 | V6 | Disputes page with a timeline per case | To build | | |
 
 ### 5.7 Prove

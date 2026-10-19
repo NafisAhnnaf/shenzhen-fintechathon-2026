@@ -1,4 +1,4 @@
-"""Policies S1-S10 (plan section 5), checked before every tool call that has an effect.
+"""Policies S1-S11 (plan section 5, spec section 7), checked before every tool call that has an effect.
 
 A tool call names its arguments as tagged values. The gate refuses the call if any policy fails and
 logs the attempt as a security event. The contract repeats S1/S2-style rules as a second layer.
@@ -10,7 +10,7 @@ from typing import Optional
 
 from .tags import Src, T
 
-EFFECT_TOOLS = {"pay_autonomous", "pay_approved", "send_query", "propose_settings", "file_claim", "open_receivable",
+EFFECT_TOOLS = {"pay_autonomous", "pay_approved", "send_query", "send_email", "propose_settings", "file_claim", "open_receivable",
                 "record_offset", "freeze", "pause", "hold", "probation"}
 PROTECTIVE = {"freeze", "pause", "hold", "probation", "record_offset"}  # S10: may run on untrusted triggers
 PAY_TOOLS = {"pay_autonomous", "pay_approved"}
@@ -36,10 +36,13 @@ class ToolCall:
     plan_confirmed: bool = False  # S9: the user confirmed the preview (for request-driven steps)
     from_request: bool = False
     trigger_supplier: Optional[str] = None  # S10: supplier whose data triggered a protective action
+    approved_by: Optional[str] = None  # S11: the finance manager released an email that changes what we pay
 
 
 def check(call: ToolCall) -> None:
     a = call.args
+    if call.tool == "send_email":
+        _check_email(call)
     # S4: bank details from anyone but the owner's settings page only open a call-back task.
     if call.tool in PAYEE_CHANGE_TOOLS:
         raise PolicyViolation("S4", "the agent cannot add a payee or change bank details; open a call-back task")
@@ -102,6 +105,27 @@ def _numbers(card: dict, prefix: str = "") -> dict:
         elif isinstance(v, dict):
             out.update(_numbers(v, key + "."))
     return out
+
+
+def _check_email(call: ToolCall) -> None:
+    """S11: templates only, to the registered contact, typed values only; amount-changing emails need a person."""
+    from .mail import AUTO_TEMPLATES, MONEY, SAFE_ID, TEMPLATES
+
+    a = call.args
+    if a["recipient"].sources != frozenset({Src.REGISTRY}):
+        raise PolicyViolation("S1", "an email goes only to the supplier's registered contact")
+    tpl = a["template"].value
+    if tpl not in TEMPLATES:
+        raise PolicyViolation("S11", f"no email template named {tpl}")
+    if tpl not in AUTO_TEMPLATES and call.approved_by != "finance_manager":
+        raise PolicyViolation("S11", f"a {tpl.replace('_', ' ')} changes what we pay: the finance manager sends it")
+    for k, v in a.items():
+        if k in ("recipient", "template") or not isinstance(v, T) or isinstance(v.value, (int, float)):
+            continue
+        if Src.SUPPLIER_MSG in v.sources:
+            raise PolicyViolation("S6", f"supplier message text cannot go into an email ({k})")
+        if Src.SUPPLIER_DOC in v.sources and not (SAFE_ID.match(str(v.value)) or MONEY.match(str(v.value))):
+            raise PolicyViolation("S6", f"only identifiers and amounts from a supplier document may be quoted ({k})")
 
 
 def check_card(card: dict, tags: dict) -> None:
