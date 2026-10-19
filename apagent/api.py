@@ -767,10 +767,10 @@ def bank_view():
 
 
 @app.get("/api/bank/tx/{action}", dependencies=[need("underwriter", "arbiter")])
-def bank_tx(action: str, bill: Optional[str] = None, amount: Optional[float] = None):
+def bank_tx(action: str, bill: Optional[str] = None, amount: Optional[float] = None, settings: Optional[int] = None):
     with _lock:
         try:
-            return _ok(S().agent.bank_tx_request(action, bill, amount))
+            return _ok(S().agent.bank_tx_request(action, bill, amount, settings))
         except ValueError as e:
             raise HTTPException(400, str(e))
 

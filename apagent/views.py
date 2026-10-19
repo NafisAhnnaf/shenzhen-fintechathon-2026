@@ -46,7 +46,7 @@ def payments(s, frm: Optional[str] = None, to: Optional[str] = None, by: Optiona
     rows = []
     for b in led.bills.values():
         who = paid_by(b)
-        if who is None or not _in(b.paid_on, frm, to) or b.paid_on > led.today:
+        if who is None or b.amount_usd <= 0 or not _in(b.paid_on, frm, to) or b.paid_on > led.today:
             continue
         if supplier and b.supplier_id != supplier:
             continue
@@ -236,7 +236,7 @@ def supplier_rows(s) -> list[dict]:
     led = s.led
     out = []
     for sid, sp in led.suppliers.items():
-        if sid not in demo.DEMO_SUPPLIERS:
+        if sid not in demo.DEMO_SUPPLIERS and sp.since != led.today and sid not in s.agent.__dict__.get("added_suppliers", set()):
             continue
         p = s.chain.payee(sid) if s.chain else {}
         paid = [b for b in led.bills.values() if b.supplier_id == sid and b.status == "paid"]

@@ -41,43 +41,65 @@ packages fail with errors such as `'._chinese_simplified' is not a valid Languag
 
 ## Run everything locally
 
+Three processes: the local chain, the governor service (it co-signs payments by the agent with its own key, so the
+agent server never holds that key), and the API, which also serves the web app.
+
 ```bash
-# 1. Calibrate the risk core and build the demo world (writes data/calibration.json, data/demo/*)
+# once: calibrate the risk core and build the demo world (writes data/calibration.json, data/demo/*)
 .venv/bin/python -m apagent.risk.calibrate
 .venv/bin/python -m apagent.demo
+(cd web && npm install --legacy-peer-deps && npx vite build)
 
-# 2. Start a local chain (keep it running) and deploy
-cd chain && npx hardhat node &             # terminal 1
-npx hardhat run scripts/deploy.js --network localhost && cd ..
+# terminal 1: local chain (keep it running)
+cd chain && npx hardhat node
 
-# 3. Scripted tasks -> evidence/evidence_localhost.md
-.venv/bin/python -m apagent.tasks --network localhost
-
-# 4. Experiments -> results/summary.md (RED needs a fresh deployment first)
+# terminal 2: deploy, then the governor service
 (cd chain && npx hardhat run scripts/deploy.js --network localhost)
-.venv/bin/python -m apagent.experiments --red
+NETWORK=localhost .venv/bin/uvicorn apagent.governor_service:app --port 8001
 
-# 5. API for the UI (owner and finance manager sign in their own wallets)
-NETWORK=localhost SIGNING=client .venv/bin/uvicorn apagent.api:app --port 8000
+# terminal 3: the API and the desk at http://127.0.0.1:8000
+NETWORK=localhost SIGNING=client GOVERNOR_URL=http://127.0.0.1:8001 .venv/bin/uvicorn apagent.api:app --port 8000
 ```
+
+Open http://127.0.0.1:8000, pick a local test account (owner, finance manager, bank or arbiter) and sign the
+sign-in message. As the owner, Settings › "Start the demo again" gives fresh contracts and the demo company's
+records. Bills arrive from Inbox ("Process"), an upload, a phone photo, or the mailbox.
+
+Optional: `GEMINI_API_KEY` in `.env` to read PDFs and photos (and for the request and instruction models),
+`SMTP_*`/`IMAP_*` for a real mailbox, `NOTIFY_WEBHOOK_URL` for WeCom, Slack or Teams alerts. See `.env.example`.
+
+Scripted runs (no browser): `.venv/bin/python -m apagent.tasks --network localhost` writes
+`evidence/evidence_localhost.md`; `.venv/bin/python -m apagent.experiments --red` writes `results/summary.md`
+(after a fresh deploy).
 
 ## Web app
 
-`web/` is the desk: React, TypeScript, Vite, Tailwind, wagmi/viem for wallets, TanStack Query, ECharts.
+`web/` is the desk: React, TypeScript, Vite, wagmi/viem for wallets, TanStack Query, ECharts. Plain CSS on the
+system font; the layout follows common accounting tools.
+
+| Page | What it is for |
+| --- | --- |
+| Inbox | Bills, emails and statements waiting; upload, phone photo, check mail, paste an email; the agent's outbox |
+| Bills | Every bill by status and period; detail with invoice vs order vs goods received, every check, the agent's proposal |
+| Approvals | Bills that need the finance manager (and the owner above $25,000), signed in the wallet |
+| Payments | Who paid what (agent, finance manager, ERP history) by period, with Verify against the on-chain anchor; pay dates and early-payment offers |
+| Suppliers | The registry with on-chain status; call-back and payment-detail changes, unfreeze, invoice-signing keys, new suppliers |
+| Disputes | Missed credits, supplier queries, reserve claims, each with a timeline |
+| Activity | The journal (who did what, with transaction and proof) and the month-end pack |
+| Risk and reserve | Risk settings, the owner's on-chain switch, the evidence behind them, monthly budgets |
+| Market prices | Price ranges for next month, alert signals, buy-ahead comparison and draft purchase orders |
+| Security | Pause and resume, frozen payees, the poisoned-invoice demo, try-your-own attack, red-team results |
+| Bank | The reserve, covered payments, premiums, claim disputes (bank) and decisions (arbiter) |
+| Settings | ERP, mailbox, pay timing, who holds which key, records vs chain, demo controls |
+
+People sign in with their wallet (Sign-In with Ethereum); the server decides the role from the deployment record.
+On a local chain the sign-in page offers the four Hardhat test accounts, which the node signs for. For phone
+approval through WalletConnect set `VITE_WC_PROJECT_ID` before building.
 
 ```bash
-cd web && npm install --legacy-peer-deps
-npx vite build                      # the API serves web/dist at http://127.0.0.1:8000
-npm run dev                         # or: development server on :5173, proxying /api to :8000
-npx playwright install chromium && npx playwright test   # browser tests against :8000 after /api/admin/reset
+cd web && npx playwright install chromium && npx playwright test   # 10 browser flows against :8000 (stack above running)
+npm run dev                                                         # development server on :5173, proxying /api to :8000
 ```
-
-Pages: Desk (requests, inbox, bills, plans, approvals, journal), Risk and reserve (the dial and the reserve
-comparison), Security (the poisoned-invoice split screen, red-team results, pause and frozen payees), Evidence
-(tasks and hashes). The connected wallet's address decides what a person can do: the owner's key sees owner
-actions, the finance manager's key sees approvals. On a local chain the wallet menu also offers the Hardhat dev
-accounts, which the local node signs for. For phone approval through WalletConnect set `VITE_WC_PROJECT_ID`
-(free from cloud.reown.com) before building; without it, open the desk in MetaMask Mobile's own browser.
 
 ## Inputs, signing and state
 
@@ -89,8 +111,8 @@ read from its text. Statements are `.csv` (`date,ref,kind,amount,against`) or `.
 The demo inbox folders (`data/demo/documents`, `inbox`, `statements`) hold the December files; `POST /api/inbox/...`
 takes one through the same path as an upload.
 
-**People sign in their own wallets.** With `SIGNING=client` the server holds only the agent, governor and
-underwriter-service keys. The finance manager signs EIP-712 messages (`GET /api/bills/{id}/approval`,
+**People sign in their own wallets.** With `SIGNING=client` the API holds only the agent key (and the governor key
+when no `GOVERNOR_URL` is set); the bank signs from its own wallet unless `UNDERWRITER_SERVICE=on`. The finance manager signs EIP-712 messages (`GET /api/bills/{id}/approval`,
 `GET /api/cases/{id}/signing`) and posts the signature back; the server checks the signer before sending anything.
 The owner sends settings, unpause and unfreeze transactions from their wallet (`GET /api/dial/tx`,
 `GET /api/owner-tx/{action}`) and posts the transaction hash; the server checks it was mined, succeeded, came from
@@ -105,8 +127,8 @@ but only if it belongs to the deployed vault. `GET /api/state` reports `consiste
 ## Tests
 
 ```bash
-cd chain && npx hardhat test && cd ..        # 28 contract tests
-.venv/bin/python -m pytest tests             # 68 tests; the chain and API tests need the local node running
+cd chain && npx hardhat test && cd ..        # 30 contract tests
+.venv/bin/python -m pytest tests             # 133 tests (4 need Odoo); the chain and API tests need the local node running
 ```
 
 ## Connecting an ERP

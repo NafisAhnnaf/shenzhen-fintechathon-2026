@@ -218,7 +218,7 @@ New in this release:
 
 ## 9. Screens
 
-The layout follows common accounting tools: left sidebar, tables with status tabs, a detail panel. Approved mockup:
+Built in `web/src/pages/`, one file per screen, and covered by 10 browser flows in `web/e2e/desk.spec.ts`. The layout follows common accounting tools: left sidebar, tables with status tabs, a detail panel. Approved mockup:
 https://claude.ai/artifact/Qtxk5zanrCQcpJKZfr5oAT
 
 | Screen | Contents | Features |

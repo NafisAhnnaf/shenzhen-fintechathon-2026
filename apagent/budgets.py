@@ -33,7 +33,7 @@ def split(bill: Bill, amount: Optional[float] = None) -> dict[str, float]:
 def spent(led: Ledger, month: str) -> dict[str, float]:
     out: dict[str, float] = defaultdict(float)
     for b in led.bills.values():
-        if b.status in ("paid", "partial") and (b.paid_on or "")[:7] == month:
+        if b.status in ("paid", "partial") and (b.paid_on or "")[:7] == month and b.paid_on <= led.today:
             for c, v in split(b).items():
                 out[c] += v
     return {c: round(v, 2) for c, v in out.items()}

@@ -1,82 +1,81 @@
-import React, { useMemo, type ReactNode } from "react";
+import React, { useEffect, useMemo, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import "./index.css";
-import "./proto.css";
-import { api, type AppState } from "./lib/api";
+import "./styles.css";
+import { SIGNED_OUT } from "./lib/api";
+import { useMe, usePublic } from "./lib/hooks";
 import { makeConfig } from "./lib/wallet";
 import { Shell } from "./components/Shell";
-import { Art, C } from "./components/Characters";
-import Landing from "./pages/Landing";
 import Login from "./pages/Login";
-import Desk from "./pages/desk/Desk";
-import Risk from "./pages/Risk";
-import Security from "./pages/Security";
+import Inbox from "./pages/Inbox";
+import Bills from "./pages/Bills";
+import Approvals from "./pages/Approvals";
+import Payments from "./pages/Payments";
+import Suppliers from "./pages/Suppliers";
+import Disputes from "./pages/Disputes";
 import Activity from "./pages/Activity";
+import Risk from "./pages/Risk";
+import Market from "./pages/Market";
+import Security from "./pages/Security";
+import Bank from "./pages/Bank";
 import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } } });
 
 function Centered({ children }: { children: ReactNode }) {
-  return (
-    <div className="wrap" style={{ minHeight: "80vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, textAlign: "center" }}>
-      {children}
-    </div>
-  );
+  return <div className="center"><div className="stack">{children}</div></div>;
 }
 
-function NotFound() {
-  return (
-    <Centered>
-      <Art html={C.clerk("sheepish", 140)} />
-      <h1 style={{ fontSize: 34 }}>Page not found</h1>
-      <p className="muted">That page doesn't exist on the desk.</p>
-      <Link className="btn btn-primary" to="/desk">
-        Back to the desk
-      </Link>
-    </Centered>
-  );
+/** Signed in: the desk. Otherwise: the sign-in page. */
+function Gate({ children }: { children: ReactNode }) {
+  const { data: me, isLoading } = useMe();
+  if (isLoading) return <Centered><span className="spin" /></Centered>;
+  if (!me) return <Navigate to="/login" replace />;
+  return <Shell>{children}</Shell>;
 }
 
-/** The wallet config needs the chain from the API, so it is built after the first state call. */
 function App() {
-  const { data, error, refetch } = useQuery({ queryKey: ["state"], queryFn: () => api.get<AppState>("/state") });
-  const config = useMemo(() => (data ? makeConfig(data.chain_id, data.rpc) : null), [data?.chain_id, data?.rpc]);
-  if (error && !data)
+  const { data: pub, error, refetch } = usePublic();
+  const qc = useQueryClient();
+  useEffect(() => {
+    const out = () => qc.invalidateQueries({ queryKey: ["me"] });
+    window.addEventListener(SIGNED_OUT, out);
+    return () => window.removeEventListener(SIGNED_OUT, out);
+  }, [qc]);
+  const config = useMemo(() => (pub ? makeConfig(pub.chain_id, pub.rpc) : null), [pub?.chain_id, pub?.rpc]);
+  if (error && !pub)
     return (
       <Centered>
-        <Art html={C.clerk("think", 140)} />
-        <h1 style={{ fontSize: 30 }}>The desk can't reach the agent</h1>
-        <p className="muted" style={{ maxWidth: "60ch" }}>
-          Start the API with <span className="mono">uvicorn apagent.api:app --port 8000</span>, and a local chain if you use one.
+        <h1>The desk cannot reach the agent</h1>
+        <p className="muted">
+          Start the API with <span className="mono">uvicorn apagent.api:app --port 8000</span> and the local chain.
         </p>
-        <button className="btn btn-primary" onClick={() => refetch()}>
-          Try again
-        </button>
+        <button className="btn primary" onClick={() => refetch()}>Try again</button>
       </Centered>
     );
-  if (!config)
-    return (
-      <Centered>
-        <span className="spin dark" />
-        <p className="muted">Connecting to the agent</p>
-      </Centered>
-    );
-  const app = (el: ReactNode) => <Shell>{el}</Shell>;
+  if (!config) return <Centered><span className="spin" /><p className="muted">Connecting</p></Centered>;
+  const g = (el: ReactNode) => <Gate>{el}</Gate>;
   return (
     <WagmiProvider config={config}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/desk" element={app(<Desk />)} />
-          <Route path="/risk" element={app(<Risk />)} />
-          <Route path="/security" element={app(<Security />)} />
-          <Route path="/activity" element={app(<Activity />)} />
-          <Route path="/settings" element={app(<Settings />)} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<Navigate to="/bills" replace />} />
+          <Route path="/inbox" element={g(<Inbox />)} />
+          <Route path="/bills" element={g(<Bills />)} />
+          <Route path="/approvals" element={g(<Approvals />)} />
+          <Route path="/payments" element={g(<Payments />)} />
+          <Route path="/suppliers" element={g(<Suppliers />)} />
+          <Route path="/disputes" element={g(<Disputes />)} />
+          <Route path="/activity" element={g(<Activity />)} />
+          <Route path="/risk" element={g(<Risk />)} />
+          <Route path="/market" element={g(<Market />)} />
+          <Route path="/security" element={g(<Security />)} />
+          <Route path="/bank" element={g(<Bank />)} />
+          <Route path="/settings" element={g(<Settings />)} />
+          <Route path="*" element={g(<Centered><h1>Page not found</h1></Centered>)} />
         </Routes>
       </BrowserRouter>
     </WagmiProvider>

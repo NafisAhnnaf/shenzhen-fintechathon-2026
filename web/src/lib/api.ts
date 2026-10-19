@@ -207,7 +207,7 @@ export interface RouteReply {
   kind: "question" | "plan";
   id?: string;
   plan?: Plan;
-  route: { text: string; outcome: string; question?: { kind: string; text: string; options?: any[]; examples?: string[] } };
+  route: { text: string; outcome: string; question?: { kind: string; text: string; slot?: string; options?: any[]; examples?: string[] } };
 }
 
 export interface Email {

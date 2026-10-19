@@ -1,9 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { useSendTransaction, useSignTypedData } from "wagmi";
+import { useAccount, useConnect, useConnections, useDisconnect, useSendTransaction, useSignTypedData, useSwitchAccount } from "wagmi";
 import { api, type PreparedTx, type Stage, type TypedData } from "../lib/api";
 import { PAYER, STAGE, money, shortHash } from "../lib/format";
-import { useAppState } from "../lib/hooks";
-import { forViem, txFor } from "../lib/wallet";
+import { useAppState, useMe } from "../lib/hooks";
+import { DEV_ACCOUNTS, forViem, txFor } from "../lib/wallet";
 
 export function StatusTag({ stage }: { stage: Stage | string }) {
   const [label, cls] = STAGE[stage] ?? [stage, "st-idle"];
@@ -209,16 +209,83 @@ export function useRemembered<T>(key: string, initial: T): [T, (v: T) => void] {
 }
 
 // ------------------------------------------------------------------ wallet steps
+/** Make sure the wallet that signs is the one the person signed in with. After a page reload the session cookie
+ * survives but the wallet connection may not: reconnect the matching wallet, and never sign with another one. */
+export function useEnsureWallet() {
+  const { address, isConnected } = useAccount();
+  const { connectors, connectAsync } = useConnect();
+  const connections = useConnections();
+  const { disconnectAsync } = useDisconnect();
+  const { switchAccountAsync } = useSwitchAccount();
+  const { data: me } = useMe();
+  return async () => {
+    const want = me?.address?.toLowerCase();
+    if (!want || (isConnected && address?.toLowerCase() === want)) return;
+    // Several wallets can be connected at once; if the right one is among them, make it the active one.
+    const have = connections.find((c) => c.accounts.some((x) => x.toLowerCase() === want));
+    if (have) {
+      await switchAccountAsync({ connector: have.connector });
+      return;
+    }
+    // Local test wallets: we know which address each one holds. Otherwise try the wallets in turn.
+    const mocks = connectors.filter((c) => c.type === "mock");
+    const devIdx = DEV_ACCOUNTS.findIndex(([, a]) => a.toLowerCase() === want);
+    const known = devIdx >= 0 && mocks[devIdx] ? [mocks[devIdx]] : [];
+    const local = connectors.filter((c) => c.type === "localKey" && c.id.toLowerCase().endsWith(want));
+    const errs: string[] = [];
+    for (const c of [...known, ...local, ...connectors.filter((c) => c.type !== "mock" && c.type !== "localKey")]) {
+      try {
+        const r = await connectAsync({ connector: c });
+        if (r.accounts.some((x) => x.toLowerCase() === want)) return;
+        errs.push(`${c.name}: holds ${r.accounts[0]}`);
+        await disconnectAsync({ connector: c });
+      } catch (e) {
+        errs.push(`${c.name}: ${e instanceof Error ? e.message.split("\n")[0] : e}`);
+      }
+    }
+    throw new Error(`Connect the wallet you signed in with (${want.slice(0, 6)}…${want.slice(-4)}).`);
+  };
+}
+
+/** The local test wallet for the signed-in address, if it is one: its provider signs directly (the Hardhat node,
+ * or the test key in the browser on FISCO), whatever the wallet library's connection state after a reload. */
+function useTestWallet() {
+  const { connectors } = useConnect();
+  const { data: me } = useMe();
+  return async (): Promise<{ provider: any; address: string } | null> => {
+    const want = me?.address?.toLowerCase();
+    if (!want) return null;
+    const mocks = connectors.filter((c) => c.type === "mock");
+    const i = DEV_ACCOUNTS.findIndex(([, a]) => a.toLowerCase() === want);
+    const c = (i >= 0 ? mocks[i] : undefined) ?? connectors.find((x) => x.type === "localKey" && x.id.toLowerCase().endsWith(want));
+    return c ? { provider: await c.getProvider(), address: me!.address } : null;
+  };
+}
+
 /** Sign EIP-712 typed data the API prepared. */
 export function useSignData() {
   const { signTypedDataAsync } = useSignTypedData();
-  return (td: TypedData) => signTypedDataAsync(forViem(td));
+  const ensure = useEnsureWallet();
+  const test = useTestWallet();
+  return async (td: TypedData): Promise<`0x${string}`> => {
+    const t = await test();
+    if (t) return t.provider.request({ method: "eth_signTypedData_v4", params: [t.address, JSON.stringify(td)] });
+    await ensure();
+    return signTypedDataAsync(forViem(td));
+  };
 }
 
-/** Send a transaction the API prepared from the connected wallet and return its hash. */
+/** Send a transaction the API prepared from the person's wallet and return its hash. */
 export function useSendPrepared() {
   const { sendTransactionAsync } = useSendTransaction();
-  return (tx: PreparedTx) => sendTransactionAsync(txFor(tx));
+  const ensure = useEnsureWallet();
+  const test = useTestWallet();
+  return async (tx: PreparedTx): Promise<`0x${string}`> => {
+    const t = await test();
+    if (t) return t.provider.request({ method: "eth_sendTransaction", params: [{ from: t.address, to: tx.to, data: tx.data, gas: tx.gas }] });
+    await ensure();
+    return sendTransactionAsync(txFor(tx));
+  };
 }
 
 /** CSV download built in the browser. */

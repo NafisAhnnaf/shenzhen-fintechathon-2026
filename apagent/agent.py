@@ -442,6 +442,7 @@ class Agent:
         if existing:
             existing.wallet, existing.rail = (w if rail == "token" else ""), rail
         else:
+            self.__dict__.setdefault("added_suppliers", set()).add(supplier_id)
             self.led.suppliers[supplier_id] = Supplier(id=supplier_id, name=new["name"], tax_id=new["tax_id"],
                                                        domain=new["domain"].lower(), contact=new["contact"], rail=rail,
                                                        wallet=w if rail == "token" else "", since=self.led.today,
@@ -581,11 +582,14 @@ class Agent:
         return {"supplier": supplier_id, "signing_key": sup.signing_key}
 
     # ================================================================== bank and arbiter decisions on claims (V4)
-    def bank_tx_request(self, action: str, bill_id: Optional[str] = None, usd: Optional[float] = None) -> dict:
+    def bank_tx_request(self, action: str, bill_id: Optional[str] = None, usd: Optional[float] = None,
+                        settings_id: Optional[int] = None) -> dict:
         """Unsigned transactions for the bank's or the arbiter's wallet."""
         from .chain import b32
         from .config import usd_to_units
         pf = self.chain.pool.functions
+        if action == "approve_settings":
+            return {"tx": self.chain.prepare("underwriter", self.chain.vault.functions.approveSettings(int(settings_id)))}
         if action == "dispute":
             return {"tx": self.chain.prepare("underwriter", pf.dispute(b32(bill_id)))}
         if action == "resolve":
@@ -1120,6 +1124,7 @@ class Agent:
         st = self.chain.state()
         if st["settings_id"] == sid and bundle_name:
             self.gov.bundle_name = bundle_name
+            self._pending_bundle.pop(sid, None)  # no longer waiting for the bank
             self.log.add("contract", "settings_active", {"settings_id": sid, "bundle": bundle_name, "mode": st["mode"]})
         return {"state": st, "active": st["settings_id"] == sid}
 
