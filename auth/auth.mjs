@@ -17,7 +17,9 @@ const roles = {
   viewer: ac.newRole(memberAc.statements),
 };
 
+const ROLE_LABEL = { owner: "owner", finance_manager: "finance manager", clerk: "accounts clerk", viewer: "viewer" };
 const base = process.env.PUBLIC_URL || "http://127.0.0.1:8000";
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 5 });
 
 const api = process.env.API_INTERNAL_URL || "http://127.0.0.1:8000";
 
@@ -44,7 +46,22 @@ export const auth = betterAuth({
   basePath: "/api/auth",
   secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: [base, "http://127.0.0.1:5173", "http://localhost:5173"],
-  database: new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 5 }),
+  database: pool,
+  databaseHooks: {
+    session: {
+      create: {
+        // A new sign-in opens the company the person last opened (or joined first), so they land on the desk.
+        async before(session) {
+          const r = await pool.query(
+            `select m."organizationId" from member m left join session s on s."userId" = m."userId" and s."activeOrganizationId" = m."organizationId"
+             where m."userId" = $1 group by m."organizationId", m."createdAt" order by max(s."updatedAt") desc nulls last, m."createdAt" limit 1`,
+            [session.userId],
+          );
+          return { data: { ...session, activeOrganizationId: r.rows[0]?.organizationId ?? null } };
+        },
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 10,
@@ -77,7 +94,7 @@ export const auth = betterAuth({
         await sendMail(
           data.email,
           `You are invited to ${data.organization.name} on the Payables Desk`,
-          `${data.inviter.user.name} invited you to join ${data.organization.name} as ${data.role}.\n\nAccept: ${link}\n`,
+          `${data.inviter.user.name} invited you to join ${data.organization.name} as ${ROLE_LABEL[data.role] ?? data.role}.\n\nAccept: ${link}\n`,
         );
       },
     }),

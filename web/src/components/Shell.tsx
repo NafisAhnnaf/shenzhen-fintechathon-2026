@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDisconnect } from "wagmi";
 import { api } from "../lib/api";
+import { auth } from "../lib/auth";
 import { ROLE, date, shortAddr, time } from "../lib/format";
 import { useAppState, useBills, useCan, useMe, useNotifications } from "../lib/hooks";
 import { AskAgent } from "./AskAgent";
@@ -126,21 +127,56 @@ function UserMenu() {
   const qc = useQueryClient();
   const nav = useNavigate();
   const { disconnectAsync } = useDisconnect();
+  const [open, setOpen] = useState(false);
   if (!me) return null;
   const signOut = async () => {
-    await api.post("/auth/logout").catch(() => undefined);
+    if (me.kind === "account") await auth.signOut().catch(() => undefined);
+    else await api.post("/wallet/logout").catch(() => undefined);
     await disconnectAsync().catch(() => undefined);
-    await qc.invalidateQueries();
+    qc.clear();
     nav("/login");
   };
-  return (
-    <span className="row">
-      <span className="small">
-        <b>{ROLE[me.role] ?? me.role}</b> <span className="mono muted">{shortAddr(me.address)}</span>
+  const switchTo = async (id: string) => {
+    setOpen(false);
+    await auth.setActive(id);
+    qc.clear();
+    nav("/bills");
+  };
+  const role = ROLE[me.role] ?? me.role;
+  if (me.kind !== "account")
+    return (
+      <span className="row">
+        <span className="small">
+          <b>{role}</b> {me.address && <span className="mono muted">{shortAddr(me.address)}</span>}
+        </span>
+        <button className="btn small" onClick={signOut}>Sign out</button>
       </span>
-      <button className="btn small" onClick={signOut}>
-        Sign out
+    );
+  const others = me.companies.filter((c) => c.id !== me.company);
+  return (
+    <div style={{ position: "relative" }}>
+      <button className="btn" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <span className="small"><b>{me.name}</b> <span className="muted">· {role}</span></span>
       </button>
-    </span>
+      {open && (
+        <div className="popover right stack" role="menu" style={{ width: 260 }}>
+          <div className="small">
+            <div>{me.email}</div>
+            <div className="muted">{me.companies.find((c) => c.id === me.company)?.name}</div>
+          </div>
+          {others.length > 0 && (
+            <>
+              <h3>Switch company</h3>
+              {others.map((c) => (
+                <button key={c.id} className="btn small" style={{ justifyContent: "flex-start" }} onClick={() => switchTo(c.id)}>{c.name}</button>
+              ))}
+            </>
+          )}
+          <button className="btn small" style={{ justifyContent: "flex-start" }} onClick={() => { setOpen(false); nav("/settings?tab=account"); }}>My account</button>
+          <button className="btn small" style={{ justifyContent: "flex-start" }} onClick={() => { setOpen(false); nav("/welcome"); }}>Create or join a company</button>
+          <button className="btn small" style={{ justifyContent: "flex-start" }} onClick={signOut}>Sign out</button>
+        </div>
+      )}
+    </div>
   );
 }

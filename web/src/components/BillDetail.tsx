@@ -173,7 +173,7 @@ function Actions({ b }: { b: Bill }) {
         {(b.stage === "scheduled" || b.stage === "needs_approval") && can.staff && !b.resolution?.offer && b.terms === "net30" && (
           <button className="btn" disabled={offer.isPending} onClick={() => offer.mutate(undefined)}>Offer early payment</button>
         )}
-        {b.supplier_id && b.stage !== "scheduled" && can.staff && b.queries.length === 0 && (
+        {b.supplier_id && b.stage !== "scheduled" && can.intake && b.queries.length === 0 && (
           <button className="btn" disabled={query.isPending} onClick={() => query.mutate(undefined)}>Ask supplier</button>
         )}
         {can.staff && (

@@ -27,6 +27,7 @@ export const ACTOR: Record<string, string> = {
 export const ROLE: Record<string, string> = {
   owner: "Owner",
   approver: "Finance manager",
+  clerk: "Accounts clerk",
   agent: "Agent service",
   governor: "Governor service",
   underwriter: "Bank",

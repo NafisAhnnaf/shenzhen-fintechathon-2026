@@ -1,4 +1,4 @@
-// Client for the FastAPI back end (apagent/api.py). The session cookie from wallet sign-in goes with every call.
+// Client for the FastAPI back end (apagent/api.py). The session cookie (email or wallet sign-in) goes with every call.
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -24,8 +24,8 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   } catch {
     data = { detail: text };
   }
-  if (r.status === 401 && !path.startsWith("/auth/")) window.dispatchEvent(new Event(SIGNED_OUT));
-  if (!r.ok) throw new ApiError(r.status, (data && (data.detail || data.error)) || r.statusText);
+  if (r.status === 401 && !path.startsWith("/auth/") && path !== "/me") window.dispatchEvent(new Event(SIGNED_OUT));
+  if (!r.ok) throw new ApiError(r.status, (data && (data.detail || data.message || data.error)) || r.statusText);
   return data as T;
 }
 
@@ -40,13 +40,21 @@ export const api = {
 };
 
 // ------------------------------------------------------------------ types
-export type Role = "owner" | "approver" | "underwriter" | "arbiter" | "viewer" | "*";
+export type Role = "owner" | "approver" | "clerk" | "underwriter" | "arbiter" | "viewer" | "*";
 export type Stage = "received" | "scheduled" | "needs_approval" | "on_hold" | "paid" | "rejected";
 
 export interface Me {
-  address: string;
-  role: Role;
+  kind: "account" | "wallet";
+  address: string | null;
+  role: Role | "none";
   label: string;
+  name: string;
+  email: string;
+  company: string | null;
+  companies: { id: string; name: string; slug: string; role: string }[];
+  two_factor?: boolean;
+  signs_as?: string | null;
+  expected_wallet?: string | null;
 }
 
 export interface Public {
@@ -56,6 +64,7 @@ export interface Public {
   company: string;
   roles: Record<string, string>;
   auth: boolean;
+  login: "accounts" | "wallet";
   demo_date: string;
 }
 

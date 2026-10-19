@@ -2,10 +2,29 @@ import { useQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { api } from "../lib/api";
 import { ROLE, date, shortAddr } from "../lib/format";
-import { useAction, useAppState, useCan } from "../lib/hooks";
-import { ErrorLine, PageHead, Tag } from "../components/ui";
+import { useSearchParams } from "react-router-dom";
+import { useAction, useAppState, useCan, useMe } from "../lib/hooks";
+import Account from "../components/Account";
+import Team from "../components/Team";
+import { ErrorLine, PageHead, Tabs, Tag } from "../components/ui";
+
+type Tab = "general" | "team" | "account";
 
 export default function Settings() {
+  const [params, setParams] = useSearchParams();
+  const { data: me } = useMe();
+  const tab = (params.get("tab") as Tab) || "general";
+  const items: [Tab, string][] = me?.kind === "account" ? [["general", "General"], ["team", "Team"], ["account", "My account"]] : [["general", "General"], ["account", "My account"]];
+  return (
+    <>
+      <PageHead title="Settings" sub="Connections, how bills are paid, the team, and your own sign-in." />
+      <Tabs value={tab} onChange={(t) => setParams({ tab: t })} items={items} />
+      {tab === "team" ? <Team /> : tab === "account" ? <Account /> : <General />}
+    </>
+  );
+}
+
+function General() {
   const { data: st } = useAppState();
   const can = useCan();
   const { data: mail } = useQuery({ queryKey: ["mail"], queryFn: () => api.get<any>("/mail") });
@@ -22,7 +41,6 @@ export default function Settings() {
   const local = st.network === "localhost" || st.network === "fisco";
   return (
     <>
-      <PageHead title="Settings" sub="Connections, how bills are paid, who holds which key, and the demo controls." />
       {msg && <div className="card pad between"><span>{msg}</span><button className="btn small" onClick={() => setMsg("")}>OK</button></div>}
       <ErrorLine error={sync.error || poll.error || timing.error || nextDay.error || skip.error || reset.error} />
       <div className="split even">
@@ -34,7 +52,7 @@ export default function Settings() {
             <dt>Suppliers</dt><dd>{st.erp.suppliers}</dd>
           </dl>
           <p className="note">The agent reads the ERP before checking each bill and writes each payment back. Other ERPs: export the lists and run the mapping assistant (docs/erp-adapters.md).</p>
-          {can.staff && <div className="row"><button className="btn" disabled={sync.isPending} onClick={() => sync.mutate(undefined)}>Read the ERP now</button></div>}
+          {can.intake && <div className="row"><button className="btn" disabled={sync.isPending} onClick={() => sync.mutate(undefined)}>Read the ERP now</button></div>}
         </div>
         <div className="card pad stack">
           <h2>Email</h2>
@@ -46,7 +64,7 @@ export default function Settings() {
             </dl>
           )}
           <p className="note">Set SMTP_* and IMAP_* in .env to use a real mailbox, and NOTIFY_WEBHOOK_URL to get alerts in WeCom, Slack or Teams.</p>
-          {can.staff && <div className="row"><button className="btn" disabled={poll.isPending} onClick={() => poll.mutate(undefined)}>Check mail now</button></div>}
+          {can.intake && <div className="row"><button className="btn" disabled={poll.isPending} onClick={() => poll.mutate(undefined)}>Check mail now</button></div>}
         </div>
       </div>
 

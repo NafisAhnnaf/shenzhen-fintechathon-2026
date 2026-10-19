@@ -47,7 +47,7 @@ function Incoming() {
   return (
     <>
       <div className="row">
-        {can.staff && (
+        {can.intake && (
           <>
             <label className="btn primary">
               Upload a bill
@@ -84,7 +84,7 @@ function Incoming() {
                       <td className="r amt">{money(d.total)}</td>
                       <td className="r">
                         <a className="small" href={`/api/files/documents/${(d.pdf || d.file).split("/").pop()}`} target="_blank" rel="noreferrer">View</a>
-                        {can.staff && <button className="btn small" style={{ marginLeft: 8 }} disabled={take.isPending} onClick={() => take.mutate(d.key)}>Process</button>}
+                        {can.intake && <button className="btn small" style={{ marginLeft: 8 }} disabled={take.isPending} onClick={() => take.mutate(d.key)}>Process</button>}
                       </td>
                     </tr>
                   ))}
@@ -100,7 +100,7 @@ function Incoming() {
               <table><tbody>{data.emails.map((e) => (
                 <tr key={e}><td className="mono">{e}</td><td className="r">
                   <a className="small" href={`/api/files/inbox/${e}`} target="_blank" rel="noreferrer">View</a>
-                  {can.staff && <button className="btn small" style={{ marginLeft: 8 }} onClick={() => email.mutate(e)}>Process</button>}
+                  {can.intake && <button className="btn small" style={{ marginLeft: 8 }} onClick={() => email.mutate(e)}>Process</button>}
                 </td></tr>))}</tbody></table>
             ) : <Empty title="No emails" />}
           </div>
@@ -110,7 +110,7 @@ function Incoming() {
               <table><tbody>{data.statements.map((s) => (
                 <tr key={s}><td className="mono">{s}</td><td className="r">
                   <a className="small" href={`/api/files/statements/${s}`} target="_blank" rel="noreferrer">View</a>
-                  {can.staff && <button className="btn small" style={{ marginLeft: 8 }} onClick={() => stmt.mutate(s)}>Reconcile</button>}
+                  {can.intake && <button className="btn small" style={{ marginLeft: 8 }} onClick={() => stmt.mutate(s)}>Reconcile</button>}
                 </td></tr>))}</tbody></table>
             ) : <Empty title="No statements" />}
           </div>

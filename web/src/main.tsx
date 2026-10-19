@@ -9,6 +9,7 @@ import { useMe, usePublic } from "./lib/hooks";
 import { makeConfig } from "./lib/wallet";
 import { Shell } from "./components/Shell";
 import Login from "./pages/Login";
+import Welcome, { AcceptInvitation, ResetPassword } from "./pages/Welcome";
 import Inbox from "./pages/Inbox";
 import Bills from "./pages/Bills";
 import Approvals from "./pages/Approvals";
@@ -28,12 +29,20 @@ function Centered({ children }: { children: ReactNode }) {
   return <div className="center"><div className="stack">{children}</div></div>;
 }
 
-/** Signed in: the desk. Otherwise: the sign-in page. */
+/** Signed in with a company open: the desk. Signed in without one: the welcome page. Otherwise: sign-in. */
 function Gate({ children }: { children: ReactNode }) {
   const { data: me, isLoading } = useMe();
   if (isLoading) return <Centered><span className="spin" /></Centered>;
-  if (!me) return <Navigate to="/login" replace />;
+  if (!me) return <Navigate to={`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`} replace />;
+  if (me.role === "none") return <Navigate to="/welcome" replace />;
   return <Shell>{children}</Shell>;
+}
+
+function SignedIn({ children }: { children: ReactNode }) {
+  const { data: me, isLoading } = useMe();
+  if (isLoading) return <Centered><span className="spin" /></Centered>;
+  if (!me) return <Navigate to="/login" replace />;
+  return <>{children}</>;
 }
 
 function App() {
@@ -62,6 +71,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/welcome" element={<SignedIn><Welcome /></SignedIn>} />
+          <Route path="/accept-invitation/:id" element={<AcceptInvitation />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/" element={<Navigate to="/bills" replace />} />
           <Route path="/inbox" element={g(<Inbox />)} />
           <Route path="/bills" element={g(<Bills />)} />

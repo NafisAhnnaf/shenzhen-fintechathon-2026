@@ -3,9 +3,9 @@ import { api, type AppState, type Bill, type Me, type Notification, type Public 
 
 export const usePublic = () => useQuery({ queryKey: ["public"], queryFn: () => api.get<Public>("/public"), staleTime: 60_000 });
 
-/** The signed-in person: their address and role, decided by the server from the deployment record. */
+/** The signed-in person and their role in the open company, decided by the server (membership or wallet). */
 export const useMe = () =>
-  useQuery({ queryKey: ["me"], queryFn: () => api.get<Me>("/auth/me"), retry: false, staleTime: 30_000 });
+  useQuery({ queryKey: ["me"], queryFn: () => api.get<Me>("/me"), retry: false, staleTime: 30_000 });
 
 export const useAppState = () => useQuery({ queryKey: ["state"], queryFn: () => api.get<AppState>("/state"), refetchInterval: 4000 });
 
@@ -22,6 +22,7 @@ export function useCan() {
   return {
     role: r,
     staff: any || r === "owner" || r === "approver",
+    intake: any || r === "owner" || r === "approver" || r === "clerk",
     owner: any || r === "owner",
     manager: any || r === "approver",
     bank: any || r === "underwriter",

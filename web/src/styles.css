@@ -163,6 +163,9 @@ td .s2 { display: block; color: var(--muted); font-size: 12.5px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .center { min-height: 80vh; display: grid; place-items: center; text-align: center; padding: 20px; }
 .login { width: min(440px, 100%); display: grid; gap: 16px; text-align: left; }
+.rule { border: 0; border-top: 1px solid var(--line); margin: 4px 0; width: 100%; }
+.qr { width: 168px; height: 168px; border: 1px solid var(--line); border-radius: 6px; image-rendering: pixelated; }
+.codes { display: grid; grid-template-columns: repeat(2, max-content); gap: 4px 20px; font-family: var(--mono); font-size: 13px; }
 
 @media (max-width: 1000px) { .split, .split.even { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {

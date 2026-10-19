@@ -220,6 +220,7 @@ export function useEnsureWallet() {
   const { data: me } = useMe();
   return async () => {
     const want = me?.address?.toLowerCase();
+    if (!want && me?.kind === "account") throw new Error("Link the wallet you sign with first: Settings, My account.");
     if (!want || (isConnected && address?.toLowerCase() === want)) return;
     // Several wallets can be connected at once; if the right one is among them, make it the active one.
     const have = connections.find((c) => c.accounts.some((x) => x.toLowerCase() === want));
@@ -258,7 +259,7 @@ function useTestWallet() {
     const mocks = connectors.filter((c) => c.type === "mock");
     const i = DEV_ACCOUNTS.findIndex(([, a]) => a.toLowerCase() === want);
     const c = (i >= 0 ? mocks[i] : undefined) ?? connectors.find((x) => x.type === "localKey" && x.id.toLowerCase().endsWith(want));
-    return c ? { provider: await c.getProvider(), address: me!.address } : null;
+    return c ? { provider: await c.getProvider(), address: me!.address! } : null;
   };
 }
 
