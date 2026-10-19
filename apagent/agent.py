@@ -222,6 +222,8 @@ class Agent:
 
     def reject(self, bill_id: str, actor: str = "finance_manager") -> dict:
         bill = self.led.bills[bill_id]
+        if bill.status not in ("received", "held", "approved"):
+            return {"bill": bill_id, "error": f"bill is {bill.status} and can no longer be rejected"}
         bill.status = "rejected"
         self.log.add(actor, "reject", {}, bill_id=bill_id, decision="rejected")
         return {"bill": bill_id, "status": "rejected"}
@@ -279,8 +281,9 @@ class Agent:
         """Owner only (T3). tx_hash: the owner sent unfreezePayee from their wallet; else the server key sends it."""
         tx = None
         if self.chain:
-            tx = self._owner_tx(self.chain.vault.functions.unfreezePayee(__import__("apagent.chain", fromlist=["b32"]).b32(supplier_id)),
-                                tx_hash, self.chain.unfreeze, supplier_id)
+            from .chain import b32
+            tx = self._owner_tx(self.chain.vault.functions.unfreezePayee(b32(supplier_id)), tx_hash, self.chain.unfreeze,
+                                supplier_id)
             if not tx.ok:
                 return {"supplier": supplier_id, "error": tx.error, "needs_signature": tx.error == "needs the owner's wallet"}
         self.led.suppliers[supplier_id].frozen = False
@@ -288,13 +291,29 @@ class Agent:
         return {"supplier": supplier_id, "frozen": False, "tx": self._tx(tx) if tx else None}
 
     def _owner_tx(self, fn, tx_hash: Optional[str], server_call, *args):
-        """An owner transaction: verify the one the owner sent, or send it with the server's owner key if held."""
+        """An owner transaction: verify the one the owner sent (fn: the call we asked them to sign), or send it with
+        the server's owner key if held."""
         from .chain import TxResult
         if tx_hash:
-            return self.chain.verify_sent(tx_hash, "owner", self.chain.vault)
+            return self._verify_once(tx_hash, "owner", fn)
         if self.chain.has_key("owner"):
             return server_call(*args)
         return TxResult(False, None, "needs the owner's wallet")
+
+    def _verify_once(self, tx_hash: str, role: str, expect):
+        """verify_sent, and accept each transaction hash only once, so an old transaction cannot be replayed."""
+        from .chain import TxResult
+        used = self.__dict__.setdefault("used_tx", set())
+        key = tx_hash.lower()
+        if key in used:
+            self.log.add("system", "tx_replay", {"tx": tx_hash, "role": role}, security=True)
+            return TxResult(False, tx_hash, "this transaction was already used")
+        tx = self.chain.verify_sent(tx_hash, role, self.chain.vault, expect)
+        if not tx.ok:
+            self.log.add("system", "bad_owner_tx", {"tx": tx_hash, "role": role, "error": tx.error}, security=True)
+            return tx
+        used.add(key)
+        return tx
 
     def owner_tx_request(self, action: str, **kw) -> dict:
         """Unsigned transaction for the owner's wallet: unpause, unfreeze, settings."""
@@ -314,7 +333,7 @@ class Agent:
         """Owner only (T3): unpause."""
         tx = None
         if self.chain:
-            tx = self._owner_tx(None, tx_hash, self.chain.unpause_agent)
+            tx = self._owner_tx(self.chain.vault.functions.unpauseAgent(), tx_hash, self.chain.unpause_agent)
             if not tx.ok:
                 return {"paused": True, "error": tx.error, "needs_signature": tx.error == "needs the owner's wallet"}
         self.gov.state.blocked.clear()
@@ -645,7 +664,7 @@ class Agent:
         if not self.chain:
             self.gov.bundle_name = proposal["bundle"]
             return out
-        tx = self._owner_tx(None, tx_hash, lambda: self.chain.send("owner", self._settings_fn(proposal)))
+        tx = self._owner_tx(self._settings_fn(proposal), tx_hash, lambda: self.chain.send("owner", self._settings_fn(proposal)))
         out["propose_tx"] = self._tx(tx)
         if not tx.ok:
             return {**out, "error": tx.error, "needs_signature": tx.error == "needs the owner's wallet"}
@@ -664,7 +683,7 @@ class Agent:
 
     def underwriter_approve(self, settings_id: int, tx_hash: str) -> dict:
         """The underwriter approved a bonded bundle from their own wallet."""
-        tx = self.chain.verify_sent(tx_hash, "underwriter", self.chain.vault)
+        tx = self._verify_once(tx_hash, "underwriter", self.chain.vault.functions.approveSettings(settings_id))
         if not tx.ok:
             return {"error": tx.error}
         name = getattr(self, "_pending_bundle", {}).get(settings_id)

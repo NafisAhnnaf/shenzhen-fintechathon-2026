@@ -2,33 +2,33 @@
   "network": "localhost",
   "chainId": 31337,
   "txs": {
-    "setPool": "0x6b88a2e275780f451b815a17e44ab16158f1d9f1e1e1ebd1278c39feba8d0d1c",
-    "mintVault": "0x6508a73c5fb5bb46f98baa16f6328c52294173cfc7a3f09f6383c6cf88decf41",
-    "mintNaive": "0x54f9fc2bf4b40355ca4a5d54ee124ac63d0b94fc692d1903388fb225dd69b0ed",
-    "mintUnderwriter": "0x069957bce4bb52b4af94e1dc13b8ba988dd1791155763580438529e3bf0762fb",
-    "approvePool": "0xc692efa27774da4f4edb0713fdffbfdc5efb409929abcc18539543da61e3ef5d",
-    "fundPool": "0xd3adbffcab17ac5616319e2c8e0b79c0c9d2db2fdd4ec42dd3931a249a02384c",
-    "addPayee_ACME": "0x6eef816cef1e69314af7817dd61baac5690ac0cf286519bbfd559a936a2eb988",
-    "addPayee_LIONROCK": "0x7438e7dd275e8121934df460fbbb081e078f61f7e54fe12ee7f053ab38cba4ee",
-    "addPayee_GANJIANG": "0x99e4a2c4e5f7dcf200c66b8d9d7368d3260ff88e6c3f739915189ab90bbe7385",
-    "addPayee_TSUENWAN": "0x2743c46ab3e63405423e1cf9ab3f8e566a187b0550079f07eddd5ce77f589ca1",
-    "addPayee_PEARLDELTA": "0xe1ff1c2263a4dfd84ab2a1b99aece5633fa44d4be660fe270aa2c2eba92c7dbf",
-    "addPayee_KWONGFAT": "0x7639ec1c03e3f3924c3768c3cefa6da94994aa6e9040668232f9824548b438cf",
-    "addPayee_SUNKEE": "0x2d1c2b199e6018faf0edd2cb9a78bc5369a5c2ff35c8b0a8ab1b5b865dd1a01e",
-    "addPayee_KAITAK": "0xb43a49f91784b8d5804bf49813ee4ba74e6ba985e8a10bd81f623fdc9a446d48",
-    "addPayee_HARBOURLUBE": "0x6340c48f2fa459dabb51e460dd31cf5f792a246f4c9975edfcefe4b9a62137bf",
-    "addPayee_SHATINPCB": "0x3ae9f804791f8c2e20c3db87a91bb182dc2cb73693a4923a91825cea2b4af3da",
-    "addPayee_VICPLATING": "0xec1a77159ff3b2d41a1c8612bb971752abe340d6588a5016deb14e53841ee747",
-    "addPayee_MONGKOKWIRE": "0x24943a87e895abddb2632c15b7a221c1bccef69aeee58d15ac792b102f91b623",
-    "proposeSettings": "0x02af63bd7be93fa004ed6ef8a7dff8ae1c37b423e7e7ba4017c58584f115209c",
-    "approveSettings": "0xfcd7007bb2837d33a2b2c4afaae9628655bc29976d6cc2fe785fa55f786fe68e"
+    "setPool": "0x7e00fdaa72ee6fa8bf51862e5430dd846e538c7e6af21cb95aef935dd914fa58",
+    "mintVault": "0xa99521811ef7147a88e5c771c9cbed072e139158ddd7be106c0167fad17d418b",
+    "mintNaive": "0x685927f1b485940d443dfeed6f8cfcc38ed5105f61bd2abd17eb77f60b7588cb",
+    "mintUnderwriter": "0x78a311c79b82dc3e3db7ea8b8e40e26e0b779730c8513858590f572635c434e7",
+    "approvePool": "0xd75c2f23d2a07204de9a5920a21ce9fe528df82bcbf6e50acc9797929fd94616",
+    "fundPool": "0x4542a3513c5b3c6c8b97ae5013c3e6052b5e17453cf6aaead80368449cea9bec",
+    "addPayee_ACME": "0x37e91345949328e3fae749313d673dc5a77718154e3acebd1d2454c88d7e194c",
+    "addPayee_LIONROCK": "0x408cc8988eee46b12a60692805ac695b0ca61776381d6e5f43f62b44c04aa28f",
+    "addPayee_GANJIANG": "0xde19b8deadbfab884a804e60c5d2a407df5c0ccf5f364d82f6106df3951882a5",
+    "addPayee_TSUENWAN": "0x778becf3561c6feb7d0a8938e6dd8cc793211593f80fdca1bb9017e6587017fd",
+    "addPayee_PEARLDELTA": "0x2561ecf9a5ee96bb2abeaabe8aca303b314aecf45cfbfa0eff6925b1fc1c7860",
+    "addPayee_KWONGFAT": "0x2a39f4d2dadae1aa67459681f03ec0761db27e712f304bda2c7331777dedc50d",
+    "addPayee_SUNKEE": "0x62c308f65dbc4392bbcb5d427bdf39016505dabdea6279cc7aadb6596c553673",
+    "addPayee_KAITAK": "0x163e025bcf3f164f71cb48999b890fc215ca6fcc211513b7b9087300d73484a4",
+    "addPayee_HARBOURLUBE": "0xbfc3b79e3a8dbf758dce300dc5159d9d6d9058c4b1f8621e38938232f32ebe52",
+    "addPayee_SHATINPCB": "0x256d996ffbc1ca875940d2fbd166450e8fcb5d4c4323bfdb6ce92fe9cee81482",
+    "addPayee_VICPLATING": "0x44ca5273656b218fa5e1dbbf0c02f65b158f48af5116384ac60b54fb1ffa9ba2",
+    "addPayee_MONGKOKWIRE": "0x8aad634ecd46e97b3e4cf8fc261eaa75f682d2c89c3cb996525d380c7e8f53f6",
+    "proposeSettings": "0xfbb34a82a71528635f9195f882ac9fb20440db166ad69411600b768715f41a68",
+    "approveSettings": "0x0685da4463ea0ff2c53b293d2b82ea27e27502f705e02d8ade982f371792f510"
   },
   "contracts": {
-    "token": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
-    "vault": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
-    "pool": "0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD",
-    "anchor": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
-    "naive": "0x36b58F5C1969B7b6591D752ea6F5486D069010AB"
+    "token": "0x547382C0D1b23f707918D3c83A77317B71Aa8470",
+    "vault": "0x7C8BaafA542c57fF9B2B90612bf8aB9E86e22C09",
+    "pool": "0x0a17FabeA4633ce714F1Fa4a2dcA62C3bAc4758d",
+    "anchor": "0x5e6CB7E728E1C320855587E1D9C6F7972ebdD6D5",
+    "naive": "0x79E8AB29Ff79805025c9462a2f2F12e9A496f81d"
   },
   "roles": {
     "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
@@ -36,7 +36,7 @@
     "governor": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
     "approver": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
     "underwriter": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
-    "arbiter": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "arbiter": "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
     "attacker": "0x9b1e4F2a7C3d5E6f708192A3b4C5d6E7f8091a2B"
   },
   "payees": {
@@ -98,5 +98,5 @@
     "timeUnit": 1,
     "dayLength": 86400
   },
-  "deployedAt": "2026-10-19T19:11:08.548Z"
+  "deployedAt": "2026-10-19T19:18:01.424Z"
 }

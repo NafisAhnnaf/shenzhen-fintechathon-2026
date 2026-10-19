@@ -10,7 +10,7 @@ const { ethers } = require("ethers");
 
 const ENV = path.join(__dirname, "..", ".env");
 // ATTACKER is an unrelated key for the red-team task that calls the vault from outside (task 9).
-const ROLES = ["OWNER", "AGENT", "GOVERNOR", "APPROVER", "UNDERWRITER", "ATTACKER"];
+const ROLES = ["OWNER", "AGENT", "GOVERNOR", "APPROVER", "UNDERWRITER", "ARBITER", "ATTACKER"];
 const FUND_ETH = process.env.FUND_ETH || "0.003";
 
 function readEnv() {

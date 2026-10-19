@@ -20,11 +20,12 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from . import auth as A
 from . import demo, naive
 from .config import DATA_DIR, SETTINGS
 from .intake import BadDocument, ReaderUnavailable
@@ -42,11 +43,57 @@ RPC_ALLOWED = {"eth_chainId", "net_version", "eth_blockNumber", "eth_call", "eth
                "eth_getTransactionCount", "eth_getTransactionReceipt", "eth_getTransactionByHash", "eth_getBlockByNumber",
                "eth_getCode", "eth_getBalance", "eth_sendRawTransaction"}
 
-app = FastAPI(title="Bonded payables agent", version="0.4")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app = FastAPI(title="Bonded payables agent", version="0.5")
+# The built app is served from this server (same origin). Only the Vite dev server needs CORS.
+CORS_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173").split(",") if o.strip()]
+app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True,
+                   allow_methods=["GET", "POST"], allow_headers=["content-type", "authorization"])
 
 _lock = threading.RLock()
 _session: Optional[Session] = None
+
+# ------------------------------------------------------------------ sign-in and roles (spec X2)
+AUTH = A.Auth()
+COOKIE = "desk_session"
+LABEL = {"owner": "owner", "approver": "finance manager", "underwriter": "bank", "arbiter": "arbiter", "viewer": "viewer"}
+# The request router's names for the two people who can type requests.
+ROUTER_ROLE = {"owner": "owner", "approver": "finance_manager"}
+
+
+def current_user(request: Request) -> A.User:
+    if not A.enabled():
+        return A.User("0x0000000000000000000000000000000000000000", "*", float("inf"))
+    h = request.headers.get("authorization", "")
+    token = h[7:].strip() if h.lower().startswith("bearer ") else request.cookies.get(COOKIE)
+    u = AUTH.user(token)
+    if u is None:
+        raise HTTPException(401, "Sign in with your wallet first")
+    return u
+
+
+def need(*roles: str):
+    def check(u: A.User = Depends(current_user)) -> A.User:
+        if not u.can(*roles):
+            raise HTTPException(403, f"Only the {' or '.join(LABEL[r] for r in roles)} can do this")
+        return u
+    return Depends(check)
+
+
+def _demo_clock(u: A.User = Depends(current_user)) -> A.User:
+    if NETWORK not in ("localhost", "fisco") and os.environ.get("DEMO_CONTROLS") != "on":
+        raise HTTPException(403, "Demo controls are off on this network")
+    if not u.can("owner"):
+        raise HTTPException(403, "Only the owner can do this")
+    return u
+
+
+ANY = need("owner", "approver", "underwriter", "arbiter", "viewer")
+STAFF = need("owner", "approver")
+OWNER = need("owner")
+FM = need("approver")
+BANK = need("underwriter")
+PROTECT = need("owner", "approver", "underwriter", "arbiter")
+DEMO = Depends(_demo_clock)
 
 
 def S() -> Session:
@@ -89,7 +136,16 @@ def _err(out: dict):
 
 class Req(BaseModel):
     text: str
-    role: str = "owner"
+    role: str = "owner"  # used only when AUTH=off; otherwise the signed-in wallet decides
+
+
+class Challenge(BaseModel):
+    address: str
+
+
+class Login(BaseModel):
+    nonce: str
+    signature: str
 
 
 class Choice(BaseModel):
@@ -128,7 +184,51 @@ def health():
     return {"ok": True, "network": NETWORK, "signing": SIGNING}
 
 
-@app.get("/api/state")
+@app.get("/api/public")
+def public():
+    """What the sign-in page needs before anyone signs in: the chain for the wallet and the role addresses."""
+    s = S()
+    return _ok({"network": NETWORK, "chain_id": s.chain.chain_id, "rpc": RPC_PUBLIC, "company": s.led.company,
+                "roles": {k: v for k, v in s.chain.dep["roles"].items() if k in A.ROLE_ORDER}, "auth": A.enabled(),
+                "demo_date": s.led.today})
+
+
+# ------------------------------------------------------------------ sign-in
+@app.post("/api/auth/challenge")
+def auth_challenge(body: Challenge, request: Request):
+    from web3 import Web3
+
+    if not Web3.is_address(body.address):
+        raise HTTPException(400, "not a wallet address")
+    s = S()
+    host = request.headers.get("host", "localhost")
+    return AUTH.challenge(Web3.to_checksum_address(body.address), host, f"{request.url.scheme}://{host}",
+                          s.chain.chain_id, s.led.company.replace(" (fictional)", ""))
+
+
+@app.post("/api/auth/login")
+def auth_login(body: Login, response: Response):
+    try:
+        token, u = AUTH.login(body.nonce, body.signature, S().chain.dep["roles"])
+    except PermissionError as e:
+        raise HTTPException(401, str(e))
+    response.set_cookie(COOKIE, token, httponly=True, samesite="strict", max_age=A.SESSION_TTL)
+    return {"address": u.address, "role": u.role, "label": LABEL.get(u.role, u.role), "token": token}
+
+
+@app.post("/api/auth/logout")
+def auth_logout(request: Request, response: Response):
+    AUTH.logout(request.cookies.get(COOKIE))
+    response.delete_cookie(COOKIE)
+    return {"ok": True}
+
+
+@app.get("/api/auth/me")
+def auth_me(u: A.User = Depends(current_user)):
+    return {"address": u.address, "role": u.role, "label": LABEL.get(u.role, u.role)}
+
+
+@app.get("/api/state", dependencies=[ANY])
 def state():
     s = S()
     with _lock:
@@ -148,7 +248,7 @@ def state():
         })
 
 
-@app.post("/api/admin/reset")
+@app.post("/api/admin/reset", dependencies=[OWNER])
 def admin_reset(confirm: str = ""):
     """Redeploy the contracts and reload the baseline ledger together. On a public network pass confirm=redeploy."""
     global _session
@@ -161,14 +261,14 @@ def admin_reset(confirm: str = ""):
 
 
 # ------------------------------------------------------------------ ERP
-@app.get("/api/erp")
+@app.get("/api/erp", dependencies=[ANY])
 def erp_status():
     s = S()
     return _ok({**s.erp.describe(), "last_sync": s.erp_synced, "orders": len(s.led.pos), "suppliers": len(s.led.suppliers),
                 "receipts": len(s.led.receipts), "returns": len(s.led.returns)})
 
 
-@app.post("/api/erp/sync")
+@app.post("/api/erp/sync", dependencies=[STAFF])
 @mutating
 def erp_sync():
     """Pull the company records from the ERP now (it also happens before each new bill)."""
@@ -176,7 +276,7 @@ def erp_sync():
 
 
 # ------------------------------------------------------------------ bills and documents
-@app.get("/api/bills")
+@app.get("/api/bills", dependencies=[ANY])
 def bills(status: Optional[str] = None):
     s = S()
     with _lock:
@@ -185,7 +285,7 @@ def bills(status: Optional[str] = None):
     return _ok(sorted(out, key=lambda c: c["bill"], reverse=True))
 
 
-@app.get("/api/bills/{bill_id}")
+@app.get("/api/bills/{bill_id}", dependencies=[ANY])
 def bill(bill_id: str):
     s = S()
     if bill_id not in s.led.bills:
@@ -193,7 +293,7 @@ def bill(bill_id: str):
     return _ok(s.agent.bill_card(bill_id))
 
 
-@app.post("/api/documents")
+@app.post("/api/documents", dependencies=[STAFF])
 @mutating
 def upload_document(file: UploadFile = File(...), process: bool = Form(True)):
     """A supplier document as received: .json e-invoice, .pdf, or a photo (.png/.jpg). PDFs and photos need the
@@ -201,7 +301,7 @@ def upload_document(file: UploadFile = File(...), process: bool = Form(True)):
     return S().ingest_file(file.filename or "upload", file.file.read(), process=process)
 
 
-@app.get("/api/inbox")
+@app.get("/api/inbox", dependencies=[ANY])
 def inbox():
     """Files waiting in the demo inbox folders (documents, emails, statements)."""
     s = S()
@@ -212,7 +312,7 @@ def inbox():
     return {"documents": docs, "emails": emails, "statements": stmts}
 
 
-@app.get("/api/files/{kind}/{name}")
+@app.get("/api/files/{kind}/{name}", dependencies=[ANY])
 def file(kind: str, name: str):
     """Serve a demo inbox file (the PDF or e-invoice of a document, an email, a statement)."""
     base = {"documents": demo.DOCS_DIR, "inbox": demo.INBOX_DIR, "statements": demo.STATEMENTS_DIR}.get(kind)
@@ -222,7 +322,7 @@ def file(kind: str, name: str):
     return FileResponse(p)
 
 
-@app.post("/api/inbox/documents/{key}")
+@app.post("/api/inbox/documents/{key}", dependencies=[STAFF])
 @mutating
 def take_document(key: str, process: bool = True):
     """Take a document from the inbox folder through the same intake path as an upload."""
@@ -232,20 +332,20 @@ def take_document(key: str, process: bool = True):
 
 
 # ------------------------------------------------------------------ T2: approvals
-@app.get("/api/bills/{bill_id}/approval")
+@app.get("/api/bills/{bill_id}/approval", dependencies=[FM])
 def approval_request(bill_id: str, amount: Optional[float] = None):
     """EIP-712 PaymentApproval for the finance manager's wallet."""
     with _lock:
         return _ok(S().agent.approval_request(bill_id, amount))
 
 
-@app.post("/api/bills/{bill_id}/approve")
+@app.post("/api/bills/{bill_id}/approve", dependencies=[FM])
 @mutating
 def approve(bill_id: str, body: Approve):
     return _err(S().agent.approve(bill_id, body.amount, signature=_sig(body.signature), expiry=body.expiry))
 
 
-@app.post("/api/bills/{bill_id}/pay")
+@app.post("/api/bills/{bill_id}/pay", dependencies=[STAFF])
 @mutating
 def pay_alone(bill_id: str):
     """Pay a bill the governor cleared for T1: the agent pays, the governor co-signs, the contract checks."""
@@ -256,44 +356,44 @@ def pay_alone(bill_id: str):
     return s.agent.pay_t1(bill_id)
 
 
-@app.post("/api/bills/{bill_id}/reject")
+@app.post("/api/bills/{bill_id}/reject", dependencies=[STAFF])
 @mutating
 def reject(bill_id: str):
     return S().agent.reject(bill_id)
 
 
 # ------------------------------------------------------------------ supplier queries and emails
-@app.get("/api/queries")
+@app.get("/api/queries", dependencies=[ANY])
 def queries():
     return _ok(list(S().agent.queries.values()))
 
 
-@app.post("/api/bills/{bill_id}/query")
+@app.post("/api/bills/{bill_id}/query", dependencies=[STAFF])
 @mutating
 def draft_query(bill_id: str, topic: str = "price"):
     return S().agent.draft_query(bill_id, topic)
 
 
-@app.post("/api/queries/{qid}/send")
+@app.post("/api/queries/{qid}/send", dependencies=[STAFF])
 @mutating
 def send_query(qid: str):
     return S().agent.send_query(qid)
 
 
-@app.post("/api/emails")
+@app.post("/api/emails", dependencies=[STAFF])
 @mutating
 def receive_email(body: RawEmail):
     """An email as received (RFC 822 text with From/Subject). Replies quoting a query ID go to that query."""
     return S().agent.receive_email(body.raw)
 
 
-@app.post("/api/emails/upload")
+@app.post("/api/emails/upload", dependencies=[STAFF])
 @mutating
 def receive_email_file(file: UploadFile = File(...)):
     return S().agent.receive_email(file.file.read().decode("utf-8", errors="replace"))
 
 
-@app.post("/api/inbox/emails/{name}")
+@app.post("/api/inbox/emails/{name}", dependencies=[STAFF])
 @mutating
 def take_email(name: str):
     p = demo.INBOX_DIR / name
@@ -303,14 +403,14 @@ def take_email(name: str):
 
 
 # ------------------------------------------------------------------ statements, cases, claims
-@app.post("/api/statements/{supplier_id}")
+@app.post("/api/statements/{supplier_id}", dependencies=[STAFF])
 @mutating
 def statement(supplier_id: str, file: UploadFile = File(...)):
     """A supplier statement (.csv: date,ref,kind,amount,against, or .json). Each unmatched line opens a case."""
     return [c.__dict__ for c in S().statement(supplier_id, file.filename or "statement.csv", file.file.read())]
 
 
-@app.post("/api/inbox/statements/{name}")
+@app.post("/api/inbox/statements/{name}", dependencies=[STAFF])
 @mutating
 def take_statement(name: str, supplier_id: str):
     p = demo.STATEMENTS_DIR / name
@@ -319,26 +419,26 @@ def take_statement(name: str, supplier_id: str):
     return [c.__dict__ for c in S().statement(supplier_id, p.name, p.read_bytes())]
 
 
-@app.get("/api/cases")
+@app.get("/api/cases", dependencies=[ANY])
 def cases():
     return _ok([c.__dict__ for c in S().led.cases.values()])
 
 
-@app.get("/api/cases/{case_id}/signing")
+@app.get("/api/cases/{case_id}/signing", dependencies=[FM])
 def case_signing(case_id: str):
     """EIP-712 messages the finance manager signs to confirm a missed credit (receivable, and claim if covered)."""
     with _lock:
         return _ok(S().agent.case_signing_request(case_id))
 
 
-@app.post("/api/cases/{case_id}/confirm")
+@app.post("/api/cases/{case_id}/confirm", dependencies=[FM])
 @mutating
 def confirm_case(case_id: str, body: CaseConfirm):
     return _err(S().agent.confirm_case(case_id, receivable_sig=_sig(body.receivable_signature),
                                        claim_sig=_sig(body.claim_signature), expiry=body.expiry))
 
 
-@app.post("/api/claims/{bill_id}/execute")
+@app.post("/api/claims/{bill_id}/execute", dependencies=[STAFF])
 @mutating
 def execute_claim(bill_id: str):
     return S().agent.execute_claim(bill_id)
@@ -347,22 +447,23 @@ def execute_claim(bill_id: str):
 # ------------------------------------------------------------------ requests and plans
 @app.post("/api/request")
 @mutating
-def request(body: Req):
-    return S().request(body.text, body.role)
+def request(body: Req, u: A.User = STAFF):
+    """The role comes from the signed-in wallet, not from the request body (spec X2)."""
+    return S().request(body.text, ROUTER_ROLE.get(u.role, body.role))
 
 
-@app.post("/api/questions/{qid}/answer")
+@app.post("/api/questions/{qid}/answer", dependencies=[STAFF])
 @mutating
 def answer(qid: str, body: Choice):
     return S().answer(qid, body.choice)
 
 
-@app.get("/api/plans/{plan_id}")
+@app.get("/api/plans/{plan_id}", dependencies=[ANY])
 def plan(plan_id: str):
     return _ok(S().plans[plan_id].to_json())
 
 
-@app.post("/api/plans/{plan_id}/step")
+@app.post("/api/plans/{plan_id}/step", dependencies=[STAFF])
 @mutating
 def plan_step(plan_id: str):
     s = S()
@@ -372,18 +473,18 @@ def plan_step(plan_id: str):
 
 @app.post("/api/plans/{plan_id}/run")
 @mutating
-def plan_run(plan_id: str):
-    return S().run(plan_id)
+def plan_run(plan_id: str, u: A.User = STAFF):
+    return S().run(plan_id, actor=ROUTER_ROLE.get(u.role, "owner"))
 
 
-@app.post("/api/plans/{plan_id}/cancel")
+@app.post("/api/plans/{plan_id}/cancel", dependencies=[STAFF])
 @mutating
 def plan_cancel(plan_id: str):
     s = S()
     return planner.cancel(s.agent, s.plans[plan_id]).to_json()
 
 
-@app.get("/api/plans/{plan_id}/tx")
+@app.get("/api/plans/{plan_id}/tx", dependencies=[OWNER])
 def plan_tx(plan_id: str):
     """The owner's transaction for a plan that needs it (SET-DIAL settings, RESUME unpause)."""
     s = S()
@@ -395,7 +496,7 @@ def plan_tx(plan_id: str):
         return _ok(s.agent.settings_tx_request(st.result["proposal"]))
 
 
-@app.post("/api/plans/{plan_id}/sign")
+@app.post("/api/plans/{plan_id}/sign", dependencies=[OWNER])
 @mutating
 def plan_sign(plan_id: str, body: TxHash):
     """The owner sent the plan's transaction from their wallet (tx_hash), or SIGNING=server sends it."""
@@ -412,7 +513,7 @@ def plan_sign(plan_id: str, body: TxHash):
 
 
 # ------------------------------------------------------------------ risk dial and settings
-@app.get("/api/dial")
+@app.get("/api/dial", dependencies=[ANY])
 def dial():
     s = S()
     cal = s.agent.cal
@@ -420,21 +521,21 @@ def dial():
                 "p_cap_usd": SETTINGS.p_cap_usd, "eps": cal.eps, "delta": cal.delta, "drift": dict(s.agent.gov.state.drift)})
 
 
-@app.get("/api/dial/tx")
+@app.get("/api/dial/tx", dependencies=[OWNER])
 def dial_tx(bundle: str, mode: Optional[str] = None):
     s = S()
     with _lock:
         return _ok(s.agent.settings_tx_request(s.agent.propose_bundle(bundle, mode)))
 
 
-@app.post("/api/dial")
+@app.post("/api/dial", dependencies=[OWNER])
 @mutating
 def set_dial(body: Dial):
     s = S()
     return _err(s.agent.apply_bundle(s.agent.propose_bundle(body.bundle, body.mode), tx_hash=body.tx_hash))
 
 
-@app.post("/api/settings/{settings_id}/underwriter")
+@app.post("/api/settings/{settings_id}/underwriter", dependencies=[BANK])
 @mutating
 def underwriter_approved(settings_id: int, body: TxHash):
     """The underwriter approved a bonded bundle from their own wallet."""
@@ -442,14 +543,14 @@ def underwriter_approved(settings_id: int, body: TxHash):
 
 
 # ------------------------------------------------------------------ security and owner actions
-@app.get("/api/log")
+@app.get("/api/log", dependencies=[ANY])
 def log(security: bool = False, limit: int = 200):
     s = S()
     lines = s.agent.log.security() if security else s.agent.log.lines
     return _ok([l.__dict__ for l in lines[-limit:]])
 
 
-@app.post("/api/naive/attack")
+@app.post("/api/naive/attack", dependencies=[STAFF])
 @mutating
 def naive_attack(doc: str = "t07_poisoned"):
     """Split screen: the naive wallet follows the document's text; our agent processes the same document."""
@@ -459,39 +560,39 @@ def naive_attack(doc: str = "t07_poisoned"):
     return {"naive": n, "ours": s.ingest(doc)}
 
 
-@app.post("/api/pause")
+@app.post("/api/pause", dependencies=[PROTECT])
 @mutating
 def pause():
     return S().agent.pause_self("Owner pressed pause")
 
 
-@app.get("/api/owner-tx/{action}")
+@app.get("/api/owner-tx/{action}", dependencies=[OWNER])
 def owner_tx(action: str, supplier: Optional[str] = None):
     """Unsigned owner transaction: unpause, or unfreeze (supplier=...)."""
     with _lock:
         return _ok(S().agent.owner_tx_request(action, supplier=supplier))
 
 
-@app.post("/api/resume")
+@app.post("/api/resume", dependencies=[OWNER])
 @mutating
 def resume(body: TxHash):
     return _err(S().agent.resume(tx_hash=body.tx_hash))
 
 
-@app.post("/api/payees/{supplier_id}/unfreeze")
+@app.post("/api/payees/{supplier_id}/unfreeze", dependencies=[OWNER])
 @mutating
 def unfreeze(supplier_id: str, body: TxHash):
     return _err(S().agent.unfreeze_supplier(supplier_id, tx_hash=body.tx_hash))
 
 
-@app.post("/api/anchor")
+@app.post("/api/anchor", dependencies=[STAFF])
 @mutating
 def anchor():
     return S().agent.anchor_day(int(time.time() // 86400))
 
 
 # ------------------------------------------------------------------ demo clock (local chain only)
-@app.post("/api/demo/next-day")
+@app.post("/api/demo/next-day", dependencies=[DEMO])
 @mutating
 def next_day():
     try:
@@ -500,7 +601,7 @@ def next_day():
         raise HTTPException(400, str(e))
 
 
-@app.post("/api/demo/advance")
+@app.post("/api/demo/advance", dependencies=[DEMO])
 @mutating
 def advance(seconds: int = 121):
     s = S()
@@ -521,7 +622,7 @@ def rpc_relay(body: dict):
 
 
 # ------------------------------------------------------------------ transaction lookup (FISCO has no public explorer)
-@app.get("/api/tx/{tx_hash}")
+@app.get("/api/tx/{tx_hash}", dependencies=[ANY])
 def tx_lookup(tx_hash: str):
     """The receipt of a transaction on the connected chain, with our contracts' events decoded."""
     from web3.logs import DISCARD
@@ -545,7 +646,7 @@ def tx_lookup(tx_hash: str):
 
 
 # ------------------------------------------------------------------ market data
-@app.get("/api/market/{series}")
+@app.get("/api/market/{series}", dependencies=[ANY])
 def market_series(series: str, start: str = "2024-01", end: str = "2025-12"):
     """A public price series (World Bank, monthly, $/mt) for the fair-price chart."""
     from . import market
@@ -557,7 +658,7 @@ def market_series(series: str, start: str = "2024-01", end: str = "2025-12"):
 
 
 # ------------------------------------------------------------------ results
-@app.get("/api/results")
+@app.get("/api/results", dependencies=[ANY])
 def results():
     out = {}
     for name in ("ac8", "capital", "fair", "red"):
@@ -567,7 +668,7 @@ def results():
     return out
 
 
-@app.get("/api/evidence")
+@app.get("/api/evidence", dependencies=[ANY])
 def evidence():
     p = DATA_DIR.parent / "evidence" / f"evidence_{NETWORK}.json"
     return json.loads(p.read_text()) if p.exists() else {}

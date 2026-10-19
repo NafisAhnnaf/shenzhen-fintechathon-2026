@@ -40,7 +40,12 @@ async function main() {
   const signers = await ethers.getSigners();
   if (signers.length < 5) throw new Error("Need 5 keys: OWNER, AGENT, GOVERNOR, APPROVER, UNDERWRITER");
   const [owner, agent, governor, approver, underwriter] = signers;
-  const arbiter = process.env.ARBITER_ADDRESS || owner.address;
+  // The arbiter settles disputed reserve claims, so it must not be the company (owner) or the bank (underwriter).
+  const local = ["localhost", "hardhat", "fisco"].includes(network.name);
+  const arbiter = process.env.ARBITER_ADDRESS || (local ? signers[6]?.address : signers[5]?.address);
+  if (!arbiter || [owner.address, underwriter.address, agent.address].includes(arbiter)) {
+    throw new Error("The arbiter needs its own key: set ARBITER_ADDRESS, or ARBITER_KEY in chain/.env");
+  }
   const attacker = process.env.ATTACKER_ADDRESS || (P && P.attacker) || ethers.Wallet.createRandom().address;
 
   const log = (k, v) => console.log(`${k.padEnd(14)} ${v}`);

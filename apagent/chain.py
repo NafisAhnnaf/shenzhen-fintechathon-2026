@@ -26,7 +26,7 @@ REAL_TIME = ("fisco", "baseSepolia")
 DEMO_CLOCK = ("localhost",) + REAL_TIME
 
 
-def hardhat_keys(n: int = 6) -> list[str]:
+def hardhat_keys(n: int = 7) -> list[str]:
     Account.enable_unaudited_hdwallet_features()
     return ["0x" + Account.from_mnemonic(HARDHAT_MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}").key.hex().removeprefix("0x")
             for i in range(n)]
@@ -43,7 +43,7 @@ def load_keys(network: str) -> dict[str, str]:
     """Role keys. 'attacker' is an unrelated key used only by the red-team tasks."""
     if network in ("localhost", "hardhat", "fisco"):
         # Local chains (Hardhat, and the local FISCO BCOS consortium chain) use the public test mnemonic.
-        return dict(zip(ROLES + ["attacker"], hardhat_keys(6)))
+        return dict(zip(ROLES + ["attacker", "arbiter"], hardhat_keys(7)))
     env = {}
     p = CHAIN_DIR / ".env"
     if p.exists():
@@ -52,7 +52,7 @@ def load_keys(network: str) -> dict[str, str]:
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
     env.update({k: v for k, v in os.environ.items() if k.endswith("_KEY")})
-    keys = {r: env[f"{r.upper()}_KEY"] for r in ROLES if env.get(f"{r.upper()}_KEY")}
+    keys = {r: env[f"{r.upper()}_KEY"] for r in ROLES + ["arbiter"] if env.get(f"{r.upper()}_KEY")}
     if env.get("ATTACKER_KEY"):
         keys["attacker"] = env["ATTACKER_KEY"]
     return keys
@@ -281,15 +281,37 @@ class Chain:
                                    "gas": 300_000, **self._fees()})
         return {"from": frm, "to": tx["to"], "data": tx["data"], "chainId": self.chain_id, "gas": hex(tx["gas"])}
 
-    def verify_sent(self, tx_hash: str, role: str, contract) -> TxResult:
-        """Check a transaction a person sent from their wallet: mined, successful, from the right role, to our contract."""
-        rc = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
-        tx = self.w3.eth.get_transaction(tx_hash)
+    def verify_sent(self, tx_hash: str, role: str, contract, expect=None) -> TxResult:
+        """Check a transaction a person sent from their wallet: mined, successful, from the right role, to our
+        contract, and (expect: the contract call we asked them to sign) calling that function with those arguments.
+        Without the last check, any earlier transaction from the same key could be passed off as this one."""
+        try:
+            rc = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
+            tx = self.w3.eth.get_transaction(tx_hash)
+        except Exception as e:  # noqa: BLE001 - unknown or malformed hash
+            return TxResult(False, tx_hash, f"no such transaction: {str(e)[:120]}")
         if Web3.to_checksum_address(tx["from"]) != self.role_address(role):
             return TxResult(False, tx_hash, f"sent from {tx['from']}, expected the {role} key")
         if Web3.to_checksum_address(tx["to"]) != contract.address:
             return TxResult(False, tx_hash, "not a transaction to this contract")
+        if expect is not None and not self.same_call(contract, tx["input"], expect):
+            return TxResult(False, tx_hash, f"the transaction does not call {expect.fn_name} with the expected values")
         return TxResult(rc.status == 1, tx_hash, None if rc.status == 1 else "reverted", rc.blockNumber)
+
+    @staticmethod
+    def same_call(contract, data, expect) -> bool:
+        """True if calldata calls the same function as the prepared call `expect`, with the same arguments."""
+        try:
+            fn, params = contract.decode_function_input(data)
+        except ValueError:
+            return False
+        if fn.fn_name != expect.fn_name:
+            return False
+        names = [i["name"] for i in fn.abi["inputs"]]
+        got = [params[n] for n in names]
+        want = list(expect.args)
+        norm = lambda v: v.lower() if isinstance(v, str) else (bytes(v) if isinstance(v, (bytes, bytearray)) else v)
+        return len(got) == len(want) and all(norm(a) == norm(b) for a, b in zip(got, want))
 
     def has_key(self, role: str) -> bool:
         return role in self.keys

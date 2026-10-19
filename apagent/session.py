@@ -126,9 +126,22 @@ class Session:
             used = self.chain.bill_used(b.bill_id)
             if b.status == "paid" and b.tx_hash and not used:
                 mism.append({"bill": b.bill_id, "ledger": "paid", "chain": "not paid"})
-            if b.status in ("received", "held", "approved") and used:
+            if b.status in ("received", "held", "approved", "rejected") and used:
                 mism.append({"bill": b.bill_id, "ledger": b.status, "chain": "paid"})
-        return {"ok": not mism, "checked": n, "mismatches": mism}
+        for sid, sp in self.led.suppliers.items():
+            if sid not in demo.DEMO_SUPPLIERS:
+                continue
+            p = self.chain.payee(sid)
+            n += 1
+            if p["exists"] and p["frozen"] != sp.frozen:
+                mism.append({"supplier": sid, "ledger": "frozen" if sp.frozen else "active",
+                             "chain": "frozen" if p["frozen"] else "active"})
+        st = self.chain.state()
+        b = self.agent.cal.bundle(self.agent.gov.bundle_name)
+        if (round(b.p_day_usd, 2), b.p_nday) != (round(st["p_day_usd"], 2), st["p_nday"]):
+            mism.append({"settings": self.agent.gov.bundle_name, "ledger": f"{b.p_day_usd:,.0f}/day, {b.p_nday} payments",
+                         "chain": f"{st['p_day_usd']:,.0f}/day, {st['p_nday']} payments"})
+        return {"ok": not mism, "checked": n + 1, "mismatches": mism}
 
     # ------------------------------------------------------------------ documents
     def ingest_file(self, filename: str, data: bytes, process: bool = True, auto_pay: bool = True) -> dict:
@@ -197,8 +210,8 @@ class Session:
                            plan_id=p.plan_id)
         return {"kind": "plan", "plan": p.to_json(), "route": r.to_json()}
 
-    def run(self, plan_id: str, cancel_after: Optional[int] = None) -> dict:
-        return planner.run(self.agent, self.plans[plan_id], cancel_after=cancel_after).to_json()
+    def run(self, plan_id: str, cancel_after: Optional[int] = None, actor: str = "owner") -> dict:
+        return planner.run(self.agent, self.plans[plan_id], cancel_after=cancel_after, actor=actor).to_json()
 
     def sign_settings(self, plan_id: str, tx_hash: Optional[str] = None) -> dict:
         p = self.plans[plan_id]

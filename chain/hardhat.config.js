@@ -23,6 +23,7 @@ const keys = [
   process.env.GOVERNOR_KEY,
   process.env.APPROVER_KEY,
   process.env.UNDERWRITER_KEY,
+  process.env.ARBITER_KEY,
 ].filter(Boolean);
 
 module.exports = {
@@ -39,7 +40,7 @@ module.exports = {
       url: process.env.FISCO_RPC || "http://127.0.0.1:8546",
       chainId: 20200,
       gasPrice: 0,
-      accounts: { mnemonic: "test test test test test test test test test test test junk", count: 6 },
+      accounts: { mnemonic: "test test test test test test test test test test test junk", count: 7 },
     },
     baseSepolia: {
       url: process.env.BASE_SEPOLIA_RPC || "https://sepolia.base.org",
