@@ -136,3 +136,9 @@ Gaps found while writing the security self-assessment (section 10.4 there; none 
 - Banners appear across the app for: server unreachable, ledger/chain mismatch, wallet on the wrong network, agent paused.
 - Characters are in `web/src/components/Characters.tsx`; the design CSS is in `web/src/proto.css`. Tailwind token names are kept and remapped to the new palette.
 - E2E: 12/12 Playwright tests pass against the built app on :8000, after `/api/admin/reset`. Run them with `PW_CHANNEL=chrome npx playwright test` to use the installed Chrome.
+
+## 2026-10-20: vision reader on Gemini
+
+- PDF/photo upload works with Google Gemini through its OpenAI-compatible endpoint, with no code change for the provider. Set `VLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai`, `VLM_MODEL=gemini-3.5-flash` and `VLM_API_KEY=<AI Studio key>`. `gemini-2.5-flash` is closed to new keys; `gemini-3.8-flash` was returning 503 (high demand).
+- 6/6 demo PDFs (t01, t02, t02_resent, t07, t16, t13) were read exactly, and each got the right outcome: paid, duplicate rejected, poisoned held, fair-price to T2.
+- The reader now retries 429/5xx up to 4 times; if the provider still fails, `/api/documents` answers 503 with a message instead of 500.

@@ -11,6 +11,7 @@ import base64
 import json
 import os
 import random
+import time
 from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
@@ -181,8 +182,19 @@ class VLMReader:
             "response_format": {"type": "json_schema", "json_schema": {"name": "invoice", "schema": READ_SCHEMA, "strict": True}},
             "temperature": 0,
         }
-        r = httpx.post(f"{self.base_url}/chat/completions", json=body,
-                       headers={"Authorization": f"Bearer {self.api_key}"}, timeout=90)
+        # Hosted models answer 429/503 when busy; retry a few times before giving up.
+        for attempt in range(4):
+            try:
+                r = httpx.post(f"{self.base_url}/chat/completions", json=body,
+                               headers={"Authorization": f"Bearer {self.api_key}"}, timeout=90)
+            except httpx.TransportError:
+                if attempt == 3:
+                    raise
+                time.sleep(2 * (attempt + 1))
+                continue
+            if r.status_code not in (429, 500, 502, 503, 504) or attempt == 3:
+                break
+            time.sleep(2 * (attempt + 1))
         r.raise_for_status()
         d = json.loads(r.json()["choices"][0]["message"]["content"])
         return parse_vlm(d)

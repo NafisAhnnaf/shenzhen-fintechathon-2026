@@ -198,7 +198,12 @@ def bill(bill_id: str):
 def upload_document(file: UploadFile = File(...), process: bool = Form(True)):
     """A supplier document as received: .json e-invoice, .pdf, or a photo (.png/.jpg). PDFs and photos need the
     vision reader (VLM_API_KEY); without it the API answers 503 and nothing is recorded."""
-    return S().ingest_file(file.filename or "upload", file.file.read(), process=process)
+    import httpx
+
+    try:
+        return S().ingest_file(file.filename or "upload", file.file.read(), process=process)
+    except (httpx.HTTPStatusError, httpx.TransportError) as e:
+        raise HTTPException(503, f"The vision reader is busy or unreachable ({type(e).__name__}); nothing was recorded. Try again in a moment.")
 
 
 @app.get("/api/inbox")
