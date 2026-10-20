@@ -18,6 +18,7 @@ from ..domain import Ledger
 from .odoo import OdooAdapter
 
 HISTORY_FROM = os.environ.get("ODOO_HISTORY_FROM", "2025-10-01")
+NO_VAT_CHECK = {"no_vat_validation": True}  # the demo suppliers' tax numbers are fictional
 MASTER = os.environ.get("ODOO_MASTER_PASSWORD", "admin")
 
 
@@ -27,7 +28,12 @@ def log(*a):
 
 def ensure_database(url: str, db: str, user: str, password: str) -> None:
     dbs = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/db", allow_none=True)
-    if db in dbs.list():
+    try:
+        names = dbs.list()
+    except xmlrpc.client.Fault:  # Odoo Online (SaaS) hides the database list; the database is the hosted one
+        log(f"database list not available; using {db}")
+        return
+    if db in names:
         log(f"database {db} exists")
         return
     log(f"creating database {db} (a minute)")
@@ -53,7 +59,8 @@ def seed(od: OdooAdapter, led: Ledger) -> dict:
     company = x("res.company", "search_read", [], fields=["id", "currency_id"], limit=1)[0]
     x("res.company", "write", [company["id"]], {"name": led.company.replace(" (fictional)", ""), "country_id": hk})
 
-    # Suppliers
+    # Suppliers (Odoo 20 names the bank account field account_number; earlier versions acc_number)
+    acc_field = "account_number" if "account_number" in x("res.partner.bank", "fields_get", attributes=["type"]) else "acc_number"
     sup_ids = {}
     for sid in demo.DEMO_SUPPLIERS:
         s = led.suppliers[sid]
@@ -62,10 +69,11 @@ def seed(od: OdooAdapter, led: Ledger) -> dict:
                 "country_id": hk if s.region == "HK" else cn}
         if found:
             pid = found[0]["id"]
-            x("res.partner", "write", [pid], vals)
+            x("res.partner", "write", [pid], vals, context=NO_VAT_CHECK)
         else:
-            pid = x("res.partner", "create", vals)
-            x("res.partner.bank", "create", {"partner_id": pid, "acc_number": s.wallet or s.bank_account})
+            pid = x("res.partner", "create", vals, context=NO_VAT_CHECK)
+        if not x("res.partner.bank", "search_count", [["partner_id", "=", pid]]):
+            x("res.partner.bank", "create", {"partner_id": pid, acc_field: s.wallet or s.bank_account})
         sup_ids[sid] = pid
     log("suppliers", len(sup_ids))
 
@@ -73,9 +81,8 @@ def seed(od: OdooAdapter, led: Ledger) -> dict:
     prod_ids = {}
     for code, m in led.materials.items():
         found = x("product.product", "search_read", [["default_code", "=", code]], fields=["id"])
-        prod_ids[code] = found[0]["id"] if found else x("product.product", "create", {
-            "name": m.name, "default_code": code, "detailed_type": "product", "purchase_method": "receive",
-            "supplier_taxes_id": [(6, 0, [])]})
+        prod_ids[code] = found[0]["id"] if found else _create_product(od, {
+            "name": m.name, "default_code": code, "purchase_method": "receive", "supplier_taxes_id": [(6, 0, [])]})
     log("products", len(prod_ids))
 
     # Purchase orders
@@ -85,6 +92,8 @@ def seed(od: OdooAdapter, led: Ledger) -> dict:
     for g in led.receipts:
         received[(g.po_id, g.item)] = received.get((g.po_id, g.item), 0.0) + g.qty
     settled = {b.read.po_id for b in led.bills.values() if b.status == "paid"}
+    # Odoo 20 names the order-line taxes tax_ids; earlier versions taxes_id
+    line_tax = "tax_ids" if "tax_ids" in x("purchase.order.line", "fields_get", attributes=["type"]) else "taxes_id"
     existing = {o["name"] for o in x("purchase.order", "search_read", [], fields=["name"])}
     n = billed = 0
     t0 = time.time()
@@ -94,7 +103,7 @@ def seed(od: OdooAdapter, led: Ledger) -> dict:
         oid = x("purchase.order", "create", {
             "name": po.po_id, "partner_id": sup_ids[po.supplier_id], "date_order": f"{po.date} 09:00:00", "currency_id": usd,
             "order_line": [(0, 0, {"product_id": prod_ids[l.item], "name": l.desc, "product_qty": l.qty, "price_unit": l.price,
-                                   "date_planned": f"{po.date} 09:00:00", "taxes_id": [(6, 0, [])]}) for l in po.lines]})
+                                   "date_planned": f"{po.date} 09:00:00", line_tax: [(6, 0, [])]}) for l in po.lines]})
         x("purchase.order", "button_confirm", [oid])
         # Receive what the ledger says was received
         picks = x("purchase.order", "read", [oid], fields=["picking_ids"])[0]["picking_ids"]
@@ -122,8 +131,20 @@ def seed(od: OdooAdapter, led: Ledger) -> dict:
     log("orders", n, "history bills", billed)
 
     # One return to a supplier on a history order, so returns are read from real Odoo data.
-    ret = _one_return(od, [p for p in pos if p.po_id in settled and not p.po_id.startswith("PO-DEC")])
+    try:
+        ret = _one_return(od, [p for p in pos if p.po_id in settled and not p.po_id.startswith("PO-DEC")])
+    except xmlrpc.client.Fault as e:  # the return wizard differs between Odoo versions; returns are optional
+        log("no return recorded:", str(e.faultString).strip().splitlines()[-1][:160])
+        ret = None
     return {"orders": n, "history_bills": billed, "return": ret}
+
+
+def _create_product(od: OdooAdapter, vals: dict) -> int:
+    """A stocked product: Odoo 18 and later mark it with is_storable, Odoo 17 and earlier with detailed_type."""
+    try:
+        return od.x("product.product", "create", {**vals, "type": "consu", "is_storable": True})
+    except xmlrpc.client.Fault:
+        return od.x("product.product", "create", {**vals, "detailed_type": "product"})
 
 
 def _one_return(od: OdooAdapter, history) -> str | None:
