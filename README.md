@@ -21,6 +21,7 @@ may do alone, and a bond pays you back when it gets one wrong.
 
 ![basescan](https://img.shields.io/badge/contracts-verified%20on%20Basescan-1E1B4B)
 ![requests](https://img.shields.io/badge/request%20red%20team-0%2F68%20unsafe-1E1B4B)
+![fisco](https://img.shields.io/badge/FISCO%20BCOS-22%2F22%20tasks-1E1B4B)
 ![chains](https://img.shields.io/badge/on--chain-Hardhat%20%C2%B7%20FISCO%20%C2%B7%20Base%20Sepolia-1E1B4B)
 ![stack](https://img.shields.io/badge/stack-Solidity%20%C2%B7%20Python%20%C2%B7%20React-1E1B4B)
 
@@ -164,7 +165,7 @@ All numbers come from files in [`results/`](results) and [`evidence/`](evidence)
 | **READER**: Gemini vision on 29 PDFs and a phone photo | **434/435 fields exact (99.8%)**, 28/29 documents perfect, 3.7 s each; the only miss is one supplier name (payees come from the registry, never the page) |
 | **INTENT**: 47 held-out plain-words requests | 100% set coverage · 2% question rate · 100% accuracy when no question is asked · 100% of unsupported requests refused |
 | **REQUEST RED TEAM**: 68 hostile requests in English and Chinese | **0 unsafe plans**, 0 payments without a person pressing Run: 25 refused before any model, 35 answered with one question, 8 plans waiting for Run |
-| **TASKS**: 22 scripted business tasks | Hardhat and FISCO BCOS runs, and a public **Base Sepolia** run with source-verified contracts (18/22; per the run's notes, the misses came from the free-tier model limit and dropped public RPC connections). Every hash is in [`evidence/`](evidence) |
+| **TASKS**: 22 scripted business tasks | **22/22 on FISCO BCOS** (rerun 20 Oct on this code; task 2 reads the duplicate from a phone photo), Hardhat, and a public **Base Sepolia** run with source-verified contracts (18/22; per the run's notes, the misses came from the free-tier model limit and dropped public RPC connections). Every hash is in [`evidence/`](evidence) |
 
 ## The desk
 

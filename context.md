@@ -68,6 +68,18 @@ Gaps found while writing the security self-assessment (section 10.4 there; none 
 
 ## Log
 
+### 2026-10-20 · README story, landing page, live reader, reruns (PR #1, branch tabib/story-and-reruns)
+
+- README: story, AFP 2026 figures, mermaid diagram, research formulas, eight animated SVG charts from `results/`
+  (`docs/readme/make_charts.py`), screenshots and a live-reader GIF (captured by `web/media/capture.spec.ts`). The
+  previous README (submission checklist and reference) follows unchanged.
+- Landing page at `/` (styles scoped under `.lp` in `web/src/landing.css`; numbers fixed from `results/`).
+- Live reader: `POST /api/documents/stream` (server-sent events) and `GET /api/bills/{id}/read`; the Inbox upload
+  and phone photo open `components/ReaderPanel.tsx`; bills show "What the reader saw".
+- Reader eval on this code: 434/435 fields exact (99.8%), 29 documents, gemini-3.5-flash-lite, 3.7 s each.
+- With a model key, the request box defaults to the LLM (`decide.py`); FISCO task 3 and browser flow 3 then fail
+  because the model asks a question where the script expects a plan. Evidence runs use `DECIDER=rules`.
+
 ### 2026-10-19 · clickable prototype
 
 - `design/prototype/` (index.html, README.md, assets/ with animated character SVGs and favicon) and
