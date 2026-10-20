@@ -16,10 +16,19 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
 # 1. Load .env if present
+# Read KEY=VALUE lines literally (not with `source`): values such as a Postgres URL contain "&", which the shell
+# would treat as a command separator. Surrounding quotes are removed; variables already set are kept.
 if [ -f .env ]; then
-  set -a
-  source .env
-  set +a
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line#"${line%%[![:space:]]*}"}"
+    case "$line" in ''|\#*) continue ;; esac
+    line="${line#export }"
+    key="${line%%=*}"
+    [ "$key" = "$line" ] && continue
+    val="${line#*=}"
+    case "$val" in \"*\") val="${val:1:${#val}-2}" ;; \'*\') val="${val:1:${#val}-2}" ;; esac
+    if [ -z "${!key+x}" ]; then export "$key=$val"; fi
+  done < .env
   echo "[+] Loaded .env environment variables."
 else
   echo "[!] Warning: No .env found. Using default environment."
@@ -90,4 +99,4 @@ fi
 
 # 5. Start API & Web Desk (port 8000)
 echo "[+] Starting Payables Desk API & Web App at $PUBLIC_URL..."
-$UVICORN apagent.api:app --host 0.0.0.0 --port "$PORT"
+"$UVICORN" apagent.api:app --host 0.0.0.0 --port "$PORT"

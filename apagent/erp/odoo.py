@@ -185,8 +185,10 @@ class OdooAdapter:
         "<network> tx " or "bill B-". Anything people entered in Odoo is not touched. Safe to repeat."""
         bills = self.x("account.move", "search", [["move_type", "=", "in_invoice"], ["payment_reference", "ilike", AGENT_TAG]])
         pays = set(self.x("account.payment", "search", [["reconciled_bill_ids", "in", bills]])) if bills else set()
+        # The payment's reference field is "ref" up to Odoo 17 and "memo" from Odoo 18.
+        memo_field = "ref" if "ref" in self.x("account.payment", "fields_get", [], {"attributes": ["type"]}) else "memo"
         pays |= set(self.x("account.payment", "search", [["partner_type", "=", "supplier"], "|",
-                                                          ["ref", "ilike", " tx 0x"], ["ref", "=like", "bill B-%"]]))
+                                                          [memo_field, "ilike", " tx 0x"], [memo_field, "=like", "bill B-%"]]))
         pays_l = sorted(pays)
         posted = self.x("account.payment", "search", [["id", "in", pays_l], ["state", "=", "posted"]])
         if posted:
