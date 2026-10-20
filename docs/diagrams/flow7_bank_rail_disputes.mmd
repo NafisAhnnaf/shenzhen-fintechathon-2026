@@ -1,0 +1,57 @@
+flowchart TD
+    subgraph SETTLEMENT_ROUTING["1. Settlement Rail Selection"]
+        APPROVED_BILL["Approved Bill Record:
+        Vendor: Global Logistics Ltd
+        Amount: €18,400.00
+        Payment Method: IBAN / SEPA"]
+        RAIL_SELECTOR{"Settlement Rail"}
+        CRYPTO_RAIL["Crypto Rail:
+        PaymentVault.sol on Base Sepolia"]
+        FIAT_RAIL["Traditional Banking Rail:
+        ISO 20022 SEPA / SWIFT Engine"]
+    end
+
+    subgraph ISO20022_PIPELINE["2. ISO 20022 Payment & Reconciliation"]
+        GEN_PAIN001["Generate pain.001.001.09 XML:
+        - Message ID & CreDtTm
+        - Creditor IBAN & BIC (CdtrAgt)
+        - Remittance Info (RmtInf / Ustrd)
+        - EndToEndId = bill_uuid"]
+        BANK_GATEWAY["Corporate Banking Gateway / Host-to-Host"]
+        CAMT053_INGEST["camt.053 XML Statement Reader"]
+        RECON_ENGINE{"Reconciliation Engine:
+        EndToEndId & Amount Match?"}
+        SETTLED_SUCCESS["Mark Bill RECONCILED in ERP & Journal"]
+    end
+
+    subgraph DISPUTE_SLASHING["3. Underwriter Bond & Dispute Claim Flow"]
+        DISPUTE_TRIGGER["Dispute Trigger:
+        Overbilling / Duplicate Payment / Fraud"]
+        BOND_CLAIM["File Formal Dispute:
+        BondPool.sol::claimDispute(billId, evidenceHash)"]
+        BOND_VERIFY{"Contract Arbitrator /
+        Evidence Anchor Valid?"}
+        UNDERWRITER_SLASH["Slash Underwriter Collateral (BondPool):
+        Restitution Paid Directly to Enterprise Vault"]
+        PAYEE_FREEZE["PaymentVault.sol: freezePayee()
+        Blacklist Vendor Across Network"]
+    end
+
+    APPROVED_BILL --> RAIL_SELECTOR
+    RAIL_SELECTOR -->|On-Chain Wallet| CRYPTO_RAIL
+    RAIL_SELECTOR -->|Bank Account / IBAN| FIAT_RAIL
+
+    FIAT_RAIL --> GEN_PAIN001
+    GEN_PAIN001 --> BANK_GATEWAY
+    BANK_GATEWAY --> CAMT053_INGEST
+    CAMT053_INGEST --> RECON_ENGINE
+
+    RECON_ENGINE -->|Success: 100% Match| SETTLED_SUCCESS
+    RECON_ENGINE -->|Discrepancy / Bank Reversal| DISPUTE_TRIGGER
+
+    CRYPTO_RAIL -.->|Fraud / Exploitation Detected| DISPUTE_TRIGGER
+    DISPUTE_TRIGGER --> BOND_CLAIM
+    BOND_CLAIM --> BOND_VERIFY
+
+    BOND_VERIFY -->|Valid Claim| UNDERWRITER_SLASH
+    UNDERWRITER_SLASH --> PAYEE_FREEZE

@@ -1,0 +1,57 @@
+flowchart TD
+    subgraph CONSORTIUM_CHAIN["1. Enterprise Consortium Layer (FISCO BCOS Chain 20200)"]
+        CONFIDENTIAL_TX1["Confidential Invoice Settled:
+        Tx1: Supplier A - $12,400 (Hash H1)"]
+        CONFIDENTIAL_TX2["Supply Chain Financing Note:
+        Tx2: Supplier B - $45,000 (Hash H2)"]
+        CONFIDENTIAL_TX3["Inventory Receipt Attestation:
+        Tx3: Warehouse GRN - (Hash H3)"]
+        CONFIDENTIAL_TX4["Dispute Resolution Event:
+        Tx4: Penalty Slashed - (Hash H4)"]
+    end
+
+    subgraph MERKLE_AGGREGATION["2. Periodic Merkle Tree Construction"]
+        LEAF_BUILDER["Batch Aggregator (Hourly / Daily Epoch):
+        Compute Leaf Hashes H1, H2, H3, H4"]
+        MERKLE_TREE["Binary Merkle Tree Assembly:
+        Node12 = Keccak256(H1 || H2)
+        Node34 = Keccak256(H3 || H4)
+        Root = Keccak256(Node12 || Node34)"]
+        MERKLE_PROOF["Generate Inclusion Proofs (Path + Siblings):
+        Proof(Tx1) = [H2, Node34]"]
+    end
+
+    subgraph PUBLIC_ANCHOR["3. Public L2 Anchoring (Base Sepolia Chain 84532)"]
+        AGENT_RELAYER["AP Agent Notary Service:
+        Signs Root Attestation Transaction"]
+        ANCHOR_CONTRACT["EvidenceAnchor.sol (Base Sepolia):
+        anchorRoot(epoch_id, merkleRoot, leafCount)"]
+        ONCHAIN_EVENT["Emits RootAnchored Event:
+        - Epoch ID
+        - Merkle Root Digest
+        - L2 Block Timestamp"]
+    end
+
+    subgraph AUDIT_VERIFICATION["4. Zero-Knowledge Audit & Verification"]
+        AUDITOR["External Auditor / Tax Regulator / Bank"]
+        VERIFY_PROOF{"Verify Merkle Proof:
+        VerifyInclusion(Tx1, Proof, Root) == True?"}
+        AUDIT_PASSED["Cryptographic Proof Confirmed:
+        Transaction Existed at Epoch Without Leaking Enterprise Data"]
+        AUDIT_FAILED["Proof Rejected: Tampering Detected"]
+    end
+
+    CONFIDENTIAL_TX1 & CONFIDENTIAL_TX2 & CONFIDENTIAL_TX3 & CONFIDENTIAL_TX4 --> LEAF_BUILDER
+    LEAF_BUILDER --> MERKLE_TREE
+    MERKLE_TREE --> MERKLE_PROOF
+    MERKLE_TREE --> AGENT_RELAYER
+
+    AGENT_RELAYER --> ANCHOR_CONTRACT
+    ANCHOR_CONTRACT --> ONCHAIN_EVENT
+
+    ONCHAIN_EVENT --> AUDITOR
+    MERKLE_PROOF --> AUDITOR
+    AUDITOR --> VERIFY_PROOF
+
+    VERIFY_PROOF -->|Valid Root Match| AUDIT_PASSED
+    VERIFY_PROOF -->|Invalid Hash| AUDIT_FAILED

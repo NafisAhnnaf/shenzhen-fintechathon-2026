@@ -1,0 +1,59 @@
+flowchart TD
+    subgraph ESCALATION_TRIGGERS["1. Tier-2 Escalation Triggers"]
+        HIGH_VAL["High Value Bill: Amount > $5,000"]
+        PRICE_FLAG["Price Discrepancy > 0.5% vs PO / Receipts"]
+        COOL_DOWN["Payee Under Probationary Cool-Down (< 300s)"]
+        COMMODITY_SPIKE["World Bank Price Band Outlier (> 5%)"]
+    end
+
+    subgraph PROPOSAL_PREPARATION["2. Approval Card & EIP-712 Payload"]
+        CARD_BUILDER["Desk Backend: Generate Approval Card
+        - Variance Analysis & Document Thumbnails
+        - Proposed Resolution & Payment Terms"]
+        EIP712_STRUCT["Construct EIP-712 Typed Data:
+        - vault: PaymentVault Address
+        - payee: Supplier Address
+        - amount: $32,500.00
+        - billHash: SHA-256 of Bill
+        - nonce: Replay Protection
+        - expiry: Deadline Timestamp"]
+    end
+
+    subgraph MULTI_SIG["3. Dual-Key Wallet Attestation"]
+        FM_WALLET["Key 1: Finance Manager Wallet
+        (MetaMask / WebAuthn Signer)"]
+        FM_SIG["ECDSA Signature 1 (sig_fm)"]
+        OWNER_WALLET["Key 2: Company Owner Wallet
+        (Hardware / Client KMS Signer)"]
+        OWNER_SIG["ECDSA Signature 2 (sig_owner)"]
+    end
+
+    subgraph CONTRACT_VERIFICATION["4. Smart Contract Execution"]
+        SUBMIT_TX["Submit Dual Signatures to Base Sepolia
+        PaymentVault.sol: executeTier2Payment(...)"]
+        CRYPTO_CHECK{"Contract Signature Verification:
+        1. EIP-712 Domain Separator Match?
+        2. ecrecover(sig_fm) == FinanceManager?
+        3. ecrecover(sig_owner) == Owner?
+        4. Nonce Unused & Expiry Valid?"}
+        VAULT_PAY["Execute Fund Transfer:
+        USDC / Bonded Asset Released to Payee"]
+        EVENT_LOG["Emit PaymentApproved Event &
+        Archive to On-Chain Audit Log"]
+        REVERT_TX["Transaction Reverted: Invalid Signatures"]
+    end
+
+    HIGH_VAL & PRICE_FLAG & COOL_DOWN & COMMODITY_SPIKE --> CARD_BUILDER
+    CARD_BUILDER --> EIP712_STRUCT
+    EIP712_STRUCT --> FM_WALLET & OWNER_WALLET
+
+    FM_WALLET --> FM_SIG
+    OWNER_WALLET --> OWNER_SIG
+
+    FM_SIG & OWNER_SIG --> SUBMIT_TX
+    SUBMIT_TX --> CRYPTO_CHECK
+
+    CRYPTO_CHECK -->|All 4 Checks Pass| VAULT_PAY
+    CRYPTO_CHECK -->|Check Fails| REVERT_TX
+
+    VAULT_PAY --> EVENT_LOG

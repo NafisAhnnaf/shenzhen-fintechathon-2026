@@ -1,0 +1,70 @@
+flowchart TD
+    subgraph INPUT["1. Input Candidate Bill"]
+        BILL["Extracted Invoice:
+        - Vendor: Acme Corp
+        - Amount: $3,200.00
+        - PO Ref: PO-8821
+        - Delivery: GRN-4019"]
+    end
+
+    subgraph THREE_WAY_MATCH["2. Deterministic 3-Way Match Engine"]
+        ERP_PO["Purchase Order (PO-8821):
+        Quantity & Unit Price Match"]
+        ERP_GRN["Goods Received Note (GRN-4019):
+        Physical Delivery Confirmed"]
+        ERP_CREDITS["Credit Notes & Prior Bills Check:
+        Zero Duplicate or Overbill"]
+        MATCH_VERIFY{"Match Status:
+        Delta <= 0.5% & Qty Valid?"}
+    end
+
+    subgraph RISK_CHECKS["3. Algorithmic Risk & Policy Gate"]
+        COMMODITY_CHECK["World Bank Commodity Fair Price:
+        Within 90% Conformal Interval"]
+        CAP_CHECK["Value Tier Assessment:
+        Amount <= $5,000 (Tier-1 Threshold)"]
+        PAYEE_STATUS["Payee Registry Check:
+        Whitelisted & Cooldown Elapsed"]
+        OFAC_GATE["OFAC SDN Sanctions Screening: Passed"]
+        RISK_DECISION{"All Tier-1 Policy
+        Gates Passed?"}
+    end
+
+    subgraph T1_EXECUTION["4. Autonomous Smart Contract Settlement"]
+        AGENT_SIGNER["AP Agent Hot Wallet:
+        Signs Transaction Payload"]
+        VAULT_CONTRACT["PaymentVault.sol on Base Sepolia:
+        Executes pay(payee, $3,200, billId)"]
+        BOND_LOCK["BondPool.sol:
+        Collateral Bond r Verified & Reserved"]
+        VAULT_EVENT["Emits Paid Event &
+        Receipt Hash on Chain"]
+    end
+
+    subgraph POST_SETTLEMENT["5. Enterprise Sync & Immutable Logging"]
+        ODOO_UPDATE["Odoo 20 Accounting:
+        Invoice Marked Paid via XML-RPC"]
+        PG_AUDIT["Append-Only PostgreSQL Journal:
+        Merkle Leaf Generated"]
+    end
+
+    BILL --> ERP_PO & ERP_GRN & ERP_CREDITS
+    ERP_PO & ERP_GRN & ERP_CREDITS --> MATCH_VERIFY
+
+    MATCH_VERIFY -->|Yes: Discrepancy <= 0.5%| COMMODITY_CHECK
+    MATCH_VERIFY -->|No: Discrepancy Detected| ESCALATE_T2["Escalate to Tier-2 Exception"]
+
+    COMMODITY_CHECK --> CAP_CHECK
+    CAP_CHECK --> PAYEE_STATUS
+    PAYEE_STATUS --> OFAC_GATE
+    OFAC_GATE --> RISK_DECISION
+
+    RISK_DECISION -->|Approved| AGENT_SIGNER
+    RISK_DECISION -->|Failed: Limit or Flag| ESCALATE_T2
+
+    AGENT_SIGNER --> VAULT_CONTRACT
+    VAULT_CONTRACT --> BOND_LOCK
+    VAULT_CONTRACT --> VAULT_EVENT
+
+    VAULT_EVENT --> ODOO_UPDATE
+    VAULT_EVENT --> PG_AUDIT

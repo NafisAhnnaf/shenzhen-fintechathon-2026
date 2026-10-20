@@ -1,0 +1,49 @@
+flowchart TD
+    subgraph INTAKE_SOURCES["1. Document Sources"]
+        PDF["Vendor Invoice (PDF)"]
+        PHOTO["Mobile Photo / Receipt (PNG/JPG)"]
+        JSON_INV["Electronic Invoice (JSON/UBL)"]
+        EMAIL["Supplier Mailbox (AgentMail Inbound)"]
+    end
+
+    subgraph API_INGESTION["2. Ingestion & Pre-Processing"]
+        UPLOAD_ENDPOINT["FastAPI POST /api/bills"]
+        MIME_CHECK["MIME Detection & Format Normalizer"]
+        DOC_HASH["SHA-256 Digest Calculation (doc_sha256)"]
+        SSE_START["SSE Stream Init (extract_bill_stream)"]
+    end
+
+    subgraph DUAL_VLM["3. Dual-Model Perception Engine"]
+        PRIMARY_VLM["Primary: Gemini 3.6 Flash (Vision API)"]
+        CIRCUIT_BREAKER{"API Timeout or 5xx?"}
+        FALLBACK_VLM["Fallback: Gemini 3.5 Flash-Lite"]
+        PROMPT_INJECT["OCR & Multimodal Token Stream"]
+    end
+
+    subgraph EXTRACTION_SCHEMA["4. Schema Validation & Normalization"]
+        JSON_PARSE["Pydantic Extraction Parser"]
+        FIELD_VALIDATOR{"Strict Schema Validation"}
+        EXTRACTED_RECORD["Extracted Bill Object:
+        - Payee Name & Tax ID
+        - Invoice Number & PO Reference
+        - Line Items (Qty, Unit Price, Tax)
+        - Net Total & Currency
+        - Payee Destination (Address / IBAN)"]
+        QUARANTINE_ERROR["Quarantine Record (Parse Error)"]
+    end
+
+    PDF & PHOTO & JSON_INV & EMAIL --> UPLOAD_ENDPOINT
+    UPLOAD_ENDPOINT --> MIME_CHECK
+    MIME_CHECK --> DOC_HASH
+    DOC_HASH --> SSE_START
+    SSE_START --> PRIMARY_VLM
+
+    PRIMARY_VLM --> CIRCUIT_BREAKER
+    CIRCUIT_BREAKER -->|No: Success| PROMPT_INJECT
+    CIRCUIT_BREAKER -->|Yes: Failover| FALLBACK_VLM
+    FALLBACK_VLM --> PROMPT_INJECT
+
+    PROMPT_INJECT --> JSON_PARSE
+    JSON_PARSE --> FIELD_VALIDATOR
+    FIELD_VALIDATOR -->|Valid| EXTRACTED_RECORD
+    FIELD_VALIDATOR -->|Malformed / Missing Fields| QUARANTINE_ERROR
