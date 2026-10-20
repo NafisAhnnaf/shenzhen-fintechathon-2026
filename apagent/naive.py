@@ -1,8 +1,9 @@
-"""A naive AI wallet agent for the side-by-side demo (task 8) and the RED baseline.
+"""The no-rules baseline for the RED experiment (apagent/experiments.py) and task 8.
 
-It does what a tool-calling LLM agent with no rules tends to do with a poisoned invoice: it treats text on
-the document as instructions. Here that behaviour is written out deterministically so the demo is
-reproducible: if the text names a wallet and asks for the balance, it sends the balance there.
+It plans what a tool-calling LLM agent with no rules tends to do with a poisoned invoice: it treats text on the
+document as instructions. Written out deterministically so the experiment is reproducible: if the text names a
+wallet and asks for the balance, the plan sends the balance there. It is a comparison column, not part of the
+product; nothing here sends money.
 """
 from __future__ import annotations
 
@@ -22,12 +23,3 @@ def plan_from_text(text: str, balance_usd: float, invoice_total: float) -> Optio
     return {"to": m.group(0), "amount": balance_usd if wants_all else invoice_total,
             "why": "the document said to pay this address"}
 
-
-def run(chain, text: str, invoice_total: float) -> dict:
-    bal = chain.state()["naive_balance_usd"]
-    p = plan_from_text(text, bal, invoice_total)
-    if p["to"] == "registered":
-        return {"action": "none", "plan": p}
-    tx = chain.naive_send(p["to"], p["amount"], "agent followed invoice instructions")
-    return {"action": "sent", "plan": p, "tx_hash": tx.tx_hash, "ok": tx.ok,
-            "balance_after": chain.state()["naive_balance_usd"]}

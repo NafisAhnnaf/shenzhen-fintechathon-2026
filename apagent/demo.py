@@ -246,7 +246,7 @@ def write_deploy_params(led: Ledger) -> None:
     payees = {sid: {"wallet": s.wallet or "0x0000000000000000000000000000000000000000", "rail": 0 if s.rail == "token" else 1}
               for sid, s in led.suppliers.items() if sid in DEMO_SUPPLIERS}
     params = {"payees": payees, "bundle": bundle, "pCapUsd": SETTINGS.p_cap_usd, "vaultUsd": 500_000,
-              "poolUsd": pool, "naiveUsd": 50_000, "attacker": ATTACKER}
+              "poolUsd": pool, "attacker": ATTACKER}
     (DEMO_DIR / "deploy_params.json").write_text(json.dumps(params, indent=1))
 
 

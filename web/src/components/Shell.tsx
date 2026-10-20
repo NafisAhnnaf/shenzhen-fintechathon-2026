@@ -44,13 +44,13 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="group">Company</span>
           {link("/risk", "Risk and reserve")}
           {link("/market", "Market prices")}
-          {link("/security", "Security")}
+          {link("/controls", "Controls")}
           {(can.bank || can.arbiter || can.owner) && link("/bank", "Bank")}
           {link("/settings", "Settings")}
         </nav>
         <div className="foot">
           <span>{st ? NETWORK[st.network] ?? st.network : ""}</span>
-          <span>Demo date {st ? date(st.today) : ""}</span>
+          <span>{st?.clock === "real" ? "Today" : "Demo date"} {st ? date(st.today) : ""}</span>
         </div>
       </aside>
       <div className="main">

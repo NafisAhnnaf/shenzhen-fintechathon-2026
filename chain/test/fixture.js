@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
-const U = (x) => ethers.parseUnits(String(x), 6); // tUSDC, 1 tUSDC stands for $1,000
+const U = (x) => ethers.parseUnits(String(x), 6); // tUSDC base units (the tests count in tokens)
 const id = (s) => ethers.encodeBytes32String(s);
 
 const Mode = { Standard: 0, SelfReserve: 1, Bonded: 2 };

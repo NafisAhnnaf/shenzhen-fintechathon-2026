@@ -77,12 +77,11 @@ class Runner:
     def day1(self) -> None:
         T = self.task
 
-        @T("8", "Poisoned invoice: naive agent drained, our agent blocked", "attack_defence")
+        @T("8", "Poisoned invoice: held, and a payment to the document's address refused twice", "attack_defence")
         def _(ev):
             read = demo.read_from_doc(self.s.docs["t07_poisoned"])
-            text = read.raw_text
-            n = naive.run(self.ch, text, read.total)
-            ev.add("naive agent reads the invoice and follows its text", "naive_agent", n, n.get("tx_hash"), "funds drained")
+            n = {"plan": naive.plan_from_text(read.raw_text, self.ch.state()["vault_balance_usd"], read.total)}
+            ev.add("what the invoice's hidden text asks for", "document", n, None, "pay a new address")
             r = self.s.ingest("t07_poisoned")
             self.bills["poisoned"] = r["bill"]
             ev.add("our agent processes the same invoice", "agent", r, None, "hold, nothing moves")
@@ -98,7 +97,7 @@ class Runner:
             self.ag.gov.sign(fake, r["bill"], "ATTACKER", self.ch.state()["settings_id"], ih)
             tx = self.ch.pay_autonomous(r["bill"], "ATTACKER", 4000.0, fake.settings_id, fake.expiry, ih, fake.signature, mine_revert=True)
             ev.add("payment to the attacker sent anyway (hacked app)", "agent_key", {"error": tx.error}, tx.tx_hash, "revert PayeeNotActive")
-            return n.get("ok") and r["tier"] in ("hold", "T2") and blocked == "S1" and not tx.ok
+            return n["plan"]["to"] != "registered" and r["tier"] in ("hold", "T2") and blocked == "S1" and not tx.ok
 
         @T("7", "Hidden instruction to pay a new account: flagged, S1 blocks", "attack_defence")
         def _(ev):

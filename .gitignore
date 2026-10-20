@@ -30,3 +30,4 @@ web/playwright-report
 
 # FISCO BCOS binaries and chain data live outside the repo (see chain/fisco/fisco.sh)
 chain/fisco/vendor
+data/fx_rates.json

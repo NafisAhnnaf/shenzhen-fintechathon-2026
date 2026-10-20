@@ -148,3 +148,27 @@ def test_fapiao_checks(ledger, docs, monkeypatch):
     assert "fapiao" in checker.check(ledger, Bill("B-F1", ledger.today, "test", void)).codes
     monkeypatch.setenv("FAPIAO_REQUIRED", "on")
     assert "fapiao" in checker.check(ledger, Bill("B-F2", ledger.today, "test", r)).codes
+
+
+def test_exchange_rate_comes_from_the_ecb_and_is_kept(monkeypatch, tmp_path):
+    """The invoice-date ECB rate is fetched once, cached, and its source written on the bill; without the service
+    the fixed fallback is used and labelled as such."""
+    from apagent import fx
+    monkeypatch.setattr(fx, "RATES_FILE", tmp_path / "fx.json")
+    monkeypatch.setenv("FX_SOURCE", "on")
+    monkeypatch.delenv("FX_HKD", raising=False)
+    calls = []
+
+    def fake(cur, on):
+        calls.append((cur, on))
+        return (7.8226, "2026-03-02")
+    monkeypatch.setattr(fx, "_fetch", fake)
+    a = fx.rate_info("HKD", "2026-03-02")
+    b = fx.rate_info("hkd", "2026-03-02")
+    assert a == b == {"rate": 7.8226, "source": fx.SOURCE_ECB, "date": "2026-03-02"} and len(calls) == 1
+    monkeypatch.setattr(fx, "_fetch", lambda cur, on: None)
+    c = fx.rate_info("CNY", "2026-03-03")
+    assert c["rate"] == 7.20 and c["source"] == fx.SOURCE_FALLBACK
+    monkeypatch.setenv("FX_CNY", "6.9")
+    assert fx.rate_info("CNY", "2026-03-03")["source"] == "company rate (FX_CNY)"
+    assert fx.rate_info("EUR", "2026-03-03") is None

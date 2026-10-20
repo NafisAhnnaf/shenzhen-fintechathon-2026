@@ -6,6 +6,7 @@ the contracts currently deployed (same vault address). consistency() compares th
 from __future__ import annotations
 
 import json
+import os
 import pickle
 import shutil
 import subprocess
@@ -248,31 +249,6 @@ class Session:
                 out.append(self.agent.pay_t1(b.bill_id))
         return out
 
-    # ------------------------------------------------------------------ try-your-own attack (spec X8)
-    def try_attack(self, text: str) -> dict:
-        """Put any text on a routine bill and give it to both agents. The naive wallet follows the text; ours
-        decides without paying anything (the trial bill is removed afterwards; the journal keeps the record)."""
-        import json as _json
-
-        from . import naive
-        from .reader import JsonReader
-
-        n = self.__dict__.get("_trials", 0) + 1
-        self.__dict__["_trials"] = n
-        doc = _json.loads((demo.DOCS_DIR / "t13_net30.json").read_text())
-        doc["inv_no"] = f"{doc['inv_no']}-TRY{n}"
-        doc["lines"][0]["qty"] = max(1, doc["lines"][0]["qty"] - 1)  # not a copy of the real bill
-        doc["total"] = round(sum(l["qty"] * l["price"] for l in doc["lines"]), 2)
-        doc["notes"] = text[:4000]
-        read = JsonReader().read_dict(doc)
-        bill = self.agent.intake(read, "e-invoice", bill_id=f"TRY-{n:04d}")
-        ours = self.agent.process(bill.bill_id, auto_pay=False)
-        card = {k: v for k, v in self.agent.bill_card(bill.bill_id).items() if k in ("reasons", "injection_p", "stage", "tier")}
-        for d in (self.led.bills, self.agent.checks, self.agent.decisions):
-            d.pop(bill.bill_id, None)
-        theirs = naive.run(self.chain, text, read.total) if self.chain else naive.plan_from_text(text, 0, read.total)
-        return {"text": text, "ours": {**ours, **card, "paid": False}, "naive": theirs}
-
     def poll_mailbox(self) -> list[dict]:
         """Read new mail (spec R4). Attachments from a registered supplier's address go through bill intake; other
         messages go to the reply path (query replies, bank-detail requests). Each message is read once."""
@@ -373,6 +349,29 @@ class Session:
         if out.get("tx") is None or out["tx"]["ok"]:
             anchored.add(day)
         return out
+
+    def clock(self) -> str:
+        """"real": the ledger date is today's date. "demo": it stays on the sample records' date and moves only with
+        the demo controls. CLOCK sets it; by default a company on the sample records keeps the demo date (its
+        invoices and orders are dated around it) and one connected to a real ERP runs on the calendar."""
+        mode = os.environ.get("CLOCK", "").lower()
+        if mode in ("real", "demo"):
+            return mode
+        return "demo" if self.erp.name == "file" else "real"
+
+    def sync_clock(self) -> bool:
+        """On the real clock, move the ledger to today, closing (anchoring) the last open day first. True if moved."""
+        if self.clock() != "real":
+            return False
+        today = date.today().isoformat()
+        if today <= self.led.today:
+            return False
+        self.close_day()
+        self.led.today = today
+        self.agent.gov.state.blocked.clear()
+        if self.pay_timing == "best_date":
+            self.run_due()
+        return True
 
     def next_day(self, days: int = 1) -> str:
         """Hardhat: jump a day. FISCO BCOS, Base Sepolia: wait one demo day (the contract's dayLength)."""

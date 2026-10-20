@@ -23,7 +23,7 @@ export function BillDetail({ id }: { id: string }) {
         <dt>Supplier says</dt>
         <dd>
           <Money v={b.supplier_says_total} />
-          {b.fx && <span className="muted"> · billed {b.fx.currency} {b.fx.total.toLocaleString("en-US", { minimumFractionDigits: 2 })} at {b.fx.rate} per USD</span>}
+          {b.fx && <span className="muted"> · billed {b.fx.currency} {b.fx.total.toLocaleString("en-US", { minimumFractionDigits: 2 })} at {b.fx.rate} per USD{b.fx.source ? ` (${b.fx.source}${b.fx.rate_date && b.fx.rate_date !== b.fx.date ? `, ${b.fx.rate_date}` : ""})` : ""}</span>}
         </dd>
         <dt>Most we owe (records)</dt>
         <dd><Money v={b.erp_bound} /></dd>

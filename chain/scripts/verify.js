@@ -15,7 +15,6 @@ async function main() {
       [c.token, r.owner, r.agent, r.governor, r.approver, r.underwriter, p.pCap, p.coolDown, p.timeUnit, p.dayLength]],
     ["pool", "contracts/BondPool.sol:BondPool", [c.token, c.vault, r.arbiter, p.window, p.disputeTime, p.timeUnit]],
     ["anchor", "contracts/EvidenceAnchor.sol:EvidenceAnchor", [r.agent]],
-    ["naive", "contracts/NaiveWallet.sol:NaiveWallet", [c.token, r.agent]],
   ];
   for (const [name, contract, args] of jobs) {
     if (!c[name]) continue;

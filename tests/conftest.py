@@ -15,6 +15,7 @@ for _k in ("GEMINI_API_KEY", "gemini_api_key", "LLM_API_KEY", "VLM_API_KEY", "TY
            "SMTP_HOST", "IMAP_HOST", "NOTIFY_WEBHOOK_URL", "AGENTMAIL_API_KEY", "AGENTMAIL_INBOX"):
     os.environ[_k] = ""
 os.environ["INJECTION_MODEL"] = "off"
+os.environ["FX_SOURCE"] = "off"
 os.environ["STATE_STORE"] = "file"
 os.environ.setdefault("APP_SECRET", "test-secret")
 

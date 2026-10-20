@@ -93,11 +93,11 @@ class Agent:
         bid = bill_id or f"B-{self.led.today.replace('-', '')}-{self.n_bills:04d}"
         conv = None
         if (read.currency or "USD").upper() != "USD":
-            r = fx.rate(read.currency, read.date or self.led.today)
-            if r:  # checked in USD like the order; the original stays on the bill
-                conv = {"currency": read.currency.upper(), "total": read.total, "rate": r, "date": read.date,
-                        "source": "reference rate"}
-                read = fx.to_usd(read, r)
+            info = fx.rate_info(read.currency, read.date or self.led.today)
+            if info:  # checked in USD like the order; the original stays on the bill
+                conv = {"currency": read.currency.upper(), "total": read.total, "rate": info["rate"],
+                        "date": read.date, "rate_date": info["date"], "source": info["source"]}
+                read = fx.to_usd(read, info["rate"])
         bill = Bill(bill_id=bid, received=self.led.today, source=source, read=read, fx=conv)
         self.led.bills[bid] = bill
         self.log.add("agent", "intake", {"source": source, "inv_no": read.inv_no, "total": read.total}, bill_id=bid)

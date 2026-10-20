@@ -1,6 +1,7 @@
 """Demo parameters (plan sections 7.1, 8 and 17). Amounts are in US dollars unless named *_units.
 
-On-chain amounts use tUSDC with 6 decimals, where 1 tUSDC stands for $1,000.
+On-chain amounts use the settlement token (tUSDC, 6 decimals) at face value: 1 token is $1. Deployments made before
+that used 1 token for $1,000; their record has no "usdPerToken" and is read at that scale (see set_token_scale).
 """
 import os
 import re
@@ -44,8 +45,14 @@ def load_env(env_path: Optional[Path] = None) -> None:
 load_env()
 load_env(CHAIN_DIR / ".env")
 
-USD_PER_TUSDC = 1_000
+USD_PER_TUSDC = 1
 TUSDC_DECIMALS = 6
+
+
+def set_token_scale(deployment: dict) -> None:
+    """Read amounts at the scale the contracts were deployed with (older deployment records: $1,000 per token)."""
+    global USD_PER_TUSDC
+    USD_PER_TUSDC = int(deployment.get("usdPerToken", 1_000))
 
 
 def usd_to_units(usd: float) -> int:

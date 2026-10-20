@@ -72,7 +72,6 @@ export interface ChainState {
   network: string;
   vault: string;
   vault_balance_usd: number;
-  naive_balance_usd: number;
   pool_balance_usd: number;
   pool_locked_usd: number;
   pool_free_usd: number;
@@ -92,6 +91,7 @@ export interface AppState {
   network: string;
   signing: "client" | "server";
   today: string;
+  clock?: "real" | "demo";
   company: string;
   cash_usd: number;
   chain: ChainState;
@@ -154,7 +154,7 @@ export interface Bill {
   po: string;
   inv_date: string;
   currency: string;
-  fx: { currency: string; total: number; rate: number; date: string } | null;
+  fx: { currency: string; total: number; rate: number; date: string; rate_date?: string; source?: string } | null;
   hold_reason: string | null;
   plan_id: string | null;
   match: MatchRow[];

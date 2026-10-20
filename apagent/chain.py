@@ -16,7 +16,7 @@ from eth_account import Account
 from web3 import Web3
 from web3.exceptions import ContractCustomError, ContractLogicError
 
-from .config import CHAIN_DIR, units_to_usd, usd_to_units
+from .config import CHAIN_DIR, set_token_scale, units_to_usd, usd_to_units
 
 # Hardhat node dev accounts come from its public test mnemonic (never use with real funds).
 HARDHAT_MNEMONIC = "test test test test test test test test test test test junk"
@@ -78,6 +78,7 @@ class Chain:
         (approver) sign in their own wallets, so the server does not load their keys.
         dep: a company's own deployment record (contracts, roles); default: the network's deployment file."""
         self.dep = dep or json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text())
+        set_token_scale(self.dep)
         rpc = rpc or {"localhost": "http://127.0.0.1:8545",
                       "fisco": os.environ.get("FISCO_RPC", "http://127.0.0.1:8546")}.get(
             network, os.environ.get("BASE_SEPOLIA_RPC", "https://sepolia.base.org"))
@@ -92,7 +93,6 @@ class Chain:
         self.pool = self.w3.eth.contract(address=Web3.to_checksum_address(c["pool"]), abi=_abi("BondPool"))
         self.token = self.w3.eth.contract(address=Web3.to_checksum_address(c["token"]), abi=_abi("MockUSDC"))
         self.anchor = self.w3.eth.contract(address=Web3.to_checksum_address(c["anchor"]), abi=_abi("EvidenceAnchor"))
-        self.naive = self.w3.eth.contract(address=Web3.to_checksum_address(c["naive"]), abi=_abi("NaiveWallet"))
         self.chain_id = self.w3.eth.chain_id
         self._errors = self._error_selectors()
 
@@ -403,10 +403,6 @@ class Chain:
     def anchor_root(self, day: int, root: bytes) -> TxResult:
         return self.send("agent", self.anchor.functions.anchor(day, root))
 
-    def naive_send(self, to: str, usd: float, memo: str) -> TxResult:
-        return self.send("agent", self.naive.functions.send(Web3.to_checksum_address(to), usd_to_units(usd), memo))
-
-    # ------------------------------------------------------------------ views
     def state(self) -> dict:
         v, p, t = self.vault.functions, self.pool.functions, self.token.functions
         sid = v.activeSettings().call()
@@ -415,7 +411,6 @@ class Chain:
             "network": self.network,
             "vault": self.vault.address,
             "vault_balance_usd": units_to_usd(t.balanceOf(self.vault.address).call()),
-            "naive_balance_usd": units_to_usd(t.balanceOf(self.naive.address).call()),
             "pool_balance_usd": units_to_usd(p.balance().call()),
             "pool_locked_usd": units_to_usd(p.lockedTotal().call()),
             "pool_free_usd": units_to_usd(p.freeCapital().call()),

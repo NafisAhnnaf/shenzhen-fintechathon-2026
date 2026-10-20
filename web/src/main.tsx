@@ -19,7 +19,7 @@ import Disputes from "./pages/Disputes";
 import Activity from "./pages/Activity";
 import Risk from "./pages/Risk";
 import Market from "./pages/Market";
-import Security from "./pages/Security";
+import Controls from "./pages/Controls";
 import Bank from "./pages/Bank";
 import Settings from "./pages/Settings";
 
@@ -84,7 +84,8 @@ function App() {
           <Route path="/activity" element={g(<Activity />)} />
           <Route path="/risk" element={g(<Risk />)} />
           <Route path="/market" element={g(<Market />)} />
-          <Route path="/security" element={g(<Security />)} />
+          <Route path="/controls" element={g(<Controls />)} />
+          <Route path="/security" element={<Navigate to="/controls" replace />} />
           <Route path="/bank" element={g(<Bank />)} />
           <Route path="/settings" element={g(<Settings />)} />
           <Route path="*" element={g(<Centered><h1>Page not found</h1></Centered>)} />

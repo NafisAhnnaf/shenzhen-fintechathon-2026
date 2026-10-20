@@ -1,4 +1,4 @@
-// Deploys tUSDC, PaymentVault, BondPool, EvidenceAnchor and the naive demo wallet, funds them,
+// Deploys tUSDC, PaymentVault, BondPool and EvidenceAnchor, funds them,
 // registers the demo payees and sets the first bundle. Writes deployments/<network>.json.
 //
 //   npx hardhat run scripts/deploy.js --network baseSepolia
@@ -9,7 +9,7 @@ const { ethers, network } = require("hardhat");
 
 const U = (x) => ethers.parseUnits(String(x), 6);
 const id = (s) => ethers.encodeBytes32String(s);
-const usd = (x) => U((Math.round(x * 100) / 100 / 1000).toFixed(6)); // 1 tUSDC stands for $1,000
+const usd = (x) => U((Math.round(x * 100) / 100).toFixed(2)); // face value: 1 tUSDC is $1 (recorded as usdPerToken)
 
 // Written by `python -m apagent.demo` from the calibration (bundle r = K/N) and the demo ledger (payees).
 const PARAMS_FILE = path.join(__dirname, "..", "..", "data", "demo", "deploy_params.json");
@@ -29,11 +29,10 @@ const DEMO = {
   window: 300, // P-WINDOW
   disputeTime: 120, // P-DISPUTE
   vaultFunds: usd(P ? P.vaultUsd : 500000),
-  naiveFunds: usd(P ? P.naiveUsd : 50000),
   poolFunds: usd(P ? P.poolUsd : 70000),
   bundle: P
     ? { mode: P.bundle.mode, pDay: usd(P.bundle.pDayUsd), pNDay: P.bundle.pNDay, pSupWeek: usd(P.bundle.pSupWeekUsd), r: usd(P.bundle.rUsd) }
-    : { mode: 2, pDay: U(15), pNDay: 5, pSupWeek: U(5), r: U(0.4) },
+    : { mode: 2, pDay: usd(15000), pNDay: 5, pSupWeek: usd(5000), r: usd(400) },
 };
 
 async function main() {
@@ -50,7 +49,7 @@ async function main() {
 
   const log = (k, v) => console.log(`${k.padEnd(14)} ${v}`);
   const wait = async (tx) => (await tx).wait();
-  const out = { network: network.name, chainId: Number((await ethers.provider.getNetwork()).chainId), txs: {} };
+  const out = { network: network.name, chainId: Number((await ethers.provider.getNetwork()).chainId), usdPerToken: 1, txs: {} };
   const record = async (name, txp) => {
     const rc = await wait(txp);
     out.txs[name] = rc.hash;
@@ -69,12 +68,9 @@ async function main() {
   await pool.waitForDeployment();
   const anchor = await (await ethers.getContractFactory("EvidenceAnchor", owner)).deploy(agent);
   await anchor.waitForDeployment();
-  const naive = await (await ethers.getContractFactory("NaiveWallet", owner)).deploy(token, agent);
-  await naive.waitForDeployment();
 
   await record("setPool", vault.connect(owner).setPool(pool));
   await record("mintVault", token.mint(vault, DEMO.vaultFunds));
-  await record("mintNaive", token.mint(naive, DEMO.naiveFunds));
   await record("mintUnderwriter", token.mint(underwriter, DEMO.poolFunds));
   await record("approvePool", token.connect(underwriter).approve(pool, ethers.MaxUint256));
   await record("fundPool", pool.connect(underwriter).fund(DEMO.poolFunds));
@@ -103,7 +99,6 @@ async function main() {
       vault: await vault.getAddress(),
       pool: await pool.getAddress(),
       anchor: await anchor.getAddress(),
-      naive: await naive.getAddress(),
     },
     roles: {
       owner: owner.address, agent: agent.address, governor: governor.address,

@@ -29,7 +29,7 @@ from pydantic import BaseModel
 import anyio
 
 from . import auth as A
-from . import demo, naive
+from . import demo
 from . import identity as I
 from .config import DATA_DIR, SETTINGS
 from .intake import BadDocument, ReaderUnavailable
@@ -161,6 +161,10 @@ def S() -> Session:
             if s is None:
                 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
                 s = _sessions[cid] = Session.open(NETWORK, log_path=LOG_PATH, signing=SIGNING, erp=ERP, company_id=cid)
+    if s.clock() == "real" and s.led.today < time.strftime("%Y-%m-%d"):
+        with _lock:
+            if s.sync_clock():
+                s.save()
     return s
 
 
@@ -430,7 +434,7 @@ def state():
     with _lock:
         ch = s.chain
         return _ok({
-            "network": NETWORK, "signing": SIGNING, "today": s.led.today, "company": s.led.company,
+            "network": NETWORK, "signing": SIGNING, "today": s.led.today, "clock": s.clock(), "company": s.led.company,
             "cash_usd": s.led.cash_usd, "chain": ch.state(), "bundle": s.agent.gov.bundle_name, "money": s.agent.money,
             "contracts": ch.dep["contracts"], "roles": ch.dep["roles"], "server_holds": sorted(ch.keys),
             "chain_id": ch.chain_id, "rpc": RPC_PUBLIC,
@@ -799,16 +803,6 @@ def log(security: bool = False, limit: int = 200):
     return _ok([l.__dict__ for l in lines[-limit:]])
 
 
-@app.post("/api/naive/attack", dependencies=[STAFF])
-@mutating
-def naive_attack(doc: str = "t07_poisoned"):
-    """Split screen: the naive wallet follows the document's text; our agent processes the same document."""
-    s = S()
-    read = demo.read_from_doc(s.docs[doc])
-    n = naive.run(s.chain, read.raw_text, read.total)
-    return {"naive": n, "ours": s.ingest(doc)}
-
-
 @app.post("/api/pause", dependencies=[PROTECT])
 @mutating
 def pause():
@@ -857,10 +851,6 @@ class BankBody(BaseModel):
 
 class Timing(BaseModel):
     mode: str
-
-
-class Attack(BaseModel):
-    text: str
 
 
 @app.get("/api/payments", dependencies=[ANY])
@@ -982,15 +972,6 @@ def bank_action(action: str, body: BankBody, u: A.User = Depends(current_user)):
     return S().agent.bank_action(action, body.tx_hash, body.bill, body.amount)
 
 
-@app.post("/api/try-attack", dependencies=[STAFF])
-@mutating
-def try_attack(body: Attack):
-    """Any text on a routine bill, given to both agents (spec X8). Ours pays nothing; the naive wallet may."""
-    if not body.text.strip():
-        raise HTTPException(400, "Type the text to put on the bill")
-    return S().try_attack(body.text)
-
-
 # ------------------------------------------------------------------ demo clock (local chain only)
 @app.post("/api/demo/next-day", dependencies=[DEMO])
 @mutating
@@ -1035,7 +1016,7 @@ def tx_lookup(tx_hash: str):
         raise HTTPException(404, f"no such transaction on {NETWORK}: {e}")
     names = {v.lower(): k for k, v in ch.dep["contracts"].items()}
     events = []
-    for c in (ch.vault, ch.pool, ch.anchor, ch.naive):
+    for c in (ch.vault, ch.pool, ch.anchor):
         for ev in c.events:
             for log in ev().process_receipt(rc, errors=DISCARD):
                 events.append({"contract": names.get(log["address"].lower(), log["address"]), "event": log["event"],
