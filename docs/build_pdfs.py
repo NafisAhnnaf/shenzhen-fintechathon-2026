@@ -31,7 +31,7 @@ CSS = """
         margin-bottom: 8px;
     }
     @bottom-left {
-        content: "Bonded Payables Agent — Confidential & Proprietary";
+        content: "Bonded Payables Agent · Team IUT_Dhonghorsho";
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         font-size: 8pt;
         color: #a0aec0;
@@ -235,7 +235,7 @@ def build_pdf(md_path: Path, out_pdf_path: Path, doc_title: str, doc_short: str,
         <p><strong>Competition:</strong> 2026 Shenzhen International FinTech Competition (FinTechathon) · International Track</p>
         <p><strong>Theme:</strong> AI as a Financial Participant &nbsp;|&nbsp; <strong>Topic:</strong> Topic F: Agent Wallet (Autonomous On-chain Wallet)</p>
         <p><strong>Deliverable ID:</strong> Checklist Item {checklist_num} &nbsp;|&nbsp; <strong>Date:</strong> October 20, 2026</p>
-        <p><strong>Repository:</strong> https://github.com/NafisAhnnaf/shenzhen-fintechathon-2026 &nbsp;|&nbsp; <strong>Base Sepolia Verified:</strong> 0x63Ac9033d31DA29EAbc3bD750905E28a781b9844</p>
+        <p><strong>Repository:</strong> https://github.com/NafisAhnnaf/shenzhen-fintechathon-2026 &nbsp;|&nbsp; <strong>Base Sepolia Verified:</strong> 0x4c71D4d211F08eAbD1e221f7eA173287461E49E2</p>
     </div>
     """
 

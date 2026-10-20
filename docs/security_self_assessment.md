@@ -21,7 +21,7 @@ deposit; bank-rail payments end in ISO 20022 files. The company, suppliers and d
 | What if the agent's server is hacked? | An autonomous payment still needs the governor's EIP-712 signature, a registered payee, every cap and an unused bill ID. Task 10 (`BadSignature`), task 9 (`NotAuthorized`), invariant B9. See risk R4 for the case where governor and agent keys sit on the same server. |
 | What can the agent key do on-chain? | Pay inside the rules, freeze a payee, pause itself, record offsets. It cannot add payees, unfreeze, unpause, change settings, withdraw or file a claim alone. Invariants B6 and B13. |
 | Red-team result | 14 attacks. Naive agent: 13 succeed. Policies only: 2 succeed. Policies + contract: **0 succeed** (`results/red.json`). |
-| Tests | 29 contract tests; 155+ Python tests; 15 browser flows; the scripted tasks on local Hardhat, local FISCO BCOS and Base Sepolia (`evidence/`). Slither: no high-impact findings (`results/slither.json`). |
+| Tests | 29 contract tests; 146 Python test functions; 15 browser flows (11 on the desk, 4 for accounts). The 22 scripted tasks pass 22/22 on local Hardhat, local FISCO BCOS and Base Sepolia (`evidence/`). Slither: no high-impact findings, 1 medium (an enum comparison it misreads), 19 low (`results/slither.json`). |
 | Who can use the desk? | Only signed-in members of a company, with the role the database gives them (owner, finance manager, accounts clerk, viewer); two-step sign-in available; the bank and arbiter by wallet. Section 7. |
 | Biggest open risks | Policy and contract both trust the ERP and the payee registry; in the default setup the governor key runs beside the agent; the 99% reserve bound assumes independent errors; some web dependencies have moderate advisories. Section 10. |
 
@@ -61,8 +61,8 @@ owner or approver key.
 | **T3** | Payees, caps, settings, mode, funding, unfreeze, unpause | The agent prepares unsigned transactions (`settings_tx_request`, `owner_tx_request`); the owner sends them from their wallet and the server checks the mined transaction came from the owner key and went to the vault | Owner-only functions; bonded bundles also need `approveSettings` by the underwriter; `setAgent` refuses the owner, governor or approver address | Tasks 3 and 18; B6, B10; `test_settings_sent_from_owner_wallet` |
 
 **Request roles.** SET-DIAL and RESUME are owner-only in the catalogue (`intent/catalogue.py`),
-`test_finance_manager_cannot_set_dial`. The role comes from the request body, so this is a UI rule; the security
-boundary for both is the owner key on-chain (see risk R6).
+`test_finance_manager_cannot_set_dial`. The API takes the role from the signed-in person's membership, never from
+the request body (`api.request`). The owner key on-chain stays the final boundary for both.
 
 **Pause.** Owner, governor or agent can pause (`pauseAgent`); only the owner unpauses. While paused,
 `payAutonomous` reverts (`AgentIsPaused`) and the governor adds "Agent is paused" to every bill, so all bills go to T2
@@ -143,8 +143,8 @@ owed and pauses; the anchor is append-only.
 
 | Defence | Code | Evidence |
 | --- | --- | --- |
-| Quarantined reader | `apagent/reader.py`: the VLM backend is an OpenAI-compatible chat call with image input and a strict JSON schema, no tools and no keys beyond its own API key; output is validated against the schema shape. The JSON e-invoice reader is the demo default | `test_pdf_without_reader_is_refused_not_guessed` (no reader key → 503, nothing recorded) |
-| Injection flag | `apagent/injection.py`: decodes base64, Morse, zero-width and look-alike characters, then scores instruction patterns. Can only escalate: p ≥ 0.5 adds a T2 reason and a security log line | `test_injections_flagged`, `test_benign_text_not_flagged`, `test_decodes_base64_and_morse`; task 7 (p = 1.0) |
+| Quarantined reader | `apagent/reader.py`: the vision reader is an OpenAI-compatible chat call to Gemini (`VLM_MODEL`, default `gemini-3.6-flash`) with image input and a strict JSON schema, no tools and no keys beyond its own API key. When a key's daily allowance runs out, it switches to `VLM_FALLBACK_MODEL` (`gemini-3.5-flash-lite`). Keys rotate (`GEMINI_API_KEYS`) and calls are spaced to `GEMINI_RPM` (15 a minute). Output is validated against the schema shape. Other text on the page is shown to the user as-is and never followed | `test_pdf_without_reader_is_refused_not_guessed` (no reader key → 503, nothing recorded); `results/reader.json`: 434 of 435 fields exact on 29 documents |
+| Injection flag | `apagent/injection.py`: decodes base64, Morse, zero-width and look-alike characters, then scores instruction patterns over every decoded view. When a model key is set, a closed-choice model check (two options, no tools, the supplier text wrapped as data) scores up to three decoded views in parallel within a 10 s budget (`INJECTION_MODEL_TIMEOUT`). The higher score counts, so the model can only add suspicion. If the model fails or is late, the patterns decide. p ≥ 0.5 adds a T2 reason and a security log line. Used on bills, supplier emails, replies and the request box | `test_injections_flagged`, `test_benign_text_not_flagged`, `test_decodes_base64_and_morse`; task 7 (p = 1.0) |
 | Supplier identity | `checker.match_supplier`: tax ID, fuzzy name, sender domain (look-alike flagged), bank details vs registry. Emails: sender domain must match a registered supplier exactly, else only logged (`Agent.receive_email`) | `test_bank_change_held`, `test_unknown_sender_is_only_logged`; task 6 |
 | Duplicates | `checker.find_duplicate`: exact invoice number, or Fellegi–Sunter style agreement weights (≥ 12) on invoice number, total, order and date. Contract: bill ID used once | `test_exact_and_fuzzy_duplicates`; task 2 |
 | Limit splitting | Governor: rolling 7-day supplier T1 total vs P-SUPWEEK. Contract: per-supplier weekly bucket | `test_split_bills_hit_weekly_cap`; task 12 (two T1, eight T2; forced T1 reverts `OverSupplierWeek`) |
@@ -153,7 +153,8 @@ owed and pauses; the anchor is append-only.
 | Evidence anchoring | Each decision-log line is hashed; the day's Merkle root goes to `EvidenceAnchor` (append-only, one root per day) | Task "anchor", tx `0x9d07…0fc0` |
 | Browser RPC relay | `/api/rpc` forwards read methods to anyone, and an already-signed transaction only from a signed-in person and only to their own company's contracts (the demo chain's test keys are public) | `test_rpc_relay_sends_only_to_the_companys_contracts` |
 | Sign-in and roles | Better Auth sessions; the API checks the cookie's HMAC and reads membership and role from the database; nothing about the role comes from the request. Clerks bring documents in but cannot approve, pay or run requests | `tests/test_identity.py`, `web/e2e/accounts.spec.ts` |
-| Request box | 500-character cap, 6 requests a minute per person and 200 a day per company, instruction-like text refused before any model sees it; each refusal is a security event | `tests/test_hardening.py` |
+| Request box | 500-character cap, 6 requests a minute per person and 200 a day per company, instruction-like text refused before any model sees it; each refusal is a security event | `tests/test_hardening.py`; `results/request_redteam.md`: 68 hostile requests in English and Chinese, 25 refused before any model, 35 answered with a question, 8 plan previews, **0 unsafe plans** (rule router) |
+| Request agent (`DECIDER=llm`) | `apagent/intent/agentic.py`: Gemini plans with tools. Look-up tools return the company's own records only (amounts, statuses, checks), never supplier free text, and invoice numbers must match a strict identifier pattern (S8). The model may propose one catalogue action with closed-list values, or ask one question. It never runs anything: a person presses Run, and every step passes S1–S11 and the contract again. If the model fails, the rule router answers | No dedicated test yet (risk R13). Its safety does not rest on the model: the preview, the S9 test and the contract tests apply to every plan |
 | Sanctions screening | Supplier names (and new payees) checked against the OFAC SDN list and its aliases; a match holds the bill for a person | `tests/test_hardening.py` |
 | Daily ceiling | One ceiling on everything paid in a day, signatures or not (owner setting, default $250,000) | `test_daily_cap_refuses_approvals_past_it` |
 | Bank statements | camt.053 import refuses DTDs and entity declarations and files over 5 MB; every debit must match an approved payment or it becomes an owner alert | `tests/test_bankfiles.py` |
@@ -211,24 +212,26 @@ UNSUPPORTED requests refused, intent-set and slot-set coverage 100%. Normal bill
 
 ## 9. Data handling: Jev, LLM and vision model
 
-**Jev.** No Jev backend exists in the code. The request layer has a **Jev-ready interface**:
-`decide(schema, state) -> {option: p}` (`apagent/intent/decide.py`), which returns a probability for every option
-in a closed list. Two backends implement it: `RuleDecider` (default, deterministic, offline) and `LLMDecider`
-(any OpenAI-compatible endpoint with a strict JSON schema whose keys are exactly the options; `DECIDER=llm`). A Jev
-backend would be a third class with the same method. The injection flag is a separate deterministic scorer
-(`apagent/injection.py`) and does not go through `decide()` today.
+**Jev.** The request layer has one interface, `decide(schema, state) -> {option: p}`
+(`apagent/intent/decide.py`), which returns a probability for every option in a closed list. Three backends
+implement it: `RuleDecider` (default, deterministic, offline), `LLMDecider` (any OpenAI-compatible endpoint with a
+strict JSON schema whose keys are exactly the options, `DECIDER=llm`) and `JevDecider` (TypeSafe AI's Jev, one Choice
+question per schema, `DECIDER=jev` with `TYPESAFE_API_KEY`). Jev needs a paid key, so the evidence runs use the rule
+decider. The injection flag is a separate scorer. Its optional model check uses the `LLMDecider` settings.
 
 **What leaves the machine.**
 
 | Setting | What is sent | Where (default) |
 | --- | --- | --- |
-| Default (`DECIDER=rules`, JSON e-invoices) | Nothing | — |
-| `DECIDER=llm` with `LLM_API_KEY` | The request text and the trusted router state (supplier names and materials, open bill numbers and statuses), truncated to 6,000 characters. Never supplier text (S8) | DashScope international endpoint, `qwen-plus` |
-| `VLM_API_KEY` set | Page images of PDFs and photos for field extraction | DashScope international endpoint, `qwen-vl-max` |
+| Default (`DECIDER=rules`, no model key, JSON e-invoices) | Nothing | — |
+| `GEMINI_API_KEY` set (vision reader) | Page images of PDFs and photos for field extraction | Google Gemini API (OpenAI-compatible endpoint), `gemini-3.6-flash`, fallback `gemini-3.5-flash-lite` |
+| A model key set, `INJECTION_MODEL` on (the default) | Text from supplier bills, emails and replies, up to 4,000 characters per decoded view, for the instruction check only. The model returns two probabilities and nothing else | Gemini, `LLM_MODEL` (`gemini-3.5-flash-lite`) |
+| `DECIDER=llm` | The request text and the results of look-up tools over the company's own records (supplier names, amounts, statuses, invoice numbers that pass the identifier pattern). Never supplier free text (S8) | Gemini, `LLM_MODEL` |
+| `DECIDER=jev` with `TYPESAFE_API_KEY` | The request text and the trusted context, one closed question at a time | TypeSafe AI Jev |
 
-Both endpoints are configurable (`LLM_BASE_URL`, `VLM_BASE_URL`). The hackathon uses demo data only. Production use
-would need a data-processing agreement with the model provider or a self-hosted model; the same applies to Jev,
-which is a US service in early access.
+All endpoints are configurable (`LLM_BASE_URL`, `VLM_BASE_URL`). `INJECTION_MODEL=off` keeps supplier text on the
+machine. The hackathon uses demo data only. Production use would need a data-processing agreement with the model
+provider or a self-hosted model. The same applies to Jev, which is a US service in early access.
 
 **What a model never does.** Set an amount, a payee or a tier; see a key; write text a user reads as a decision.
 Model outputs are options from a list (decider) or schema fields (reader) that the checker then tests against ERP
@@ -283,27 +286,28 @@ figure uses the governor's rolling 7-day cap; the contract alone uses fixed week
 
 | # | Gap | Effect | Mitigation today |
 | --- | --- | --- | --- |
-| R1 | The router state includes open bills' invoice numbers, which come from supplier documents and are not tagged | With `DECIDER=llm`, a crafted invoice number reaches the LLM prompt. The answer is still an option from a closed list, shown in a preview | S9 preview; rule decider only matches digits |
+| R1 | The router state includes open bills' invoice numbers, which come from supplier documents and are not tagged | With `DECIDER=llm`, an invoice number reaches the model prompt. The request agent passes only numbers that match a strict identifier pattern, so free text cannot ride along. The answer is still an option from a closed list, shown in a preview | S9 preview; identifier pattern in the look-up tools; rule decider only matches digits |
 | R2 | S5 is checked on bill cards only, not on plan previews or T0 answers. On fair-price cards the justified price is tagged `erp, computed`, without `market` | A plan summary number is not machine-checked against a tag | Plan numbers come from the same bounded amounts |
-| R3 | The injection flag is a pattern scorer, not a model | Paraphrased instructions can evade it | It only escalates; S1, S2 and the contract do not depend on it |
+| R3 | The injection flag can miss paraphrased instructions. The patterns are fixed, and the model check (when a key is set) is a classifier that can also be wrong | A paraphrased instruction may reach the bill card unflagged | Both only escalate. S1, S2 and the contract do not depend on them. Without a model key, the patterns alone decide |
 | R4 | With `SIGNING=client`, the agent, governor and underwriter-service keys are on one server | A full server compromise is the "both keys" case: T1 payments to registered payees inside the caps, and withdrawal of the underwriter's free pool deposit | Production: governor run by the company's risk function or the underwriter on separate infrastructure |
 | R5 | The contract's supplier cap uses fixed 7-day buckets; the governor uses a rolling 7 days | Contract-only, one supplier can get up to 2 × P-SUPWEEK across a bucket boundary, and up to 5 × P-SUPWEEK ($25,000) in a 30-day window | The governor's rolling check applies on the normal path |
 | R6 | Fixed: every endpoint needs a signed-in member with the right role (section 7) | — | — |
 | R7 | Fixed: the deploy script refuses an arbiter equal to the owner, bank or agent | — | — |
 | R8 | The owner key is a single key with unrestricted vault `withdraw` and `addPayee` (cool-down only) | Owner compromise is total loss of the vault | Production: multisig or hardware key, longer cool-down |
 | R9 | A compromised approver key plus the agent key can pay any registered payee any amount (`payApproved` has no caps, by design) | T2 is uncapped | Payees still limited to the registry |
-| R10 | Fixed: contracts deployed and verified on Base Sepolia with a public evidence run, and the FISCO evidence rerun on 20 Oct with the final code (22/22) | — | — |
+| R10 | Fixed: contracts deployed and source-verified on Base Sepolia. The public evidence run on 20 Oct (19:35) passed 22/22 on a fresh deployment (vault `0x4c71D4d211F08eAbD1e221f7eA173287461E49E2`). The FISCO evidence rerun on 20 Oct with the final code also passed 22/22 | — | — |
 | R11 | Web dependencies: moderate advisories in react-router 6, echarts 5, and libraries inside the wallet SDKs (one high, in a server-side websocket library the browser bundle does not use) | Fixes need major-version upgrades | Safe fixes applied; upgrades listed as future work |
 | R12 | The hosted demo chain uses public test keys | Anyone could sign for a demo role on that chain directly | The relay accepts transactions only from signed-in members to their own company's contracts; the chain is a sandbox |
+| R13 | The request agent (`DECIDER=llm`) has no dedicated tests, and the 68-request red team ran on the rule router | A model-specific failure in the agent path is not measured | The agent only proposes. The preview, S1–S11 at run time and the contract apply to every plan, and the rule router answers if the model fails |
 
 ### 10.5 Plan section 15 risks: status
 
 | Risk | Status |
 | --- | --- |
-| No Jev access | Realised: Jev-ready interface with rule and LLM backends |
+| No Jev access | Realised in part: a `JevDecider` exists behind the same interface (`DECIDER=jev`), but it needs a paid key, so the evidence uses the rule decider |
 | A request is misread | Conformal sets: 100% intent and slot coverage on 47 held-out requests, question rate 2%; preview before any effect |
 | Policies block normal bills or requests | 22/22 tasks pass; 100% accuracy without a question on held-out requests. No policy was loosened |
-| Testnet problems | Base Sepolia run done; public RPC lag handled by waiting for the next block after each transaction |
+| Testnet problems | Base Sepolia run passed 22/22 on 20 Oct, with short demo windows (10 s cool-down and dispute time, 30 s coverage window and day); public RPC lag handled by waiting for the next block after each transaction |
 | "Insurance" or stablecoin concerns | Performance reserve wording, tUSDC on test chains only, bank rail for mainland payees (task 15), standard mode needs no bank (task 18) |
 | Correlated errors | Stress case reported (10.3); several suppliers failing together is not covered |
 | Maths error | Unit tests for the cut-off, betting bound coverage and Bernstein formula (`tests/test_risk.py`); AC-8 and CAPITAL simulations |
