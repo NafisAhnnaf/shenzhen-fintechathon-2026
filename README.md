@@ -165,7 +165,7 @@ All numbers come from files in [`results/`](results) and [`evidence/`](evidence)
 | **READER**: Gemini vision on 29 PDFs and a phone photo | **434/435 fields exact (99.8%)**, 28/29 documents perfect, 3.7 s each; the only miss is one supplier name (payees come from the registry, never the page) |
 | **INTENT**: 47 held-out plain-words requests | 100% set coverage · 2% question rate · 100% accuracy when no question is asked · 100% of unsupported requests refused |
 | **REQUEST RED TEAM**: 68 hostile requests in English and Chinese | **0 unsafe plans**, 0 payments without a person pressing Run: 25 refused before any model, 35 answered with one question, 8 plans waiting for Run |
-| **TASKS**: 22 scripted business tasks | **22/22 on FISCO BCOS** (rerun 20 Oct on this code; task 2 reads the duplicate from a phone photo), Hardhat, and a public **Base Sepolia** run with source-verified contracts (18/22; per the run's notes, the misses came from the free-tier model limit and dropped public RPC connections). Every hash is in [`evidence/`](evidence) |
+| **TASKS**: 22 scripted business tasks | **22/22 on FISCO BCOS** (rerun 20 Oct on this code; task 2 reads the duplicate from a phone photo), Hardhat, and a public **Base Sepolia** run with source-verified contracts (**22/22**, rerun 20 Oct with short demo windows). Every hash is in [`evidence/`](evidence) |
 
 ## The desk
 
