@@ -100,11 +100,6 @@ export default function Landing() {
       </nav>
 
       <header className="hero">
-        <div className="aurora" aria-hidden="true">
-          <i style={{ width: 420, height: 420, left: -60, top: 40, background: "#C7BFFF" }} />
-          <i style={{ width: 360, height: 360, right: "6%", top: -40, background: "#BFD3FF", animationDelay: "-4s" }} />
-          <i style={{ width: 300, height: 300, right: "30%", top: 220, background: "#E4E0FF", animationDelay: "-8s" }} />
-        </div>
         <div className="wrap">
           <div>
             <p className="eyebrow">AI payables clerk · Hong Kong manufacturers · testnet</p>
@@ -196,7 +191,7 @@ export default function Landing() {
           {[
             [C.clerk("idle", 90), "It reads the bill", "Typed fields only. The reader has no tools and no keys.", undefined],
             [C.checklist(78), "Nine fixed checks", "Order, delivery, prices, totals, duplicates, market price.", undefined],
-            [C.supervisor(84), "The supervisor scores it", "Low risk: it co-signs. Anything else goes to a person.", "#DCE8FF"],
+            [C.supervisor(84), "The supervisor scores it", "Low risk: it co-signs. Anything else goes to a person.", "#F1F1F3"],
             [C.vault(86), "The contract pays", "Registered payees, within limits, once per bill. A hash lands on-chain.", undefined],
           ].map(([art, h, p, bg]) => (
             <div key={h} className="card spot st" onMouseMove={spot}>

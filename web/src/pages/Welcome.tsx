@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { api } from "../lib/api";
 import { auth, MEMBER_ROLE, type MemberRole } from "../lib/auth";
 import { useMe } from "../lib/hooks";
 import { ErrorLine } from "../components/ui";
@@ -27,6 +28,7 @@ export default function Welcome() {
   const { data: invites } = useQuery({ queryKey: ["my-invitations"], queryFn: auth.myInvitations, retry: false });
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [stage, setStage] = useState("");
   const [err, setErr] = useState<unknown>(null);
   const pending = (invites ?? []).filter((i) => i.status === "pending");
 
@@ -35,12 +37,17 @@ export default function Welcome() {
     setBusy(true);
     try {
       await fn();
+      // The first open of a company deploys its own contracts on the chain: wait for it here, with a message,
+      // rather than on a blank desk.
+      setStage("Setting up the company: deploying its contracts and loading the records. This takes about 20 seconds.");
+      await api.get("/state");
       await qc.invalidateQueries();
-      nav("/desk", { replace: true });
+      nav("/bills", { replace: true });
     } catch (e) {
       setErr(e);
     } finally {
       setBusy(false);
+      setStage("");
     }
   };
   const create = (e: FormEvent) => {
@@ -91,7 +98,11 @@ export default function Welcome() {
           your own ERP and mailbox in Settings.
         </p>
         <button className="btn primary" disabled={busy}>Create company</button>
+        {stage && <p className="row note"><span className="spin" /> {stage}</p>}
       </form>
+      {pending.length === 0 && (
+        <p className="note">Invited by a colleague? Open the link in the invitation email to join their company.</p>
+      )}
       <ErrorLine error={err} />
       <button className="link small" style={{ justifySelf: "start" }}
         onClick={async () => { await auth.signOut().catch(() => undefined); await qc.invalidateQueries(); nav("/login"); }}>
