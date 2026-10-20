@@ -1,0 +1,2325 @@
+[
+ {
+  "ts": 1792460628.754596,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "TSU-2512019",
+   "total": 3493.12
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0001",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460629.5832782,
+  "actor": "agent",
+  "kind": "injection_flag",
+  "detail": {
+   "p": 1.0,
+   "decoded": [],
+   "model_p": null
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0001",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T2",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792460634.774261,
+  "actor": "agent",
+  "kind": "freeze_payee",
+  "detail": {
+   "supplier": "TSUENWAN",
+   "reason": "Bank details on a bill differ from the registry"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": "frozen",
+  "tx_hash": "0x4144d78d6aa3c05dec73f0527f2d947753e2dfa4b1bb859352a229e88c5dc8dd",
+  "security": true
+ },
+ {
+  "ts": 1792460634.774522,
+  "actor": "agent",
+  "kind": "case_open",
+  "detail": {
+   "kind": "bank_change",
+   "case": "C-0001",
+   "bill": "B-20251210-0001",
+   "callback": "accounts@tsuen-hk.com"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": "open",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460636.001847,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0001",
+   "template": "bank_change_alert",
+   "to": "accounts@tsuen-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0001",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460645.143743,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "hold",
+   "score": null,
+   "cutoff": null,
+   "group": "routine",
+   "reasons": [
+    "Bank details differ from the registry: payee frozen, call-back task opened"
+   ],
+   "amount": 0.0
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0001",
+  "input_hash": null,
+  "policy": null,
+  "decision": "hold",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460645.144112,
+  "actor": "system",
+  "kind": "policy_block",
+  "detail": {
+   "tool": "pay_autonomous",
+   "reason": "payee must come from the registry, got ['supplier_doc']"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0001",
+  "input_hash": null,
+  "policy": "S1",
+  "decision": "blocked",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792460657.4790678,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "KAI-2512001",
+   "total": 1810.16
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460668.59659,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3024,
+   "cutoff": 0.8715,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.302 is within the limit 0.871 for routine bills"
+   ],
+   "amount": 1810.16
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460684.7878048,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0002"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460685.9654121,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0002",
+   "template": "payment_notice",
+   "to": "accounts@kai-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460685.965475,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 1810.16,
+   "supplier": "KAITAK",
+   "premium": 20.7
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0002",
+  "input_hash": "0x584448df1e55021d9284d987748176e7dae4b1b517b81845aafc8c59d39b03ef",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x64e2519d9f8496345abc404cf844e92f1a81658220685b401384aaa071131c73",
+  "security": false
+ },
+ {
+  "ts": 1792460686.899169,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "SUN-2512007",
+   "total": 2397.6
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460697.2603478,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3342,
+   "cutoff": 0.8715,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.334 is within the limit 0.871 for routine bills"
+   ],
+   "amount": 2397.6
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460713.4110458,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0003"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460714.676464,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0003",
+   "template": "payment_notice",
+   "to": "accounts@sun-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460714.676558,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 2397.6,
+   "supplier": "SUNKEE",
+   "premium": 26.31
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0003",
+  "input_hash": "0xa1aa5b4469eed0a3ccaf8464250e2b21acb979ead37b720168acdb8bd987016c",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x4ea1f813ef7ad1f282c6c70123f0b94dda3af438a89a326e3786fcf910381240",
+  "security": false
+ },
+ {
+  "ts": 1792460781.300443,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "HAR-2512011",
+   "total": 1632.78
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0004",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460791.463734,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.2917,
+   "cutoff": 0.8715,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.292 is within the limit 0.871 for routine bills"
+   ],
+   "amount": 1632.78
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0004",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460791.477772,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "GAN-2512023",
+   "total": 2545.64
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0005",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460801.357876,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3325,
+   "cutoff": 0.8715,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.333 is within the limit 0.871 for routine bills"
+   ],
+   "amount": 2545.64
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0005",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460817.074673,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0005"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0005",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460818.4079528,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0004",
+   "template": "payment_notice",
+   "to": "accounts@ganjiang.cn",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0005",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460818.408041,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 2545.64,
+   "supplier": "GANJIANG",
+   "premium": 27.73
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0005",
+  "input_hash": "0x73c2d5067dca7009a8f2d7d384357cf49a6ebebd9a7f537ada5595496b6994df",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0xfe97407f373a02f1bbc77d45b9bb89341f19d780a67cb5979156cbffe95e057e",
+  "security": false
+ },
+ {
+  "ts": 1792460818.733307,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "SHA-2512015",
+   "total": 4017.6
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460828.682771,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3739,
+   "cutoff": 0.8715,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.374 is within the limit 0.871 for routine bills"
+   ],
+   "amount": 4017.6
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460842.958536,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0006"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460844.146017,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0005",
+   "template": "payment_notice",
+   "to": "accounts@shatin-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460844.146057,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 4017.6,
+   "supplier": "SHATINPCB",
+   "premium": 41.79
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": "0xcc1cd2af2c3ac2c2f82b4ad3165c501b121665afd01ab52defe3c1ff753c526f",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0xaec7e16b8815cddedf6ce724f6224127dffe968c5eb040d1ffd082e53cd5f361",
+  "security": false
+ },
+ {
+  "ts": 1792460844.149102,
+  "actor": "agent",
+  "kind": "case_open",
+  "detail": {
+   "kind": "missed_credit",
+   "case": "C-0002",
+   "statement_line": {
+    "date": "2025-12-08",
+    "ref": "CN-2015",
+    "kind": "credit",
+    "amount": -1145.02,
+    "against": "SHA-2512015"
+   },
+   "bill": "B-20251210-0006",
+   "amount": 1145.02,
+   "paid": 4017.6,
+   "owed": 2872.58,
+   "tier": "T1",
+   "tx_hash": "0xaec7e16b8815cddedf6ce724f6224127dffe968c5eb040d1ffd082e53cd5f361"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": "open",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460844.149119,
+  "actor": "agent",
+  "kind": "reconcile",
+  "detail": {
+   "supplier": "SHATINPCB",
+   "lines": 2,
+   "cases": [
+    "C-0002"
+   ]
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460850.946015,
+  "actor": "contract",
+  "kind": "open_receivable",
+  "detail": {
+   "amount": 1145.02
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x3ae8fecc3394152a73e3c43ffe9c27056b0976372fdf6b8ad5610a971af6f45c",
+  "security": false
+ },
+ {
+  "ts": 1792460850.946111,
+  "actor": "finance_manager",
+  "kind": "case_confirm",
+  "detail": {
+   "case": "C-0002",
+   "kind": "missed_credit"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460850.9464161,
+  "actor": "governor",
+  "kind": "cutoff_drop",
+  "detail": {
+   "group": "routine",
+   "before": 0.8715,
+   "after": 0.8426
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460867.1514912,
+  "actor": "agent",
+  "kind": "file_claim",
+  "detail": {
+   "amount": 1145.02,
+   "cause": "overpayment",
+   "signed_by": "finance_manager"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": "filed",
+  "tx_hash": "0x6655cf7693a171c6fc12795af3298afa1628201252388a1f63177f49076318ea",
+  "security": false
+ },
+ {
+  "ts": 1792460867.1516879,
+  "actor": "agent",
+  "kind": "probation",
+  "detail": {
+   "supplier": "SHATINPCB",
+   "bills": 5,
+   "reason": "confirmed error on B-20251210-0006"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460867.1519392,
+  "actor": "agent",
+  "kind": "email_draft",
+  "detail": {
+   "email": "M-0006",
+   "template": "refund_request",
+   "to": "accounts@shatin-hk.com"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792460998.7357702,
+  "actor": "contract",
+  "kind": "claim_paid",
+  "detail": {},
+  "plan_id": null,
+  "bill_id": "B-20251210-0006",
+  "input_hash": null,
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x97e54a94bdd0a84172fb0058810cb83e31f7471903b5767ea3e09355ba5178a9",
+  "security": false
+ },
+ {
+  "ts": 1792461008.3758929,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "SHA-2512031",
+   "total": 2980.8
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461019.017174,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T2",
+   "score": 0.3056,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Supplier on probation: 5 more bills go to a person",
+    "This supplier would get $5,853.38 in 7 days without a signature (limit $5,000): possible limit splitting"
+   ],
+   "amount": 1835.78
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T2",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461032.8673291,
+  "actor": "agent",
+  "kind": "record_offset",
+  "detail": {
+   "receivable": "B-20251210-0006",
+   "amount": 1145.02,
+   "to_reserve": true
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xb5ddd9595c573d3951afb09fee974a4bfc3234a33aa40d44ebce9c5b4ad26699",
+  "security": false
+ },
+ {
+  "ts": 1792461032.874003,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0007"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461034.169251,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0007",
+   "template": "payment_notice",
+   "to": "accounts@shatin-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461034.169344,
+  "actor": "finance_manager",
+  "kind": "approve",
+  "detail": {
+   "amount": 1835.78
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": "approved",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461034.16936,
+  "actor": "contract",
+  "kind": "pay_approved",
+  "detail": {
+   "amount": 1835.78,
+   "supplier": "SHATINPCB"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0007",
+  "input_hash": null,
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x68a80f9e36c98e34ea107862c888754816461735713c9b8b94c41afd37826dac",
+  "security": false
+ },
+ {
+  "ts": 1792461044.2041442,
+  "actor": "agent",
+  "kind": "message",
+  "detail": {
+   "supplier": "LIONROCK",
+   "class": "bank_change",
+   "injection_p": 0.9526
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792461050.8590238,
+  "actor": "agent",
+  "kind": "freeze_payee",
+  "detail": {
+   "supplier": "LIONROCK",
+   "reason": "Supplier message asks to change bank details"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": "frozen",
+  "tx_hash": "0x67e60be5be8560b3ad8fd860ded4b94997fec7ba4278eee7012d7b23bfb49095",
+  "security": true
+ },
+ {
+  "ts": 1792461051.987447,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0008",
+   "template": "bank_change_alert",
+   "to": "accounts@lion-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461051.9875681,
+  "actor": "agent",
+  "kind": "case_open",
+  "detail": {
+   "kind": "bank_change",
+   "case": "C-0003",
+   "message": "bank-detail change request",
+   "callback": "accounts@lion-hk.com"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": "open",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461052.497953,
+  "actor": "agent",
+  "kind": "email_unknown_sender",
+  "detail": {
+   "from": "accounts@acme-hk.co",
+   "injection_p": 0.2689
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792461077.588166,
+  "actor": "system",
+  "kind": "policy_block",
+  "detail": {
+   "tool": "pay_autonomous",
+   "reason": "payee must come from the registry, got ['supplier_msg']"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": "S1",
+  "decision": "blocked",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792461077.5883489,
+  "actor": "system",
+  "kind": "policy_block",
+  "detail": {
+   "tool": "pay_autonomous",
+   "reason": "payee must come from the registry, got ['supplier_msg']"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": "S1",
+  "decision": "blocked",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792461077.5884001,
+  "actor": "system",
+  "kind": "policy_block",
+  "detail": {
+   "tool": "pay_autonomous",
+   "reason": "payee must come from the registry, got ['supplier_msg']"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": "S1",
+  "decision": "blocked",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792461082.8739488,
+  "actor": "agent",
+  "kind": "pause_self",
+  "detail": {
+   "reason": "Circuit breaker: repeated blocked attempts"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": "paused",
+  "tx_hash": "0x9879eda572f4787de2098c38fb040aed050c93e209ee8ff0a5c868559bae854f",
+  "security": true
+ },
+ {
+  "ts": 1792461092.433747,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "SUN-251293",
+   "total": 902.8
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0008",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461103.495977,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T2",
+   "score": 0.2553,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Agent is paused: all bills go to a person"
+   ],
+   "amount": 902.8
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0008",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T2",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461108.715958,
+  "actor": "owner",
+  "kind": "unpause",
+  "detail": {},
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xb96f84abc8d3e503485a7bc63472dde88ea10f344e572544254b09b2314bde3e",
+  "security": false
+ },
+ {
+  "ts": 1792461118.331373,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "ACM-2512420",
+   "total": 1144.45
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461118.335666,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "ACM-2512421",
+   "total": 1487.79
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461118.340731,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "ACM-2512422",
+   "total": 1716.68
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461118.345386,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "ACM-2512412",
+   "total": 53800.12
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461118.345678,
+  "actor": "owner",
+  "kind": "request",
+  "detail": {
+   "text": "Pay the copper supplier"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461118.358369,
+  "actor": "agent",
+  "kind": "route",
+  "detail": {
+   "outcome": "missing_slot",
+   "intent_set": [
+    "PAY_SET"
+   ],
+   "slot_set": [],
+   "q_intent": 0.8087078500455813,
+   "q_slot": 0.0824921841962728
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461118.358515,
+  "actor": "owner",
+  "kind": "answer",
+  "detail": {
+   "question": "QQ-61118",
+   "choice": "ACME"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461129.610092,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.2714,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.271 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1144.45
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461140.773416,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.2921,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.292 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1487.79
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461151.305909,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3038,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.304 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1716.68
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461162.276285,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T2",
+   "score": 0.4218,
+   "cutoff": 0.3074,
+   "group": "price_change",
+   "reasons": [
+    "Copper rod: price +9.0% while the index justifies +0.6%",
+    "Amount $49,639.64 is above the per-payment cap $5,000",
+    "Risk score 0.422 is above the limit 0.307 for bills with a price change"
+   ],
+   "amount": 49639.64
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T2",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461162.276457,
+  "actor": "agent",
+  "kind": "draft_query",
+  "detail": {
+   "query": "Q-001",
+   "to": "accounts@acme-hk.com"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461163.60565,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0009",
+   "template": "query",
+   "to": "accounts@acme-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461163.6057441,
+  "actor": "agent",
+  "kind": "send_query",
+  "detail": {
+   "query": "Q-001",
+   "to": "accounts@acme-hk.com",
+   "email": "M-0009"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": "sent",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461163.607923,
+  "actor": "agent",
+  "kind": "plan_preview",
+  "detail": {
+   "intent": "PAY_SET",
+   "summary": "Pay Acme Metals (HK) Ltd: 3 bills for $4,348.92 on its own and 1 bill for $49,639.64 after the finance manager signs.",
+   "steps": 4
+  },
+  "plan_id": "P-0001",
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461168.888437,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 739595,
+   "root": "0x04d7b384b78db2fd8503f533710aadb230dc1526844c1405868c0d6083c91a70",
+   "lines": 72
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x686fb03c91cd08ae98f8e9622f6f2b277435738602f8ec603bf168e6213aea95",
+  "security": false
+ },
+ {
+  "ts": 1792461359.573571,
+  "actor": "owner",
+  "kind": "request",
+  "detail": {
+   "text": "Pay everything from Acme due this week except the disputed bill"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461359.584202,
+  "actor": "agent",
+  "kind": "route",
+  "detail": {
+   "outcome": "plan",
+   "intent_set": [
+    "PAY_SET"
+   ],
+   "slot_set": [
+    "ACME"
+   ],
+   "q_intent": 0.8087078500455813,
+   "q_slot": 0.0824921841962728
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461359.585384,
+  "actor": "agent",
+  "kind": "plan_preview",
+  "detail": {
+   "intent": "PAY_SET",
+   "summary": "Pay Acme Metals (HK) Ltd: 3 bills for $4,348.92 on its own.",
+   "steps": 4
+  },
+  "plan_id": "P-0002",
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461359.58555,
+  "actor": "owner",
+  "kind": "plan_run",
+  "detail": {
+   "intent": "PAY_SET",
+   "steps": 4
+  },
+  "plan_id": "P-0002",
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461375.448747,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0009"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461376.664663,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0010",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461376.664798,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 1144.45,
+   "supplier": "ACME",
+   "premium": 14.34
+  },
+  "plan_id": "P-0002",
+  "bill_id": "B-20251210-0009",
+  "input_hash": "0x516bd0717de415a93f66c901c2c19168b9bffff1f398db5cc8244d2a8d5e91ce",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0xfe6dfe282dddc5e5777076ec6692b9d66889838cbb690a860f022a2f2e1a20de",
+  "security": false
+ },
+ {
+  "ts": 1792461376.66486,
+  "actor": "agent",
+  "kind": "step_pay",
+  "detail": {
+   "n": 1,
+   "status": "done"
+  },
+  "plan_id": "P-0002",
+  "bill_id": "B-20251210-0009",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xfe6dfe282dddc5e5777076ec6692b9d66889838cbb690a860f022a2f2e1a20de",
+  "security": false
+ },
+ {
+  "ts": 1792461392.8632488,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0010"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461393.973858,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0011",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461393.973954,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 1487.79,
+   "supplier": "ACME",
+   "premium": 17.62
+  },
+  "plan_id": "P-0002",
+  "bill_id": "B-20251210-0010",
+  "input_hash": "0xa9f74ed4a62d71b0e160185db19d2bc3964bd94bf6f9217067603a15b4ddd0f5",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0xa29fcfe28eae8bc0cd73a167fe035a322bf9eab8cb92d4f61bb64f712f7a33d0",
+  "security": false
+ },
+ {
+  "ts": 1792461393.974008,
+  "actor": "agent",
+  "kind": "step_pay",
+  "detail": {
+   "n": 2,
+   "status": "done"
+  },
+  "plan_id": "P-0002",
+  "bill_id": "B-20251210-0010",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xa29fcfe28eae8bc0cd73a167fe035a322bf9eab8cb92d4f61bb64f712f7a33d0",
+  "security": false
+ },
+ {
+  "ts": 1792461408.839272,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0011"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461409.854507,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0012",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461409.854617,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 1716.68,
+   "supplier": "ACME",
+   "premium": 19.81
+  },
+  "plan_id": "P-0002",
+  "bill_id": "B-20251210-0011",
+  "input_hash": "0x42c6bd90ded10b554727872d4ee5b01c9aa3b41f032616c326ffc7ca0b74b258",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x72f9b2e3863d69421253bdd5b9dd7a950260fcccf635111bef8cc5dfc2028c3f",
+  "security": false
+ },
+ {
+  "ts": 1792461409.854752,
+  "actor": "agent",
+  "kind": "step_pay",
+  "detail": {
+   "n": 3,
+   "status": "done"
+  },
+  "plan_id": "P-0002",
+  "bill_id": "B-20251210-0011",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x72f9b2e3863d69421253bdd5b9dd7a950260fcccf635111bef8cc5dfc2028c3f",
+  "security": false
+ },
+ {
+  "ts": 1792461420.278877,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T2",
+   "score": 0.4218,
+   "cutoff": 0.3074,
+   "group": "price_change",
+   "reasons": [
+    "Copper rod: price +9.0% while the index justifies +0.6%",
+    "Amount $49,639.64 is above the per-payment cap $5,000",
+    "Risk score 0.422 is above the limit 0.307 for bills with a price change"
+   ],
+   "amount": 49639.64
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T2",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461420.730656,
+  "actor": "agent",
+  "kind": "reply",
+  "detail": {
+   "query": "Q-001",
+   "class": "credit_note",
+   "injection_p": 0.0759,
+   "fields": {
+    "credit_note": "CN-7781",
+    "amount": 4160.48
+   }
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461430.360381,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251210-0012"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461431.416597,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0013",
+   "template": "payment_notice",
+   "to": "accounts@acme-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461431.416708,
+  "actor": "finance_manager",
+  "kind": "approve",
+  "detail": {
+   "amount": 49639.64
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": "approved",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461431.416735,
+  "actor": "contract",
+  "kind": "pay_approved",
+  "detail": {
+   "amount": 49639.64,
+   "supplier": "ACME"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251210-0012",
+  "input_hash": null,
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x0c702976cd4bed9a10a9e4c3e6a79330169b626bd2eb06e6b1de4b190b21a1f5",
+  "security": false
+ },
+ {
+  "ts": 1792461431.4171891,
+  "actor": "owner",
+  "kind": "request",
+  "detail": {
+   "text": "Be more careful this month"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461431.425524,
+  "actor": "agent",
+  "kind": "route",
+  "detail": {
+   "outcome": "plan",
+   "intent_set": [
+    "SET_DIAL"
+   ],
+   "slot_set": [
+    "careful"
+   ],
+   "q_intent": 0.8087078500455813,
+   "q_slot": 0.0824921841962728
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461440.910291,
+  "actor": "agent",
+  "kind": "plan_preview",
+  "detail": {
+   "intent": "SET_DIAL",
+   "summary": "Switch to 'careful': loss budget 0.5%, about 14% paid alone, daily cap $10,000 / 3 payments, reserve K $88,363 (r $982 per payment). The owner signs.",
+   "steps": 1
+  },
+  "plan_id": "P-0003",
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461446.648643,
+  "actor": "owner",
+  "kind": "settings_proposed",
+  "detail": {
+   "bundle": "careful",
+   "mode": "bonded",
+   "r_usd": 981.81,
+   "p_day_usd": 10000,
+   "p_nday": 3
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x1d815ad80845857af997dcb430a0352e4e366a83e83dbbc20a2888a061c9ec3e",
+  "security": false
+ },
+ {
+  "ts": 1792461462.496662,
+  "actor": "contract",
+  "kind": "settings_active",
+  "detail": {
+   "settings_id": 1,
+   "bundle": "careful",
+   "mode": "bonded"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461487.3323321,
+  "actor": "owner",
+  "kind": "settings_proposed",
+  "detail": {
+   "bundle": "standard",
+   "mode": "standard",
+   "r_usd": 0.0,
+   "p_day_usd": 15000,
+   "p_nday": 5
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x5e58631a9f50e703ff0b5b0c38145d1e1e7e32f125513022faeedd411ccb6508",
+  "security": false
+ },
+ {
+  "ts": 1792461497.129374,
+  "actor": "contract",
+  "kind": "settings_active",
+  "detail": {
+   "settings_id": 2,
+   "bundle": "standard",
+   "mode": "standard"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461497.137619,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "VIC-251290",
+   "total": 1810.8
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461508.2227561,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3033,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.303 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1810.8
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461524.9661381,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251211-0013"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461526.180484,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0014",
+   "template": "payment_notice",
+   "to": "accounts@victoria-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0013",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461526.180622,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 1810.8,
+   "supplier": "VICPLATING",
+   "premium": 20.71
+  },
+  "plan_id": null,
+  "bill_id": "B-20251211-0013",
+  "input_hash": "0xb7013bceda1c3281e50bba97967bb2dc4fc51ef9a1b67cc86e3da0fbabd1ce4e",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0xd24866795c2cf2257870f3c801044943710760f64a7a35dd6040112187969b58",
+  "security": false
+ },
+ {
+  "ts": 1792461542.802679,
+  "actor": "owner",
+  "kind": "settings_proposed",
+  "detail": {
+   "bundle": "standard",
+   "mode": "bonded",
+   "r_usd": 414.94,
+   "p_day_usd": 15000,
+   "p_nday": 5
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xcd4a2ac10135c078b3e3b6e725e4a8bb57f0ee3d1c43fee39c1ecc424d388097",
+  "security": false
+ },
+ {
+  "ts": 1792461558.1527638,
+  "actor": "contract",
+  "kind": "settings_active",
+  "detail": {
+   "settings_id": 3,
+   "bundle": "standard",
+   "mode": "bonded"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461564.814015,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 739596,
+   "root": "0xd860d16c5501d96705e0792224046ec6f11985706704dcbcd093eef5846c5d99",
+   "lines": 109
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x7c4b942af1f08f8d74f04be2ac5c63e2525aef18abe38ca8f0907c114ce7121e",
+  "security": false
+ },
+ {
+  "ts": 1792461748.847784,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "KWO-2510101",
+   "total": 1700.91
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0014",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461759.874109,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3046,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.305 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1700.91
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0014",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461774.8466501,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251212-0014"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0014",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461776.17495,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0015",
+   "template": "payment_notice",
+   "to": "accounts@kwong-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0014",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461776.1750872,
+  "actor": "contract",
+  "kind": "pay_autonomous",
+  "detail": {
+   "amount": 1700.91,
+   "supplier": "KWONGFAT",
+   "premium": 19.66
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0014",
+  "input_hash": "0xabaef20d249f57791ea28f3fa05f569bb7fad376b688b62d5b3045579d6cb0b8",
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0x403b082133079452659f2fbad4c83ef4f8a33addad6600695812abd583e0b22f",
+  "security": false
+ },
+ {
+  "ts": 1792461776.1837409,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "KWO-2510138",
+   "total": 1721.16
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0015",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792461786.506481,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.3056,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.306 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1721.16
+  },
+  "plan_id": null,
+  "bill_id": "B-20251212-0015",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792462708.911857,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 739597,
+   "root": "0x2cfe55b807873be8e721d53a45a5d5467e64119d9bb842959bc62261c4a8cccf",
+   "lines": 117
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0x728ca87cbadf373d46994377b92b6c9a04c8d7b62945d66f4afdf40af7c7250d",
+  "security": false
+ },
+ {
+  "ts": 1792468053.3562539,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "MON-251291",
+   "total": 1317.81
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0016",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468053.362082,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "PEA-251292",
+   "total": 2104.21
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0017",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468053.366152,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "KAI-251294",
+   "total": 1091.42
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0018",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468053.366838,
+  "actor": "owner",
+  "kind": "request",
+  "detail": {
+   "text": "pay everything due this month"
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468053.379752,
+  "actor": "agent",
+  "kind": "route",
+  "detail": {
+   "outcome": "plan",
+   "intent_set": [
+    "PAY_SET"
+   ],
+   "slot_set": [
+    "ALL"
+   ],
+   "q_intent": 0.8087078500455813,
+   "q_slot": 0.0824921841962728
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468053.4292219,
+  "actor": "agent",
+  "kind": "intake",
+  "detail": {
+   "source": "e-invoice",
+   "inv_no": "HAR-2512044",
+   "total": 1088.52
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468065.0614028,
+  "actor": "governor",
+  "kind": "decision",
+  "detail": {
+   "tier": "T1",
+   "score": 0.2601,
+   "cutoff": 0.8426,
+   "group": "routine",
+   "reasons": [
+    "Checks passed; risk score 0.260 is within the limit 0.843 for routine bills"
+   ],
+   "amount": 1088.52
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T1",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468091.3874218,
+  "actor": "contract",
+  "kind": "revert",
+  "detail": {
+   "error": "PoolIsPaused"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": "T2",
+  "tx_hash": null,
+  "security": true
+ },
+ {
+  "ts": 1792468098.913107,
+  "actor": "agent",
+  "kind": "erp_payment",
+  "detail": {
+   "erp": "file",
+   "ref": "file:B-20251213-0019"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468100.413171,
+  "actor": "agent",
+  "kind": "email_sent",
+  "detail": {
+   "email": "M-0016",
+   "template": "payment_notice",
+   "to": "accounts@harbour-hk.com",
+   "via": "agentmail"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468100.4132018,
+  "actor": "finance_manager",
+  "kind": "approve",
+  "detail": {
+   "amount": 1088.52
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": "approved",
+  "tx_hash": null,
+  "security": false
+ },
+ {
+  "ts": 1792468100.4132118,
+  "actor": "contract",
+  "kind": "pay_approved",
+  "detail": {
+   "amount": 1088.52,
+   "supplier": "HARBOURLUBE"
+  },
+  "plan_id": null,
+  "bill_id": "B-20251213-0019",
+  "input_hash": null,
+  "policy": null,
+  "decision": "paid",
+  "tx_hash": "0xb79ef3b0313d655b807b455eebf839d2c9fd26ac4c44e499507de5445bb6ff88",
+  "security": false
+ },
+ {
+  "ts": 1792468118.6891782,
+  "actor": "agent",
+  "kind": "anchor",
+  "detail": {
+   "day": 20767,
+   "root": "0xddaa251d1dad7cb05bb8438b1873e9c457e2c6a56750fdf07e7c503b9cfde0f6",
+   "lines": 130
+  },
+  "plan_id": null,
+  "bill_id": null,
+  "input_hash": null,
+  "policy": null,
+  "decision": null,
+  "tx_hash": "0xdc49319fcbe830aa046b2c44f3874957c450caa2c164b04c869053a6e943fc9b",
+  "security": false
+ }
+]
