@@ -233,7 +233,7 @@ def upload_document_stream(file: UploadFile = File(...)):
         except (httpx.HTTPStatusError, httpx.TransportError) as e:
             yield ev("error", message=reader_error(e))
             return
-        yield ev("read", kind=kind, seconds=round(time.time() - t0, 1), read=read_json(read))
+        yield ev("read", kind=kind, seconds=round(time.time() - t0, 1), reader=read.reader or "e-invoice parser", read=read_json(read))
         yield ev("checking")
         with _lock:
             try:
@@ -271,7 +271,7 @@ def read_json(r) -> dict:
             "po_id": r.po_id, "date": r.date, "due_date": r.due_date, "terms": r.terms, "currency": r.currency,
             "lines": [{"item": l.item, "desc": l.desc, "unit": l.unit, "qty": l.qty, "price": l.price} for l in r.lines],
             "credit": r.credit, "total": r.total, "bank_account": r.bank_account, "confidence": r.confidence,
-            "text": r.raw_text}
+            "text": r.raw_text, "reader": r.reader}
 
 
 @app.get("/api/inbox")

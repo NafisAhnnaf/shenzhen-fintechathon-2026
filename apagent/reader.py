@@ -158,31 +158,69 @@ VLM_PROMPT = (
 class VLMReader:
     """OpenAI-compatible chat endpoint with image input and JSON-schema output. Isolated: no tools."""
 
-    def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
+    def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None,
+                 fallback: Optional["VLMReader"] = None):
         self.base_url = (base_url or os.environ.get("VLM_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")).rstrip("/")
         self.model = model or os.environ.get("VLM_MODEL", "qwen-vl-max")
         self.api_key = api_key or os.environ.get("VLM_API_KEY", "")
+        # A second provider, tried when the first is out of quota, down or refuses (VLM_FALLBACK_*).
+        if fallback is None and base_url is None and os.environ.get("VLM_FALLBACK_API_KEY"):
+            fallback = VLMReader(os.environ.get("VLM_FALLBACK_BASE_URL", "https://api.groq.com/openai/v1"),
+                                 os.environ.get("VLM_FALLBACK_MODEL", "qwen/qwen3.8-27b"), os.environ["VLM_FALLBACK_API_KEY"])
+        self.fallback = fallback
 
     def available(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key) or bool(self.fallback and self.fallback.available())
 
     def read_image(self, image_bytes: bytes, mime: str = "image/png") -> Read:
         return self.read_images([image_bytes], mime)
 
     def read_images(self, images: list[bytes], mime: str = "image/png") -> Read:
-        """All pages of one document in one call, so a credit on page 2 is read with the rest."""
+        """All pages of one document in one call, so a credit on page 2 is read with the rest.
+        If this provider fails (quota, outage, bad answer) and a fallback is set, the fallback reads it instead."""
         import httpx
 
-        content = [{"type": "text", "text": VLM_PROMPT}] + [
-            {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64.b64encode(img).decode()}"}}
-            for img in images]
+        if not self.api_key and self.fallback:
+            return self.fallback.read_images(images, mime)
+        try:
+            out = self._read(images, mime)
+            out.reader = self.model
+            return out
+        except (httpx.HTTPError, ValueError, KeyError, TypeError):
+            if not self.fallback:
+                raise
+            out = self.fallback.read_images(images, mime)
+            out.reader = f"{out.reader} (fallback)"
+            return out
+
+    def _read(self, images: list[bytes], mime: str) -> Read:
+        import httpx
+
+        pages = [{"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64.b64encode(img).decode()}"}}
+                 for img in images]
         body = {
             "model": self.model,
-            "messages": [{"role": "user", "content": content}],
+            "messages": [{"role": "user", "content": [{"type": "text", "text": VLM_PROMPT}] + pages}],
             "response_format": {"type": "json_schema", "json_schema": {"name": "invoice", "schema": READ_SCHEMA, "strict": True}},
             "temperature": 0,
         }
-        # Hosted models answer 429/503 when busy; retry a few times before giving up.
+        r = self._post(body)
+        if r.status_code == 400 and ("response_format" in r.text or "schema" in r.text):
+            # Some providers' strict mode rejects the open-ended confidence map: ask for plain JSON with the schema
+            # in the prompt instead. parse_vlm still checks the shape of whatever comes back.
+            prompt = f"{VLM_PROMPT}\nAnswer with one JSON object only, matching this JSON schema:\n{json.dumps(READ_SCHEMA)}"
+            body["messages"] = [{"role": "user", "content": [{"type": "text", "text": prompt}] + pages}]
+            body["response_format"] = {"type": "json_object"}
+            r = self._post(body)
+        r.raise_for_status()
+        text = r.json()["choices"][0]["message"]["content"]
+        text = text[text.find("{"): text.rfind("}") + 1]  # some models wrap JSON in prose or code fences
+        return parse_vlm(json.loads(text))
+
+    def _post(self, body: dict):
+        """Hosted models answer 429/503 when busy; retry a few times. A daily quota won't clear, so it isn't retried."""
+        import httpx
+
         for attempt in range(4):
             try:
                 r = httpx.post(f"{self.base_url}/chat/completions", json=body,
@@ -193,11 +231,22 @@ class VLMReader:
                 time.sleep(2 * (attempt + 1))
                 continue
             if r.status_code not in (429, 500, 502, 503, 504) or attempt == 3 or (r.status_code == 429 and "PerDay" in r.text):
-                break
-            time.sleep(2 * (attempt + 1))
-        r.raise_for_status()
-        d = json.loads(r.json()["choices"][0]["message"]["content"])
-        return parse_vlm(d)
+                return r
+            time.sleep(_wait_hint(r, 2 * (attempt + 1)))
+        return r
+
+
+def _wait_hint(r, default: float) -> float:
+    """Seconds the provider asks us to wait (Retry-After, or "try again in 18.66s"), capped at 30."""
+    import re
+
+    hint = r.headers.get("retry-after")
+    m = re.search(r"try again in ([0-9.]+)s", r.text)
+    try:
+        secs = float(hint) if hint else float(m.group(1)) if m else default
+    except ValueError:
+        secs = default
+    return min(30.0, max(default, secs))
 
 
 def parse_vlm(d: dict) -> Read:

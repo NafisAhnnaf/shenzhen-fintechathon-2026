@@ -150,3 +150,11 @@ Gaps found while writing the security self-assessment (section 10.4 there; none 
 - pdfium renders behind a lock: two PDFs rendered at once segfaulted the server.
 - Gemini free tier allows 20 requests a day per model. When the quota is used up the panel says so (a 429 shows a plain message). Switch `VLM_MODEL` to another model with its own quota (`gemini-3.5-flash-lite` was used for the last tests).
 - E2E: 13/13 tests pass, including an upload test that uses a JSON e-invoice so it spends no model quota.
+
+## 2026-10-20: vision reader fallback (Groq)
+
+- If the main reader fails (quota, outage, bad key, unreadable answer), `VLMReader` hands the bill to a fallback set by `VLM_FALLBACK_API_KEY` (and `VLM_FALLBACK_BASE_URL`, `VLM_FALLBACK_MODEL`; default Groq `qwen/qwen3.8-27b`). The panel shows which model read the bill ("… (fallback)").
+- Groq's strict JSON mode rejects our open-ended `confidence` map, so on a 400 about the schema the reader re-asks in plain JSON mode with the schema in the prompt. `parse_vlm` still validates the result.
+- Retries follow the provider's wait hint (Retry-After or "try again in Ns", capped at 30 s). The Groq free tier allows about 1,000 output tokens a minute, about 2 bills a minute.
+- Tested: with Gemini out of quota, Groq read t01, t02 and t07 exactly and each got the right decision. With flash-lite as the main reader, t16 was read in 2.5 s.
+- Start with `./run_api.sh`: it loads `.env` (gitignored; template in `.env.example`).

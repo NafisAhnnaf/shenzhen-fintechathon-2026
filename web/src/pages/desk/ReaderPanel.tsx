@@ -131,7 +131,7 @@ export function ReaderPanel({ file, onBill }: { file: File; onBill: (id: string)
           return (
             <li key={s} className={`badge ${cls}`}>
               {state === "active" ? <span className="spin dark" style={{ width: 12, height: 12 }} /> : state === "done" ? "✓" : state === "failed" ? "✕" : "○"}{" "}
-              {s === "reading" && got("reading") ? `Reading with ${got("reading")!.reader}` : label}
+              {s === "reading" && got("reading") ? `Reading with ${got("reading")!.reader}` : s === "read" && read?.reader ? `Read by ${read.reader}` : label}
             </li>
           );
         })}

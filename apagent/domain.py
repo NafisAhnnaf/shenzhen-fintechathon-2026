@@ -138,6 +138,7 @@ class Read:
     bank_account: str
     confidence: dict[str, float]
     raw_text: str = ""  # free text from the document; only the injection flag sees it
+    reader: str = ""  # which reader produced these fields (model name, or "e-invoice")
 
     @property
     def min_confidence(self) -> float:

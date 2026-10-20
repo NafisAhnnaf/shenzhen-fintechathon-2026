@@ -63,3 +63,58 @@ def test_statement_csv(demo_world):
 ])
 def test_reply_fields(text, want):
     assert extract_reply_fields(text) == want
+
+
+# ------------------------------------------------------------------ vision reader fallback
+def _vlm_answer(inv_no="FB-1"):
+    return {"inv_no": inv_no, "supplier_name": "S", "tax_id": "T", "sender_domain": "s.hk", "po_id": "PO-1", "date": "2025-12-01",
+            "due_date": "2025-12-31", "terms": "net30", "currency": "USD", "lines": [{"item": "X", "desc": "x", "unit": "pc", "qty": 2, "price": 3}],
+            "credit": 0, "total": 6, "bank_account": "", "confidence": {"total": 0.9}, "free_text": ""}
+
+
+class _Resp:
+    def __init__(self, code, body):
+        self.status_code, self.text, self.headers = code, json.dumps(body), {}
+
+    def json(self):
+        return json.loads(self.text)
+
+    def raise_for_status(self):
+        import httpx
+
+        if self.status_code >= 400:
+            raise httpx.HTTPStatusError(str(self.status_code), request=None, response=self)
+
+
+def test_reader_falls_back_when_the_first_provider_is_out_of_quota(monkeypatch):
+    import httpx
+
+    from apagent.reader import VLMReader
+
+    calls = []
+
+    def post(url, json=None, headers=None, timeout=None):
+        calls.append((url, json["response_format"]["type"]))
+        if "primary" in url:
+            return _Resp(429, {"error": "GenerateRequestsPerDay quota"})
+        if json["response_format"]["type"] == "json_schema":  # the fallback's strict mode refuses our schema
+            return _Resp(400, {"error": {"message": "invalid JSON schema for response_format"}})
+        return _Resp(200, {"choices": [{"message": {"content": "Here you go: " + __import__("json").dumps(_vlm_answer())}}]})
+
+    monkeypatch.setattr(httpx, "post", post)
+    monkeypatch.setattr("apagent.reader.time.sleep", lambda s: None)
+    r = VLMReader("https://primary/v1", "a", "k1", fallback=VLMReader("https://backup/v1", "b", "k2"))
+    out = r.read_images([b"img"])
+    assert out.inv_no == "FB-1" and out.total == 6
+    assert out.reader == "b (fallback)"
+    assert ("https://backup/v1/chat/completions", "json_object") in calls  # plain-JSON retry after the schema refusal
+
+
+def test_reader_without_fallback_raises(monkeypatch):
+    import httpx
+
+    from apagent.reader import VLMReader
+
+    monkeypatch.setattr(httpx, "post", lambda *a, **k: _Resp(401, {"error": "bad key"}))
+    with pytest.raises(httpx.HTTPStatusError):
+        VLMReader("https://primary/v1", "a", "k1").read_images([b"img"])
