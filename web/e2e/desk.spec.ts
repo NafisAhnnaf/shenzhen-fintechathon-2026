@@ -167,6 +167,29 @@ test.describe.serial("payables desk", () => {
     await page.screenshot({ path: `${SHOTS}/07-market.png`, fullPage: true });
   });
 
+  test("bank transfers: payment file, bank statement, and a debit nobody approved", async ({ page }) => {
+    await signIn(page, "finance manager");
+    await processDoc(page, "GAN-2512023");
+    const d = page.locator(".detail");
+    const approve = d.getByRole("button", { name: "Approve and sign" });
+    const paid = d.getByText("Paid", { exact: true }).first();
+    await expect(approve.or(paid).first()).toBeVisible({ timeout: 30_000 });
+    if (await approve.isVisible()) await approve.click();  // routine bills are paid by the agent alone
+    await expect(d.getByText("Paid", { exact: true }).first()).toBeVisible({ timeout: 30_000 });
+    await signIn(page, "owner");
+    await page.goto("/payments");
+    await page.getByRole("tab", { name: "Bank transfers" }).click();
+    const download = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Make payment file" }).click();
+    expect((await download).suggestedFilename()).toMatch(/^pain001-.*\.xml$/);
+    await expect(page.getByText(/Payment file .*: 1 transfer/)).toBeVisible();
+    await page.getByRole("button", { name: "…with an unapproved debit" }).click();
+    await expect(page.getByText(/1 payment\(s\) confirmed, 1 debit\(s\) outside the desk/)).toBeVisible();
+    await expect(page.getByText(/left the bank account without an approval/)).toBeVisible();
+    await expect(page.getByText("All booked")).toBeVisible();
+    await page.screenshot({ path: `${SHOTS}/10-bank.png`, fullPage: true });
+  });
+
   test("phone width", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await signIn(page, "finance manager");

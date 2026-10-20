@@ -116,6 +116,14 @@ class Chain:
                         return name
         return msg[:200]
 
+    def _nonce(self, address: str) -> int:
+        """The next nonce for `address`. Public RPCs sit behind load balancers, so "latest" can lag a transaction we
+        just saw mined; take the pending count and never go below the last nonce this process used."""
+        used = self.__dict__.setdefault("_nonces", {})
+        n = max(self.w3.eth.get_transaction_count(address, "pending"), used.get(address, -1) + 1)
+        used[address] = n
+        return n
+
     def send(self, role: str, fn, allow_revert_tx: bool = False) -> TxResult:
         """Sign and send a transaction as `role`. Reverts are caught at simulation time unless
         allow_revert_tx is set, in which case a failing transaction is mined to produce a public revert hash."""
@@ -127,7 +135,7 @@ class Chain:
             if not allow_revert_tx:
                 return TxResult(False, None, reason)
             gas = 400_000
-            tx = fn.build_transaction({"from": acct.address, "nonce": self.w3.eth.get_transaction_count(acct.address),
+            tx = fn.build_transaction({"from": acct.address, "nonce": self._nonce(acct.address),
                                        "gas": gas, "chainId": self.chain_id, **self._fees()})
             raw = acct.sign_transaction(tx)
             try:
@@ -138,9 +146,13 @@ class Chain:
                 return TxResult(False, txh or "0x" + raw.hash.hex().removeprefix("0x"), reason)
             rc = self.w3.eth.wait_for_transaction_receipt(h, timeout=180)
             return TxResult(False, "0x" + h.hex().removeprefix("0x"), reason, rc.blockNumber)
-        tx = fn.build_transaction({"from": acct.address, "nonce": self.w3.eth.get_transaction_count(acct.address),
+        tx = fn.build_transaction({"from": acct.address, "nonce": self._nonce(acct.address),
                                    "gas": int(gas * 1.3) + 20_000, "chainId": self.chain_id, **self._fees()})
-        h = self.w3.eth.send_raw_transaction(acct.sign_transaction(tx).raw_transaction)
+        try:
+            h = self.w3.eth.send_raw_transaction(acct.sign_transaction(tx).raw_transaction)
+        except Exception:
+            self._nonces[acct.address] = tx["nonce"] - 1  # not accepted: the nonce is free again
+            raise
         rc = self.w3.eth.wait_for_transaction_receipt(h, timeout=180)
         hx = "0x" + h.hex().removeprefix("0x")
         return TxResult(rc.status == 1, hx, None if rc.status == 1 else "reverted", rc.blockNumber)

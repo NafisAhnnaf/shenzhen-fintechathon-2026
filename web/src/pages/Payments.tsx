@@ -5,15 +5,16 @@ import { PAYER, date, money, pct } from "../lib/format";
 import { useAction, useCan } from "../lib/hooks";
 import { useStateToday } from "../components/BillDetail";
 import { VerifyButton } from "../components/Verify";
+import BankTransfers from "../components/BankTransfers";
 import { Empty, ErrorLine, Hash, Money, PageHead, PaidBy, PeriodPicker, Tabs, downloadCsv, periodBounds, useRemembered, type Period } from "../components/ui";
 
 export default function Payments() {
-  const [tab, setTab] = useRemembered<"register" | "upcoming">("payments-tab", "register");
+  const [tab, setTab] = useRemembered<"register" | "upcoming" | "bank">("payments-tab", "register");
   return (
     <>
       <PageHead title="Payments" sub="Every payment, who made it, and its on-chain record." />
-      <Tabs value={tab} onChange={setTab} items={[["register", "Paid"], ["upcoming", "Upcoming and offers"]]} />
-      {tab === "register" ? <Register /> : <Upcoming />}
+      <Tabs value={tab} onChange={setTab} items={[["register", "Paid"], ["upcoming", "Upcoming and offers"], ["bank", "Bank transfers"]]} />
+      {tab === "register" ? <Register /> : tab === "bank" ? <BankTransfers /> : <Upcoming />}
     </>
   );
 }

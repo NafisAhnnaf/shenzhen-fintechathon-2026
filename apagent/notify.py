@@ -28,6 +28,9 @@ RULES: dict[str, tuple[str, str, Callable]] = {
     "policy_block": ("owner", "alert", lambda l: f"Blocked by policy {l.policy}: {l.detail.get('reason')}"),
     "mailbox_error": ("owner", "alert", lambda l: "The mailbox could not be read"),
     "erp_payment_failed": ("finance_manager", "alert", lambda l: f"Payment for {l.bill_id} could not be posted to the ERP"),
+    "paid_outside_system": ("owner", "alert",
+                            lambda l: f"${l.detail.get('amount', 0):,.2f} left the bank account on {l.detail.get('booked')} "
+                                      f"to {l.detail.get('supplier')} without an approval in the desk"),
 }
 
 

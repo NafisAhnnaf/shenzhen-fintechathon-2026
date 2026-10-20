@@ -655,6 +655,76 @@ if float(os.environ.get("MAILBOX_POLL_SECONDS", "0") or 0) > 0:
     threading.Thread(target=_poll_forever, args=(float(os.environ["MAILBOX_POLL_SECONDS"]),), daemon=True).start()
 
 
+# ------------------------------------------------------------------ bank payment files and statements (spec M1, M2)
+def _bank():
+    from .bankfiles import BankDesk
+    return BankDesk(S().agent)
+
+
+def _company_account() -> str:
+    # The company's own account the transfers are paid from (the sample company's is illustrative).
+    return os.environ.get("COMPANY_BANK_ACCOUNT", "HSBC 400-123456-001")
+
+
+@app.get("/api/bank-files", dependencies=[ANY])
+def bank_files():
+    """Approved bank transfers waiting for a file, the files made, what the bank has booked, and debits that match
+    nothing the desk approved."""
+    with _lock:
+        return _ok({**_bank().summary(), "account": _company_account()})
+
+
+@app.post("/api/bank-files")
+@mutating
+def make_bank_file(u: A.User = STAFF):
+    """Write the waiting transfers into an ISO 20022 pain.001 file for the bank portal."""
+    return _bank().make_file(ROUTER_ROLE.get(u.role, "owner") if u.role != "*" else "owner", _company_account())
+
+
+@app.get("/api/bank-files/{file_id}.xml", dependencies=[STAFF])
+def bank_file_xml(file_id: str):
+    try:
+        xml = _bank().file_xml(file_id, _company_account())
+    except KeyError:
+        raise HTTPException(404, "no such payment file")
+    return Response(xml, media_type="application/xml",
+                    headers={"content-disposition": f'attachment; filename="pain001-{file_id}.xml"'})
+
+
+@app.post("/api/bank-statements", dependencies=[INTAKE])
+@mutating
+def bank_statement(file: UploadFile = File(...)):
+    """The bank's camt.053 end-of-day statement: each debit is matched to a payment the desk approved."""
+    from .bankfiles import BadStatement
+    try:
+        return _bank().import_statement("system", file.file.read())
+    except BadStatement as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/demo/bank-statement/{file_id}", dependencies=[DEMO])
+@mutating
+def demo_bank_statement(file_id: str, outside: bool = False):
+    """Demo bank (local chain only): book a payment file the way a bank statement would, optionally with one debit
+    nobody approved, then import it. A real bank sends this file itself."""
+    from .bankfiles import camt053
+    b = _bank()
+    batch = next((x for x in b.batches if x["id"] == file_id), None)
+    if batch is None:
+        raise HTTPException(404, "no such payment file")
+    day = S().led.today
+    entries = [{"amount": p["amount"], "direction": "debit", "booked": day, "end_to_end": p["bill"],
+                "counterparty": p["creditor"], "account": p["account"], "remittance": p["reference"],
+                "bank_ref": f"BK{file_id}{i:03d}"} for i, p in enumerate(batch["payments"], 1)]
+    if outside:
+        sup = next(s for s in S().led.suppliers.values() if s.rail == "bank" and s.bank_account)
+        entries.append({"amount": 4870.00, "direction": "debit", "booked": day, "end_to_end": "",
+                        "counterparty": sup.name, "account": sup.bank_account, "remittance": "Manual transfer",
+                        "bank_ref": f"BK{file_id}X01"})
+    xml = camt053(_company_account(), entries, f"STMT-{file_id}", day)
+    return b.import_statement("system", xml.encode())
+
+
 # ------------------------------------------------------------------ statements, cases, claims
 @app.post("/api/statements/{supplier_id}", dependencies=[INTAKE])
 @mutating
