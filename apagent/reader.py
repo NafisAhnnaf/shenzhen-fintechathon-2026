@@ -195,10 +195,17 @@ class VLMReader:
         }
         url, headers = f"{self.base_url}/chat/completions", {"Authorization": f"Bearer {self.api_key}"}
 
+        fallback_model = os.environ.get("VLM_FALLBACK_MODEL", "gemini-3.5-flash-lite" if "generativelanguage" in self.base_url else "")
+
         def post():
-            # Free tiers answer 429/503 when busy (the limit is per minute); back off, honouring Retry-After.
-            for wait in (3, 10, 20, 30, 0):
+            # Free tiers answer 429/503 when busy. A per-minute limit: back off, honouring Retry-After. A used-up
+            # daily allowance: switch to the fallback model (its own allowance) instead of waiting hours.
+            for wait in (3, 10, 20, 0):
                 r = httpx.post(url, json=body, headers=headers, timeout=90)
+                if r.status_code == 429 and fallback_model and body["model"] != fallback_model \
+                        and ("RESOURCE_EXHAUSTED" in r.text or "per day" in r.text.lower()):
+                    body["model"] = fallback_model
+                    r = httpx.post(url, json=body, headers=headers, timeout=90)
                 if r.status_code not in (429, 500, 503) or not wait:
                     return r
                 try:

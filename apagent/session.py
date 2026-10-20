@@ -320,13 +320,18 @@ class Session:
                     "you want done, for example \"pay Acme's bills due this week\".", "p": inj["p"]}
         self.agent.log.add(role, "request", {"text": text})
         r = self.router.route(text, self.request_state(), role)
+        d = self.router.decider
+        reader = {"decider": getattr(d, "last", d.name), "model": getattr(getattr(d, "primary", None), "model", None),
+                  "fallback": getattr(d, "last", d.name) != d.name, "provisional_calibration": getattr(self.router, "provisional", False)}
+        if reader["fallback"]:
+            reader["error"] = getattr(d, "error", None)
         self.agent.log.add("agent", "route", {"outcome": r.outcome, "intent_set": r.intent_set, "slot_set": r.slot_set,
-                                              "q_intent": self.router.q_intent, "q_slot": self.router.q_slot})
+                                              "q_intent": self.router.q_intent, "q_slot": self.router.q_slot, "reader": reader})
         if r.outcome != "plan":
             qid = f"QQ-{len(self.pending) + int(time.time()) % 100000:05d}"
             self.pending[qid] = r
-            return {"kind": "question", "id": qid, "route": r.to_json()}
-        return self._plan(r)
+            return {"kind": "question", "id": qid, "route": r.to_json(), "reader": reader}
+        return {**self._plan(r), "reader": reader}
 
     def answer(self, qid: str, choice: str) -> dict:
         """The user taps one button. Intent questions pick the intent; slot questions pick the value."""

@@ -226,7 +226,9 @@ class LLMDecider:
         key = api_key if api_key is not None else (os.environ.get("LLM_API_KEY") or gemini_key or "")
         is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("LLM_API_KEY"))
         default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-        default_model = "gemini-3.6-flash" if is_gemini else "qwen-plus"
+        # The request reader makes small, frequent calls that pick from a fixed list: the lite model is enough, and
+        # its free allowance is separate from the one the invoice reader uses.
+        default_model = "gemini-3.5-flash-lite" if is_gemini else "qwen-plus"
 
         self.base_url = (base_url or os.environ.get("LLM_BASE_URL", default_base_url)).rstrip("/")
         self.model = model or os.environ.get("LLM_MODEL", default_model)
@@ -245,7 +247,7 @@ class LLMDecider:
         prompt = (f"Choose the {schema.name} for this request from the options. Return a probability for every option; "
                   f"they must sum to 1.\nRequest: {state['text']}\nContext (trusted): {json.dumps(ctx)[:6000]}")
         import time as _t
-        for wait in (3, 10, 20, 30, 0):  # free tiers limit requests per minute
+        for wait in (2, 6, 0):  # a short back-off for per-minute limits; after that the rules answer (FallbackDecider)
             r = httpx.post(f"{self.base_url}/chat/completions", timeout=60,
                            headers={"Authorization": f"Bearer {self.api_key}"},
                            json={"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": prompt}],
@@ -347,11 +349,39 @@ class JevDecider:
         return {k: v / z for k, v in p.items()}
 
 
+class FallbackDecider:
+    """The model first; if it fails (no answer, rate limit, outage), the rule decider answers instead, so a request
+    is never lost to the model being busy. `last` says which one answered the latest question."""
+
+    def __init__(self, primary, backup):
+        self.primary, self.backup = primary, backup
+        self.name = primary.name
+        self.last = primary.name
+        self.fallbacks = 0
+        self.error: Optional[str] = None
+
+    def available(self) -> bool:
+        return True
+
+    def decide(self, schema: Schema, state: dict) -> dict[str, float]:
+        try:
+            out = self.primary.decide(schema, state)
+            self.last, self.error = self.primary.name, None
+            return out
+        except Exception as e:  # noqa: BLE001 - any model failure falls back to the rules
+            self.fallbacks += 1
+            self.last, self.error = self.backup.name, f"{type(e).__name__}: {str(e)[:120]}"
+            return self.backup.decide(schema, state)
+
+
 def default_decider():
-    choice = os.environ.get("DECIDER", "rules")
+    """DECIDER=llm (the default when a model key is set), jev, or rules. A model decider falls back to the rules."""
+    load_env()
+    has_key = bool(os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key"))
+    choice = os.environ.get("DECIDER") or ("llm" if has_key else "rules")
     for backend in (JevDecider, LLMDecider):
         if choice == backend.name and backend().available():
-            return backend()
+            return FallbackDecider(backend(), RuleDecider())
     return RuleDecider()
 
 

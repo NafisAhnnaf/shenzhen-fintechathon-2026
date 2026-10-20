@@ -23,7 +23,11 @@ from . import decide as D
 from .catalogue import CATALOGUE, INTENTS, WHAT_IT_CAN_DO
 from .requests_data import R, request_state, split
 
-QHAT_FILE = DATA_DIR / "intent_qhat.json"
+QHAT_FILE = DATA_DIR / "intent_qhat.json"  # the rule decider's calibration
+
+
+def qhat_file(name: str):
+    return QHAT_FILE if name == "rules" else DATA_DIR / f"intent_qhat_{name}.json"
 
 
 def slot_options(slot: str, state: dict) -> list[str]:
@@ -91,28 +95,50 @@ class Router:
         return out
 
     def save(self) -> None:
-        QHAT_FILE.write_text(json.dumps({"q_intent": self.q_intent, "q_slot": self.q_slot,
-                                         "alpha_intent": self.alpha_intent, "alpha_slot": self.alpha_slot,
-                                         "decider": self.decider.name}))
+        qhat_file(self.decider.name).write_text(json.dumps({
+            "q_intent": self.q_intent, "q_slot": self.q_slot, "alpha_intent": self.alpha_intent,
+            "alpha_slot": self.alpha_slot, "decider": self.decider.name}))
 
     @staticmethod
     def load(decider=None) -> "Router":
         r = Router(decider or D.default_decider())
-        if QHAT_FILE.exists():
-            d = json.loads(QHAT_FILE.read_text())
-            if d.get("decider") == r.decider.name:
-                r.q_intent, r.q_slot = d["q_intent"], d["q_slot"]
-                return r
+        r.q_by = {}
+        rules = qhat_file("rules")
+        if rules.exists():
+            d = json.loads(rules.read_text())
+            r.q_by["rules"] = (d["q_intent"], d["q_slot"])
+        if isinstance(r.decider, D.FallbackDecider):
+            f = qhat_file(r.decider.name)
+            if f.exists():
+                d = json.loads(f.read_text())
+                r.q_by[r.decider.name] = (d["q_intent"], d["q_slot"])
+                r.provisional = False
+            else:
+                # Not calibrated on the model yet (python -m apagent.intent.calibrate_llm does it, about 100 model
+                # calls): use the rule decider's thresholds until then, and say so.
+                r.q_by[r.decider.name] = r.q_by.get("rules", (1.0, 1.0))
+                r.provisional = True
+            r.q_intent, r.q_slot = r.q_by[r.decider.name]
+            return r
+        if "rules" in r.q_by and r.decider.name == "rules":
+            r.q_intent, r.q_slot = r.q_by["rules"]
+            return r
         r.calibrate(split()[0], request_state())
         r.save()
         return r
+
+    def _q(self) -> tuple[float, float]:
+        """Thresholds for whichever decider answered (the model, or the rules when it fell back)."""
+        last = getattr(self.decider, "last", self.decider.name)
+        return getattr(self, "q_by", {}).get(last, (self.q_intent, self.q_slot))
 
     # ------------------------------------------------------------------ routing
     def route(self, text: str, state: dict, role: str = "owner") -> Route:
         check_router_input(state)  # S8: trusted state only, never raw supplier text
         st = {**state, "text": text}
         pi = self.decider.decide(D.Schema("intent", INTENTS), st)
-        iset = sorted([k for k, p in pi.items() if p >= 1 - self.q_intent], key=lambda k: -pi[k])
+        q_intent = self._q()[0]
+        iset = sorted([k for k, p in pi.items() if p >= 1 - q_intent], key=lambda k: -pi[k])
         window, excl, topic = D.window_of(text), D.exclusions_of(text), D.topic_of(text)
         base = dict(text=text, intent_probs=pi, window=window, exclusions=excl, topic=topic)
         supported = [i for i in iset if i != "UNSUPPORTED"]
@@ -135,7 +161,7 @@ class Router:
         opts = slot_options(spec.key_slot, state)
         ps = self.decider.decide(D.Schema(spec.key_slot, opts), st)
         evidence = bool(ps) and max(ps.values()) > 1.0 / len(opts) + 1e-9
-        sset = sorted([k for k, p in ps.items() if p >= 1 - self.q_slot], key=lambda k: -ps[k]) if evidence else []
+        sset = sorted([k for k, p in ps.items() if p >= 1 - self._q()[1]], key=lambda k: -ps[k]) if evidence else []
         if not sset:
             if spec.required:
                 top = sorted(ps, key=lambda k: -ps[k])[:3] if evidence else []
