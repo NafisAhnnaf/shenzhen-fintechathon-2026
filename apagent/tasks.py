@@ -166,7 +166,7 @@ class Runner:
             ev.add("manager confirms with one tap", "finance_manager", {k: v for k, v in out.items() if k != "claim"},
                    (out.get("receivable_tx") or {}).get("tx_hash"))
             ev.add("claim filed with the manager's signature", "agent", out.get("claim"), (out.get("claim") or {}).get("tx_hash"))
-            self.ch.advance(121)
+            self.ch.advance(int(self.ch.dep.get("params", {}).get("disputeTime", 120)) + 1)  # the bank's dispute time
             pay = self.ag.execute_claim(r["bill"])
             ev.add("reserve repays the company", "contract", pay, pay.get("tx_hash"))
             return pay["ok"] and out["cutoff"]["after"] < out["cutoff"]["before"] and out["probation"]["probation_left"] > 0

@@ -16,6 +16,9 @@ for _k in ("GEMINI_API_KEY", "gemini_api_key", "LLM_API_KEY", "VLM_API_KEY", "TY
     os.environ[_k] = ""
 os.environ["INJECTION_MODEL"] = "off"
 os.environ["FX_SOURCE"] = "off"
+os.environ["ERP"] = "file"  # the sample company the tests are written for, whatever .env connects to
+os.environ["DECIDER"] = "rules"
+os.environ["LOGIN"] = "wallet"  # tests that need email sign-in turn it on themselves (test_identity)
 os.environ["STATE_STORE"] = "file"
 os.environ.setdefault("APP_SECRET", "test-secret")
 

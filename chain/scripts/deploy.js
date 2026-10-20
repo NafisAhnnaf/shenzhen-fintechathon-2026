@@ -25,9 +25,11 @@ const DAY_SECONDS = REAL_TIME ? Number(process.env.DEMO_DAY_SECONDS || 180) : 86
 
 const DEMO = {
   pCap: usd(P ? P.pCapUsd : 5000), // P-CAP
-  coolDown: REAL_TIME ? 60 : 300, // P-COOL (shorter where time cannot be moved forward)
-  window: 300, // P-WINDOW
-  disputeTime: 120, // P-DISPUTE
+  // Where time cannot be moved forward the windows are short; COOL_DOWN_SECONDS, WINDOW_SECONDS and
+  // DISPUTE_SECONDS shorten them further for a quick evidence run.
+  coolDown: REAL_TIME ? Number(process.env.COOL_DOWN_SECONDS || 60) : 300, // P-COOL
+  window: REAL_TIME ? Number(process.env.WINDOW_SECONDS || 300) : 300, // P-WINDOW
+  disputeTime: REAL_TIME ? Number(process.env.DISPUTE_SECONDS || 120) : 120, // P-DISPUTE
   vaultFunds: usd(P ? P.vaultUsd : 500000),
   poolFunds: usd(P ? P.poolUsd : 70000),
   bundle: P
