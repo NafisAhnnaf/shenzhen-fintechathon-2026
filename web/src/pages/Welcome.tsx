@@ -125,7 +125,7 @@ export function AcceptInvitation() {
   if (inv.error)
     return (
       <Card title="This invitation cannot be used" sub={`It may have expired, been cancelled, or been sent to another address than ${me.email}.`}>
-        <button className="btn" onClick={() => nav("/")}>Continue</button>
+        <button className="btn" onClick={() => nav("/bills")}>Continue</button>
       </Card>
     );
   if (!inv.data) return <Card title="Invitation"><span className="spin" /></Card>;
@@ -139,7 +139,7 @@ export function AcceptInvitation() {
         await auth.setActive(i.organizationId);
       } else await auth.rejectInvitation(i.id);
       await qc.invalidateQueries();
-      nav("/", { replace: true });
+      nav("/bills", { replace: true });
     } catch (e) {
       setErr(e);
     } finally {
