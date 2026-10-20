@@ -323,6 +323,14 @@ class Session:
             return {"kind": "refused", "reason": "This reads like instructions to the AI rather than a task. Say what "
                     "you want done, for example \"pay Acme's bills due this week\".", "p": inj["p"]}
         self.agent.log.add(role, "request", {"text": text})
+        from .intent.decide import FallbackDecider
+        d = self.router.decider
+        if isinstance(d, FallbackDecider):  # the model plans with tools; the rule router answers if it fails
+            from .intent.agentic import ToolAgent
+            try:
+                return self._agent_reply(ToolAgent(self, d.primary).run(text, role), text, role, d.primary.model)
+            except Exception as e:  # noqa: BLE001 - any model failure: the rule router
+                self.agent.log.add("agent", "agent_fallback", {"error": f"{type(e).__name__}: {str(e)[:160]}"})
         r = self.router.route(text, self.request_state(), role)
         d = self.router.decider
         reader = {"decider": getattr(d, "last", d.name), "model": getattr(getattr(d, "primary", None), "model", None),
@@ -337,10 +345,39 @@ class Session:
             return {"kind": "question", "id": qid, "route": r.to_json(), "reader": reader}
         return {**self._plan(r), "reader": reader}
 
+    def _agent_reply(self, out: dict, text: str, role: str, model: str) -> dict:
+        """The tool agent's result in the shape the desk shows: a plan preview, a question, or an answer."""
+        tools = [t["tool"] for t in out.get("trace", [])]
+        reader = {"decider": "agent", "model": model, "fallback": False, "tools": tools}
+        self.agent.log.add("agent", "agent_tools", {"tools": tools, "outcome": out["kind"]})
+        if out["kind"] == "plan":
+            return {**self._plan(out["route"]), "reader": {**reader, "why": out.get("why", "")}}
+        if out["kind"] == "question":
+            qid = f"QQ-{len(self.pending) + int(time.time()) % 100000:05d}"
+            self.pending[qid] = {"agent": out["messages"], "text": text, "role": role}
+            return {"kind": "question", "id": qid, "reader": reader,
+                    "route": {"text": text, "outcome": "ask", "question": {"kind": "agent", "text": out["question"],
+                                                                          "options": out["options"]}}}
+        self.agent.log.add("agent", "agent_answer", {"chars": len(out["text"])})
+        return {"kind": "answer", "text": out["text"], "reader": reader, "route": {"text": text, "outcome": "answer"}}
+
     def answer(self, qid: str, choice: str) -> dict:
-        """The user taps one button. Intent questions pick the intent; slot questions pick the value."""
+        """The user taps one button. Intent questions pick the intent; slot questions pick the value; the agent's
+        own questions go back to the agent with the choice."""
         from .intent.catalogue import CATALOGUE
 
+        pend = self.pending.get(qid)
+        if isinstance(pend, dict) and "agent" in pend:
+            from .intent.agentic import ToolAgent
+            from .intent.decide import FallbackDecider
+            self.pending.pop(qid)
+            self.agent.log.add(pend["role"], "answer", {"question": qid, "choice": choice})
+            d = self.router.decider
+            if isinstance(d, FallbackDecider):
+                msgs = pend["agent"] + [{"role": "user", "content": f"I mean: {choice}"}]
+                return self._agent_reply(ToolAgent(self, d.primary).run(pend["text"], pend["role"], msgs),
+                                         pend["text"], pend["role"], d.primary.model)
+            return self.request(f"{pend['text']} ({choice})", pend["role"])
         r = self.pending.pop(qid)
         if r.question["kind"] == "intent":
             r.intent, r.intent_set = choice, [choice]

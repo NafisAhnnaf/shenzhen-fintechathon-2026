@@ -67,6 +67,16 @@ export function AskAgent() {
           {reply?.kind === "question" && <QuestionView reply={reply} onChoose={(c) => answer.mutate(c)} busy={answer.isPending} onExample={(t) => { setText(t); ask.mutate(t); }} />}
           {reply?.kind === "plan" && reply.plan && <PlanView initial={reply.plan} onDone={() => undefined} />}
           {reply?.kind === "refused" && <p className="warn" style={{ marginTop: 10 }}>{reply.reason}</p>}
+          {reply?.kind === "answer" && <p style={{ marginTop: 10, whiteSpace: "pre-wrap" }}>{reply.text}</p>}
+          {reply?.reader && (
+            <p className="note small" style={{ marginTop: 8 }}>
+              {reply.reader.decider === "agent"
+                ? `Read by ${reply.reader.model}${reply.reader.tools?.length ? `; looked at: ${[...new Set(reply.reader.tools.filter((t) => t !== "propose_action" && t !== "ask_user"))].map((t) => t.replace(/_/g, " ")).join(", ") || "nothing"}` : ""}. Nothing runs until you press Run.`
+                : reply.reader.fallback
+                  ? "The AI was unavailable; the rule reader answered."
+                  : "Read by the rule reader."}
+            </p>
+          )}
           <ErrorLine error={ask.error || answer.error} />
         </div>
       )}

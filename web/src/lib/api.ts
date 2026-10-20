@@ -213,8 +213,10 @@ export interface Plan {
 }
 
 export interface RouteReply {
-  kind: "question" | "plan" | "refused";
+  kind: "question" | "plan" | "refused" | "answer";
   reason?: string;
+  text?: string;
+  reader?: { decider: string; model?: string | null; fallback?: boolean; tools?: string[]; why?: string };
   id?: string;
   plan?: Plan;
   route?: { text: string; outcome: string; question?: { kind: string; text: string; slot?: string; options?: any[]; examples?: string[] } };
