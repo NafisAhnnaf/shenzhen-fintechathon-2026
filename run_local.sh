@@ -76,6 +76,16 @@ if [ -n "$BETTER_AUTH_SECRET" ] && [ -n "$DATABASE_URL" ]; then
   (cd auth && node server.mjs --migrate)
   echo "[+] Starting Better Auth service on 127.0.0.1:$AUTH_PORT..."
   (cd auth && node server.mjs) &
+  echo "    Waiting for Better Auth service..."
+  for i in $(seq 1 30); do
+    if curl -s "http://127.0.0.1:$AUTH_PORT/health" > /dev/null 2>&1; then
+      echo "    [+] Better Auth service is ready."
+      break
+    fi
+    sleep 0.2
+  done
+else
+  echo "[!] Warning: BETTER_AUTH_SECRET or DATABASE_URL not set; skipping Better Auth login service."
 fi
 
 # 5. Start API & Web Desk (port 8000)
