@@ -70,8 +70,10 @@ class OdooAdapter:
         partners = self.x("res.partner", "search_read", [["supplier_rank", ">", 0]],
                           fields=["id", "ref", "name", "vat", "email", "country_id", "bank_ids"])
         pid_to_sid = {p["id"]: (p["ref"] or f"ODOO{p['id']}") for p in partners}
-        banks = {b["id"]: b["acc_number"] for b in self.x("res.partner.bank", "search_read",
-                                                          [["partner_id", "in", list(pid_to_sid)]], fields=["acc_number"])}
+        bank_fields = self.x("res.partner.bank", "fields_get", [], {"attributes": ["type"]})
+        acc_field = "account_number" if "account_number" in bank_fields else "acc_number"
+        banks = {b["id"]: b[acc_field] for b in self.x("res.partner.bank", "search_read",
+                                                          [["partner_id", "in", list(pid_to_sid)]], fields=[acc_field])}
         countries = {c["id"]: c["code"] for c in self.x("res.country", "search_read", [["id", "in", [p["country_id"][0] for p in partners if p["country_id"]]]], fields=["code"])}
         sups = []
         for p in partners:
@@ -127,9 +129,23 @@ class OdooAdapter:
         for bl in bill_lines:
             po_name, item = line_item[bl["purchase_line_id"][0]]
             billed[f"{po_name}|{item}"] += bl["quantity"]
-        groups = self.x("account.move", "read_group", [["move_type", "=", "in_invoice"], ["state", "=", "posted"],
-                                                       ["partner_id", "in", list(pid_to_sid)]], ["partner_id"], ["partner_id"])
-        counts = {pid_to_sid[g["partner_id"][0]]: g["partner_id_count"] for g in groups if g["partner_id"]}
+        counts = {}
+        try:
+            groups = self.x("account.move", "read_group", [["move_type", "=", "in_invoice"], ["state", "=", "posted"],
+                                                           ["partner_id", "in", list(pid_to_sid)]], ["partner_id"], ["partner_id"])
+            counts = {pid_to_sid[g["partner_id"][0]]: g.get("partner_id_count", 1) for g in groups if g.get("partner_id")}
+        except Exception:
+            # Odoo 20+ fallback: count posted moves directly per partner
+            try:
+                moves = self.x("account.move", "search_read", [["move_type", "=", "in_invoice"], ["state", "=", "posted"],
+                                                               ["partner_id", "in", list(pid_to_sid)]], fields=["partner_id"])
+                for m in moves:
+                    if m.get("partner_id"):
+                        sid = pid_to_sid.get(m["partner_id"][0])
+                        if sid:
+                            counts[sid] = counts.get(sid, 0) + 1
+            except Exception:
+                pass
         return ErpData("odoo", sups, pos, receipts, returns, dict(billed), counts)
 
     # ------------------------------------------------------------------ payments back
