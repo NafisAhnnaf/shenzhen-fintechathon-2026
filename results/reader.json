@@ -1,0 +1,1990 @@
+{
+ "summary": {
+  "model": "gemini-3.5-flash-lite",
+  "documents": 29,
+  "failed_reads": 0,
+  "fields": 435,
+  "field_accuracy": 0.9977011494252873,
+  "documents_all_correct": 28,
+  "mean_conf_when_right": 1.0,
+  "mean_conf_when_wrong": null,
+  "photo_accuracy": [
+   1.0
+  ],
+  "mean_seconds": 3.7227586206896555
+ },
+ "documents": [
+  {
+   "doc": "t01_routine",
+   "kind": "pdf",
+   "seconds": 2.43,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t02_pdf",
+   "kind": "pdf",
+   "seconds": 2.75,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t02_resent",
+   "kind": "pdf",
+   "seconds": 2.43,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t02_photo",
+   "kind": "photo",
+   "seconds": 3.39,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t13_net30",
+   "kind": "pdf",
+   "seconds": 3.68,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t04_missed_credit",
+   "kind": "pdf",
+   "seconds": 2.78,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t05_next_invoice",
+   "kind": "pdf",
+   "seconds": 2.69,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t07_poisoned",
+   "kind": "pdf",
+   "seconds": 4.09,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_0",
+   "kind": "pdf",
+   "seconds": 2.15,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_1",
+   "kind": "pdf",
+   "seconds": 2.62,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_2",
+   "kind": "pdf",
+   "seconds": 2.95,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_3",
+   "kind": "pdf",
+   "seconds": 2.92,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_4",
+   "kind": "pdf",
+   "seconds": 2.97,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_5",
+   "kind": "pdf",
+   "seconds": 2.61,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_6",
+   "kind": "pdf",
+   "seconds": 2.39,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_7",
+   "kind": "pdf",
+   "seconds": 2.73,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_8",
+   "kind": "pdf",
+   "seconds": 29.01,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t12_split_9",
+   "kind": "pdf",
+   "seconds": 2.43,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t11_pool",
+   "kind": "pdf",
+   "seconds": 2.46,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t15_bank_rail",
+   "kind": "pdf",
+   "seconds": 2.52,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": false,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t19_acme_0",
+   "kind": "pdf",
+   "seconds": 2.31,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t19_acme_1",
+   "kind": "pdf",
+   "seconds": 5.47,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t19_acme_2",
+   "kind": "pdf",
+   "seconds": 2.69,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t16_fair_price",
+   "kind": "pdf",
+   "seconds": 2.77,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t21_0",
+   "kind": "pdf",
+   "seconds": 2.37,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t21_1",
+   "kind": "pdf",
+   "seconds": 2.38,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t21_2",
+   "kind": "pdf",
+   "seconds": 2.44,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t21_3",
+   "kind": "pdf",
+   "seconds": 2.46,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  },
+  {
+   "doc": "t21_4",
+   "kind": "pdf",
+   "seconds": 3.07,
+   "error": null,
+   "fields": {
+    "inv_no": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "supplier_name": {
+     "ok": true,
+     "conf": null
+    },
+    "tax_id": {
+     "ok": true,
+     "conf": null
+    },
+    "sender_domain": {
+     "ok": true,
+     "conf": null
+    },
+    "po_id": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "date": {
+     "ok": true,
+     "conf": null
+    },
+    "due_date": {
+     "ok": true,
+     "conf": null
+    },
+    "terms": {
+     "ok": true,
+     "conf": null
+    },
+    "currency": {
+     "ok": true,
+     "conf": null
+    },
+    "total": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "credit": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "bank_account": {
+     "ok": true,
+     "conf": null
+    },
+    "n_lines": {
+     "ok": true,
+     "conf": null
+    },
+    "line0.qty": {
+     "ok": true,
+     "conf": 1.0
+    },
+    "line0.price": {
+     "ok": true,
+     "conf": 1.0
+    }
+   }
+  }
+ ]
+}

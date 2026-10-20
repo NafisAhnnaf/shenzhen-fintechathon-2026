@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 220" width="760" height="220" role="img" aria-label="29 of 35 padded bills caught"><style>
+text{font-family:'Nunito Sans','Segoe UI',Helvetica,Arial,sans-serif;fill:#4A4775}
+.t{font-family:Fredoka,'Trebuchet MS','Segoe UI',sans-serif;font-size:22px;font-weight:600;fill:#1E1B4B}
+.s{font-size:13px;fill:#6B6799}
+.v{font-size:15px;font-weight:800;fill:#1E1B4B}
+.grow{transform-box:fill-box;transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) both}
+.up{transform-box:fill-box;transform-origin:center bottom;animation:up 1.1s cubic-bezier(.2,.8,.2,1) both}
+.pop{transform-box:fill-box;transform-origin:center;animation:pop .6s cubic-bezier(.2,.9,.3,1.3) both}
+.fade{animation:fade .8s ease both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes up{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.grow,.up,.pop,.fade{animation:none}}
+</style><rect width="760" height="220" rx="18" fill="#FFFFFF" stroke="#DAD6FB"/><text x="28" y="44" class="t">Fair-price check: padded bills caught</text><text x="28" y="68" class="s">Invoice price change vs. the World Bank commodity index for that material, over a simulated year</text><rect class="grow" x="28" y="92" width="583.3" height="44" rx="10" fill="#1F4CB8"/><rect class="grow" style="animation-delay:.4s" x="615.3" y="92" width="116.7" height="44" rx="10" fill="#C7C2EE"/><text class="fade" style="animation-delay:.7s;font-size:17px;font-weight:800;fill:#FFFFFF" x="44" y="120">29 of 35 caught (83%)</text><text class="fade" style="animation-delay:.9s;font-size:14px;font-weight:700;fill:#1E1B4B" x="625.3" y="120">6 missed</text><text x="28" y="168" style="font-size:15px;fill:#1E1B4B">$6,626 recovered · $1,032 missed · 5.6% of honest price rises flagged for a person</text><text x="28" y="202" class="s">results/fair.json · World Bank Pink Sheet, CC BY 4.0</text></svg>

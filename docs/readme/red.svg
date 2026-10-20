@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 282" width="760" height="282" role="img" aria-label="Red team: 14 attacks, three set-ups"><style>
+text{font-family:'Nunito Sans','Segoe UI',Helvetica,Arial,sans-serif;fill:#4A4775}
+.t{font-family:Fredoka,'Trebuchet MS','Segoe UI',sans-serif;font-size:22px;font-weight:600;fill:#1E1B4B}
+.s{font-size:13px;fill:#6B6799}
+.v{font-size:15px;font-weight:800;fill:#1E1B4B}
+.grow{transform-box:fill-box;transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) both}
+.up{transform-box:fill-box;transform-origin:center bottom;animation:up 1.1s cubic-bezier(.2,.8,.2,1) both}
+.pop{transform-box:fill-box;transform-origin:center;animation:pop .6s cubic-bezier(.2,.9,.3,1.3) both}
+.fade{animation:fade .8s ease both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes up{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.grow,.up,.pop,.fade{animation:none}}
+</style><rect width="760" height="282" rx="18" fill="#FFFFFF" stroke="#DAD6FB"/><text x="28" y="44" class="t">Red team: 14 attacks, three set-ups</text><text x="28" y="68" class="s">Attacks that moved money (lower is better)</text><text x="28" y="112" style="font-size:15px;font-weight:700;fill:#1E1B4B">Typical AI agent (no rules)</text><rect x="266" y="92" width="404" height="30" rx="9" fill="#E4E0FF" opacity=".55"/><rect class="grow" style="animation-delay:0.00s" x="266" y="92" width="375.1" height="30" rx="9" fill="#7A2E9E"/><text class="fade v" style="animation-delay:0.60s" x="651.1" y="112">13/14</text><text x="28" y="160" style="font-size:15px;font-weight:700;fill:#1E1B4B">Our rules only</text><rect x="266" y="140" width="404" height="30" rx="9" fill="#E4E0FF" opacity=".55"/><rect class="grow" style="animation-delay:0.15s" x="266" y="140" width="57.7" height="30" rx="9" fill="#6D5BFF"/><text class="fade v" style="animation-delay:0.75s" x="333.7" y="160">2/14</text><text x="28" y="208" style="font-size:15px;font-weight:700;fill:#1E1B4B">Rules + smart contract</text><rect x="266" y="188" width="404" height="30" rx="9" fill="#E4E0FF" opacity=".55"/><rect class="grow" style="animation-delay:0.30s" x="266" y="188" width="0.0" height="30" rx="9" fill="#1F4CB8"/><text class="fade v" style="animation-delay:0.90s" x="276.0" y="208">0/14</text><text x="28" y="264" class="s">results/red.json · prompt injection, Base64, Morse, look-alike domains, hacked server, split bills…</text></svg>

@@ -1,5 +1,6 @@
 """API on the local chain in SIGNING=client mode. The test plays the people's wallets: it signs the EIP-712
 typed data the API returns with the finance manager's key, and sends the owner's transactions itself."""
+import json
 import os
 
 import pytest
@@ -72,6 +73,31 @@ def test_upload_e_invoice_pays_alone(client):
     p = demo.DOCS_DIR / "t01_routine.json"
     r = c.post("/api/documents", files={"file": (p.name, p.read_bytes(), "application/json")}).json()
     assert r["tier"] == "T1" and r["tx"]["ok"] and r["source"] == "e-invoice"
+
+
+def test_upload_stream_reports_each_stage_and_the_fields_read(client):
+    from apagent import demo
+    c, _ = client
+    p = demo.DOCS_DIR / "t01_routine.json"
+    r = c.post("/api/documents/stream", files={"file": (p.name, p.read_bytes(), "application/json")})
+    events = [json.loads(line[6:]) for line in r.text.splitlines() if line.startswith("data: ")]
+    assert [e["stage"] for e in events] == ["received", "reading", "read", "checking", "decided"]
+    read = events[2]["read"]
+    assert read["inv_no"] == "KAI-2512001" and read["lines"] and "confidence" in read
+    decided = events[-1]["result"]
+    assert decided["tier"] == "T1" and decided["tx"]["ok"]
+    assert c.get(f"/api/bills/{decided['bill']}/read").json()["inv_no"] == "KAI-2512001"
+
+
+def test_upload_stream_reports_a_missing_reader_as_an_error_event(client):
+    from apagent import demo
+    c, _ = client
+    for k in ("VLM_API_KEY", "GEMINI_API_KEY", "gemini_api_key"):
+        os.environ[k] = ""
+    p = demo.DOCS_DIR / "t13_net30.pdf"
+    r = c.post("/api/documents/stream", files={"file": (p.name, p.read_bytes(), "application/pdf")})
+    events = [json.loads(line[6:]) for line in r.text.splitlines() if line.startswith("data: ")]
+    assert events[-1]["stage"] == "error" and "vision reader" in events[-1]["message"]
 
 
 def test_pdf_upload_without_reader_is_503(client):

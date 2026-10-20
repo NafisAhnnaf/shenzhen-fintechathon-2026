@@ -9,6 +9,7 @@ import { useMe, usePublic } from "./lib/hooks";
 import { makeConfig } from "./lib/wallet";
 import { Shell } from "./components/Shell";
 import Login from "./pages/Login";
+import Landing from "./pages/Landing";
 import Welcome, { AcceptInvitation, ResetPassword } from "./pages/Welcome";
 import Inbox from "./pages/Inbox";
 import Bills from "./pages/Bills";
@@ -74,7 +75,7 @@ function App() {
           <Route path="/welcome" element={<SignedIn><Welcome /></SignedIn>} />
           <Route path="/accept-invitation/:id" element={<AcceptInvitation />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/" element={<Navigate to="/bills" replace />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/inbox" element={g(<Inbox />)} />
           <Route path="/bills" element={g(<Bills />)} />
           <Route path="/approvals" element={g(<Approvals />)} />
