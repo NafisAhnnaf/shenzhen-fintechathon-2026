@@ -1,21 +1,27 @@
 # Bonded payables agent
 
-An AI accounts-payable agent for Hong Kong manufacturers (FinTechathon 2026, International Track, Topic F: Agent Wallet).
+**2026 Shenzhen International FinTech Competition (FinTechathon) · International Track**  
+**Theme:** AI as a Financial Participant · **Topic F:** Agent Wallet (Autonomous On-chain Wallet)  
+**Repository:** [https://github.com/NafisAhnnaf/shenzhen-fintechathon-2026](https://github.com/NafisAhnnaf/shenzhen-fintechathon-2026)
+
+An AI accounts-payable agent for Hong Kong manufacturers.
 It reads supplier bills and emails, checks them against the company's own records (ERP) and public market prices, pays
 routine bills on its own and sends the rest to the finance manager with a proposed resolution. It writes and sends its
 own supplier emails, reconciles supplier and bank statements, and recovers money it overpaid. A smart contract enforces
 every payment rule even if the agent's server is taken over. The owner sets a loss budget; conformal risk control turns
 it into how much the agent may pay alone, and a certified bound sizes the reserve behind those payments.
 
-Documents: [`docs/technical_document.md`](docs/technical_document.md),
-[`docs/security_self_assessment.md`](docs/security_self_assessment.md),
-[`docs/real_vs_simulated.md`](docs/real_vs_simulated.md), [`docs/spec.md`](docs/spec.md) (every feature and its
-status), [`evidence/`](evidence/) (every transaction, on Base Sepolia, FISCO BCOS and a local chain),
-[`docker/README.md`](docker/README.md) (hosting). The demo company is invented; prices, exchange rates, the sanctions
-list, email, storage and the public chain are real.
+### Submission Deliverables (Checklist 01–06)
+- **01 Technical Documentation:** [`docs/technical_document.md`](docs/technical_document.md) (PDF: [`docs/submission/01_Technical_Documentation_Bonded_Payables_Agent.pdf`](docs/submission/01_Technical_Documentation_Bonded_Payables_Agent.pdf))
+- **02 Presentation Deck:** 10-minute slide deck (see [`pptx.md`](pptx.md))
+- **03 Demo Video:** 5-minute walkthrough script at [`docs/demo_video_script.md`](docs/demo_video_script.md)
+- **04 Source Code & Setup:** Full repository with setup below, Docker container [`Dockerfile`](Dockerfile), and test suites
+- **05 Security Self-Assessment Report:** [`docs/security_self_assessment.md`](docs/security_self_assessment.md) (PDF: [`docs/submission/05_Security_Self_Assessment_Bonded_Payables_Agent.pdf`](docs/submission/05_Security_Self_Assessment_Bonded_Payables_Agent.pdf))
+- **06 Execution Evidence:** Real on-chain transaction hashes on **Base Sepolia** at [`evidence/evidence_baseSepolia.md`](evidence/evidence_baseSepolia.md), FISCO BCOS at [`evidence/evidence_fisco.md`](evidence/evidence_fisco.md), and Localhost at [`evidence/evidence_localhost.md`](evidence/evidence_localhost.md)
 
-**Base Sepolia** (source verified on Basescan): see `chain/deployments/baseSepolia.json` for the addresses and
-`evidence/evidence_baseSepolia.md` for the public run.
+Additional Documents: [`docs/real_vs_simulated.md`](docs/real_vs_simulated.md), [`docs/spec.md`](docs/spec.md) (feature status matrix), [`docker/README.md`](docker/README.md) (hosting guide). The demo company is invented; prices, exchange rates, the sanctions list, email, storage, and the public chain are real.
+
+**Base Sepolia** (source verified on Basescan): see `chain/deployments/baseSepolia.json` for the addresses and [`evidence/evidence_baseSepolia.md`](evidence/evidence_baseSepolia.md) for the public run.
 
 ## What is in the repo
 
