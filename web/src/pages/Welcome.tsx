@@ -36,7 +36,7 @@ export default function Welcome() {
     try {
       await fn();
       await qc.invalidateQueries();
-      nav("/bills", { replace: true });
+      nav("/desk", { replace: true });
     } catch (e) {
       setErr(e);
     } finally {

@@ -14,6 +14,7 @@ import { Art, C } from "./purple/components/Characters";
 import { Shell } from "./purple/components/Shell";
 import Landing from "./pages/Landing";
 import Login from "./purple/pages/Login";
+import ClassicLogin from "./pages/Login";
 import Desk from "./purple/pages/desk/Desk";
 import Risk from "./purple/pages/Risk";
 import Security from "./purple/pages/Security";
@@ -113,7 +114,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={pub?.login === "accounts" ? plain(<ClassicLogin />) : <Login />} />
           <Route path="/welcome" element={plain(<Welcome />)} />
           <Route path="/accept-invitation/:id" element={plain(<AcceptInvitation />)} />
           <Route path="/reset-password" element={plain(<ResetPassword />)} />
