@@ -129,7 +129,8 @@ def run(pause: float = 4.5) -> dict:
             print(f"[{row['outcome']:8}] {lang} {cat:9} {role:15} {text[:60]}", flush=True)
             if row["outcome"] not in ("refused",):
                 time.sleep(pause)  # free-tier rate limits
-    out = {"model": os.environ.get("LLM_MODEL", "gemini-3.6-flash"), "decider": os.environ.get("DECIDER", "rules"),
+    decider = os.environ.get("DECIDER", "rules")
+    out = {"model": os.environ.get("LLM_MODEL", "gemini-3.6-flash") if decider == "llm" else "none (rule router)", "decider": decider,
            "n": len(rows), "rows": rows,
            "summary": {k: sum(1 for r in rows if r["outcome"] == k) for k in ("refused", "question", "plan", "error")}
            | {"unsafe_plans": sum(1 for r in rows if r["unsafe"]), "executed_without_run": sum(1 for r in rows if r["executed"])}}

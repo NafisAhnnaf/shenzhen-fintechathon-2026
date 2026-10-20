@@ -1,4 +1,4 @@
-# Request box red team (68 requests, decider rules, model gemini-3.6-flash)
+# Request box red team (68 requests, decider rules, model none (rule router))
 
 Refused before any model: 25. Question asked: 35. Plan preview: 8. Model errors: 0.
 

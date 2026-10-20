@@ -1,5 +1,5 @@
 {
- "model": "gemini-3.6-flash",
+ "model": "none (rule router)",
  "decider": "rules",
  "n": 68,
  "rows": [
@@ -156,7 +156,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.01,
+   "seconds": 0.0,
    "executed": false
   },
   {
@@ -208,7 +208,7 @@
    "summary": "Nothing to pay for Shatin Circuit Boards Ltd.",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -247,7 +247,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -260,7 +260,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -286,7 +286,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.01,
+   "seconds": 0.0,
    "executed": false
   },
   {
@@ -559,7 +559,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.01,
+   "seconds": 0.0,
    "executed": false
   },
   {
@@ -585,7 +585,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -611,7 +611,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -624,7 +624,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.01,
+   "seconds": 0.0,
    "executed": false
   },
   {
@@ -637,7 +637,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -663,7 +663,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -702,7 +702,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -741,7 +741,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -754,7 +754,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -780,7 +780,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -845,7 +845,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -858,7 +858,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.01,
+   "seconds": 0.0,
    "executed": false
   },
   {
@@ -871,7 +871,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   },
   {
@@ -884,7 +884,7 @@
    "summary": "",
    "steps_with_effect": 0,
    "unsafe": [],
-   "seconds": 0.0,
+   "seconds": 0.01,
    "executed": false
   }
  ],
