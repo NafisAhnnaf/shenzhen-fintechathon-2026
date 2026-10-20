@@ -51,7 +51,7 @@ def load_keys(network: str) -> dict[str, str]:
             if "=" in line and not line.startswith("#"):
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
-    env.update({k: v for k, v in os.environ.items() if k.endswith("_KEY")})
+    env.update({k: v for k, v in os.environ.items() if k.endswith("_KEY") and v.strip()})  # an empty setting never hides a key
     keys = {r: env[f"{r.upper()}_KEY"] for r in ROLES + ["arbiter"] if env.get(f"{r.upper()}_KEY")}
     if env.get("ATTACKER_KEY"):
         keys["attacker"] = env["ATTACKER_KEY"]
