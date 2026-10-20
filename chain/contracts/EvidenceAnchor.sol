@@ -10,6 +10,7 @@ contract EvidenceAnchor {
     event Anchored(uint256 indexed day, bytes32 root);
 
     constructor(address anchorer_) {
+        require(anchorer_ != address(0), "zero address");
         anchorer = anchorer_;
     }
 

@@ -147,6 +147,11 @@ contract PaymentVault is EIP712 {
         require(timeUnit_ == 1 || timeUnit_ == 1000, "time unit");
         require(dayLength_ > 0, "day length");
         require(agent_ != owner_ && agent_ != governor_ && agent_ != approver_, "agent key must be separate");
+        require(
+            address(token_) != address(0) && owner_ != address(0) && agent_ != address(0) && governor_ != address(0)
+                && approver_ != address(0) && underwriter_ != address(0),
+            "zero address"
+        );
         token = token_;
         owner = owner_;
         agent = agent_;
@@ -339,7 +344,7 @@ contract PaymentVault is EIP712 {
             revert BadReceivable();
         }
         rc.open -= amount;
-        uint256 toPool;
+        uint256 toPool = 0;
         if (address(pool) != address(0)) {
             uint256 rec = pool.recoverable(billId);
             toPool = amount < rec ? amount : rec;

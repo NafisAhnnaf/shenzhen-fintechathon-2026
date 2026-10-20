@@ -91,6 +91,7 @@ contract BondPool is IBondPool, EIP712 {
         EIP712("BondPool", "1")
     {
         require(timeUnit_ == 1 || timeUnit_ == 1000, "time unit");
+        require(address(token_) != address(0) && vault_ != address(0) && arbiter_ != address(0), "zero address");
         timeUnit = timeUnit_;
         token = token_;
         vault = vault_;
