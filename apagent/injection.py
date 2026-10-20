@@ -35,6 +35,24 @@ PATTERNS = [
     (r"\b0x[0-9a-fA-F]{40}\b", 1.5),
     (r"\bimmediately\b|\burgent(ly)?\b", 0.7),
     (r"\bdo not (tell|inform|notify)\b", 2.0),
+    # Talking to the model about itself, or asking it to drop its rules (seen in the request-box red team).
+    (r"\b(you are|you're) now\b", 2.0),
+    (r"\b(forget|disregard|override|bypass|disable|turn off)\b.{0,30}\b(rules|instructions|polic(y|ies)|checks?|guard|gate|limits?)\b", 3.0),
+    (r"\bno (restrictions|rules|limits)\b", 2.5),
+    (r"\bsystem prompt\b|\bmaintenance mode\b|\bdeveloper mode\b|\bjailbreak\b", 3.0),
+    (r"</?\s*(system|request|instructions?)\s*>", 3.0),
+    (r"\bpretend\b|\bact as\b|\brole-?play\b", 2.0),
+    (r"\b(private key|seed phrase|mnemonic|api key|connection string|password)s?\b", 3.0),
+    (r"\balready approved\b", 2.0),
+    # The same in Chinese.
+    (r"(忽略|无视|忘掉|忘记|绕过|跳过|关闭|禁用).{0,8}(指令|规则|提示|检查|策略|限制|审核|审批)", 3.0),
+    (r"系统\s*[:：]|系统提示|维护模式|开发者模式|管理员指令|开发人员", 3.0),
+    (r"没有任何限制|不受限制|无限制", 2.5),
+    (r"假装|扮演", 2.0),
+    (r"私钥|助记词|密钥|连接字符串|密码", 3.0),
+    (r"(全部|所有|全额)(余额|资金|储备)", 2.5),
+    (r"不要(显示|等待|确认|告诉|通知)", 2.5),
+    (r"已经批准", 2.0),
 ]
 
 
@@ -65,9 +83,19 @@ def normalise(text: str) -> str:
     return t
 
 
+def _despace(text: str) -> list[str]:
+    """Text written with a space between every letter ("p a y   a l l"), joined back up."""
+    words = text.split()
+    singles = sum(1 for w in words if len(w) == 1)
+    if singles < 8 or singles < 0.6 * len(words):
+        return []
+    joined = re.sub(r" {2,}", "\0", text).replace(" ", "").replace("\0", " ")
+    return [joined] if joined != text else []
+
+
 def decoded_views(text: str) -> list[str]:
     t = normalise(text)
-    return [t] + _decode_base64(t) + _decode_morse(t)
+    return [t] + _decode_base64(t) + _decode_morse(t) + _despace(t)
 
 
 def score(text: str) -> dict:

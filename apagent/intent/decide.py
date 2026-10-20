@@ -244,10 +244,15 @@ class LLMDecider:
         ctx = {k: v for k, v in state.items() if k != "text"}
         prompt = (f"Choose the {schema.name} for this request from the options. Return a probability for every option; "
                   f"they must sum to 1.\nRequest: {state['text']}\nContext (trusted): {json.dumps(ctx)[:6000]}")
-        r = httpx.post(f"{self.base_url}/chat/completions", timeout=60,
-                       headers={"Authorization": f"Bearer {self.api_key}"},
-                       json={"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": prompt}],
-                             "response_format": {"type": "json_schema", "json_schema": {"name": schema.name, "schema": js, "strict": True}}})
+        import time as _t
+        for wait in (3, 10, 20, 30, 0):  # free tiers limit requests per minute
+            r = httpx.post(f"{self.base_url}/chat/completions", timeout=60,
+                           headers={"Authorization": f"Bearer {self.api_key}"},
+                           json={"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": prompt}],
+                                 "response_format": {"type": "json_schema", "json_schema": {"name": schema.name, "schema": js, "strict": True}}})
+            if r.status_code not in (429, 500, 503) or not wait:
+                break
+            _t.sleep(wait)
         r.raise_for_status()
         p = json.loads(r.json()["choices"][0]["message"]["content"])
         p = {k: max(0.0, float(p.get(k, 0.0))) for k in opts}
