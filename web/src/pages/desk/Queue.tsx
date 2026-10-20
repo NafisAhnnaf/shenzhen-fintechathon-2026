@@ -6,7 +6,7 @@ import { useAction, useAppState, useBills } from "../../lib/hooks";
 import { ErrorLine } from "../../components/bits";
 
 /** One list: what needs a person. The inbox stays closed until asked for. */
-export function Queue({ selected, onBill, onCase }: { selected: string | null; onBill: (id: string) => void; onCase: (id: string) => void }) {
+export function Queue({ selected, onBill, onCase, onUpload }: { selected: string | null; onBill: (id: string) => void; onCase: (id: string) => void; onUpload: (f: File) => void }) {
   const { data: bills } = useBills();
   const { data: st } = useAppState();
   const needs = (bills ?? []).filter((b) => b.status === "held" || (b.status === "approved" && b.tier === "T2"));
@@ -34,7 +34,7 @@ export function Queue({ selected, onBill, onCase }: { selected: string | null; o
           ))}
         </ul>
       </div>
-      <InboxBox onBill={onBill} onCase={onCase} />
+      <InboxBox onBill={onBill} onCase={onCase} onUpload={onUpload} />
     </aside>
   );
 }
@@ -57,11 +57,10 @@ function Row({ title, sub, right, active, onClick, tone }: { title: string; sub:
   );
 }
 
-function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (id: string) => void }) {
+function InboxBox({ onBill, onCase, onUpload }: { onBill: (id: string) => void; onCase: (id: string) => void; onUpload: (f: File) => void }) {
   const { data } = useQuery({ queryKey: ["inbox"], queryFn: () => api.get<Inbox>("/inbox"), refetchInterval: 5000 });
   const [open, setOpen] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
-  const upload = useAction((f: File) => api.upload<{ bill: string }>("/documents", f));
   const take = useAction((key: string) => api.post<{ bill: string }>(`/inbox/documents/${key}`));
   const email = useAction((name: string) => api.post<any>(`/inbox/emails/${name}`));
   const statement = useAction((name: string) => api.post<Case[]>(`/inbox/statements/${encodeURIComponent(name)}?supplier_id=${name.split("-")[0]}`));
@@ -75,7 +74,7 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
           Inbox {count > 0 && <span className="font-normal text-muted">({count})</span>}
         </button>
         <button className="btn-link" style={{ fontSize: 14 }} onClick={() => fileRef.current?.click()}>
-          {upload.isPending ? "Reading" : "Upload a bill"}
+          Upload a bill
         </button>
         <input
           ref={fileRef}
@@ -84,12 +83,12 @@ function InboxBox({ onBill, onCase }: { onBill: (id: string) => void; onCase: (i
           accept=".json,.pdf,.png,.jpg,.jpeg,.webp"
           onChange={(e) => {
             const f = e.target.files?.[0];
-            if (f) upload.mutate(f, { onSuccess: (r) => onBill(r.bill) });
+            if (f) onUpload(f);
             e.target.value = "";
           }}
         />
       </div>
-      <ErrorLine error={upload.error || take.error || email.error || statement.error} />
+      <ErrorLine error={take.error || email.error || statement.error} />
       {open && (
         <ul className="max-h-[56vh] overflow-y-auto">
           {docs.map((d) => (

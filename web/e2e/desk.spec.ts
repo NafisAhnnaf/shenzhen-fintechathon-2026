@@ -44,6 +44,19 @@ test.describe.serial("payables desk", () => {
     await expect(page.getByText("Owed back, recorded on-chain")).toBeVisible({ timeout: 30_000 });
   });
 
+  test("upload: the reader panel shows each stage and the extracted fields", async ({ page }) => {
+    await connect(page, "finance manager");
+    // A JSON e-invoice runs the same live panel without spending vision-model quota.
+    await page.locator('input[type=file]').setInputFiles("../data/demo/documents/t13_net30.json");
+    await expect(page.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
+    await expect(page.getByText("HAR-2512011").first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("button", { name: "Open the bill" })).toBeVisible({ timeout: 30_000 });
+    await page.screenshot({ path: `${SHOTS}/16-reader.png`, fullPage: true });
+    await page.getByRole("button", { name: "Open the bill" }).click();
+    await page.getByText("What the reader saw").click();
+    await expect(page.getByText("supplier says").first()).toBeVisible();
+  });
+
   test("fair price: query, reply, signed approval", async ({ page }) => {
     await connect(page, "finance manager");
     await openDoc(page, "t16_fair_price");

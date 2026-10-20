@@ -7,6 +7,7 @@ import { money, signedPct } from "../../lib/format";
 import { useAction, useAppState, useBills, useRole } from "../../lib/hooks";
 import { forViem } from "../../lib/wallet";
 import { ErrorLine, Hash } from "../../components/bits";
+import { ReadView, type ReadFields } from "./ReaderPanel";
 
 /** One bill: what we pay, why, and the one thing to do. Everything else sits under Details. */
 export function BillPanel({ id }: { id: string }) {
@@ -35,6 +36,7 @@ export function BillPanel({ id }: { id: string }) {
           Transaction <Hash h={b.tx_hash} />
         </p>
       )}
+      <ReaderSaw id={b.bill} />
       <Details b={b} />
     </article>
   );
@@ -253,6 +255,20 @@ function Details({ b }: { b: Bill }) {
           </p>
         ))}
         <Sources tags={b.tags} />
+      </div>
+    </details>
+  );
+}
+
+/** What the reader took from the document, opened on demand. */
+function ReaderSaw({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
+  const { data, error } = useQuery({ queryKey: ["read", id], queryFn: () => api.get<ReadFields>(`/bills/${id}/read`), enabled: open });
+  return (
+    <details className="mt-4 border-t border-rule pt-4 text-sm" onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+      <summary className="cursor-pointer text-muted hover:text-ink">What the reader saw</summary>
+      <div className="mt-3">
+        {data ? <ReadView r={data} /> : <p className="text-muted">{error ? String(error) : "Loading"}</p>}
       </div>
     </details>
   );

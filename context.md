@@ -142,3 +142,11 @@ Gaps found while writing the security self-assessment (section 10.4 there; none 
 - PDF/photo upload works with Google Gemini through its OpenAI-compatible endpoint, with no code change for the provider. Set `VLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai`, `VLM_MODEL=gemini-3.5-flash` and `VLM_API_KEY=<AI Studio key>`. `gemini-2.5-flash` is closed to new keys; `gemini-3.8-flash` was returning 503 (high demand).
 - 6/6 demo PDFs (t01, t02, t02_resent, t07, t16, t13) were read exactly, and each got the right outcome: paid, duplicate rejected, poisoned held, fair-price to T2.
 - The reader now retries 429/5xx up to 4 times; if the provider still fails, `/api/documents` answers 503 with a message instead of 500.
+
+## 2026-10-20: live reader panel
+
+- Upload a bill and the desk opens "What the reader sees": the PDF or photo on the left, live steps (received, reading with <model>, fields extracted, checks and score, decision), then every extracted field with confidence bars, the line items, and the page's other text shown as-is ("never followed").
+- Backend: `POST /api/documents/stream` (server-sent events) reads first, then processes. `Session.ingest_read` was split out of `ingest_file`. `GET /api/bills/{id}/read` returns a bill's read fields; each bill's "What the reader saw" section uses it.
+- pdfium renders behind a lock: two PDFs rendered at once segfaulted the server.
+- Gemini free tier allows 20 requests a day per model. When the quota is used up the panel says so (a 429 shows a plain message). Switch `VLM_MODEL` to another model with its own quota (`gemini-3.5-flash-lite` was used for the last tests).
+- E2E: 13/13 tests pass, including an upload test that uses a JSON e-invoice so it spends no model quota.

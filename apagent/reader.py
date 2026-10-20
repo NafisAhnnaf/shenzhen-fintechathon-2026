@@ -192,7 +192,7 @@ class VLMReader:
                     raise
                 time.sleep(2 * (attempt + 1))
                 continue
-            if r.status_code not in (429, 500, 502, 503, 504) or attempt == 3:
+            if r.status_code not in (429, 500, 502, 503, 504) or attempt == 3 or (r.status_code == 429 and "PerDay" in r.text):
                 break
             time.sleep(2 * (attempt + 1))
         r.raise_for_status()

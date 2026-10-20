@@ -5,6 +5,7 @@ import { CasePanel } from "./CasePanel";
 import { Queue } from "./Queue";
 import { PlanPanel, QuestionPanel } from "./PlanPanel";
 import { RequestBar } from "./RequestBar";
+import { ReaderPanel } from "./ReaderPanel";
 import { Art, C } from "../../components/Characters";
 
 export type Focus =
@@ -12,7 +13,8 @@ export type Focus =
   | { kind: "bill"; id: string }
   | { kind: "case"; id: string }
   | { kind: "plan"; reply: PlanReply }
-  | { kind: "question"; reply: Question };
+  | { kind: "question"; reply: Question }
+  | { kind: "reading"; file: File; n: number };
 
 /** Two parts: what needs you on the left, the one thing you are looking at on the right. */
 export default function Desk() {
@@ -36,11 +38,13 @@ export default function Desk() {
           selected={focus.kind === "bill" || focus.kind === "case" ? focus.id : null}
           onBill={openBill}
           onCase={(id) => setFocus({ kind: "case", id })}
+          onUpload={(file) => setFocus({ kind: "reading", file, n: Date.now() })}
         />
         <section ref={panel} className="card detail scroll-mt-20" aria-live="polite">
           {focus.kind === "none" && <Empty />}
           {focus.kind === "bill" && <BillPanel id={focus.id} />}
           {focus.kind === "case" && <CasePanel id={focus.id} />}
+          {focus.kind === "reading" && <ReaderPanel key={focus.n} file={focus.file} onBill={openBill} />}
           {focus.kind === "plan" && <PlanPanel reply={focus.reply} onBill={openBill} />}
           {focus.kind === "question" && (
             <QuestionPanel reply={focus.reply} onPlan={(r) => setFocus({ kind: "plan", reply: r })} onExample={(t) => setDraft(t)} />

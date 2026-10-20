@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import email
 import io
+import threading
 import json
 import re
 from email import policy
@@ -53,7 +54,15 @@ def read_document(filename: str, data: bytes, vlm: Optional[VLMReader] = None) -
     raise BadDocument(f"unsupported file type {ext or '(none)'}: send a .json e-invoice, a .pdf or an image")
 
 
+_PDFIUM = threading.Lock()  # pdfium is not thread-safe; two renders at once crash the process
+
+
 def pdf_pages(data: bytes, scale: float = 2.0, max_pages: int = 4) -> list[bytes]:
+    with _PDFIUM:
+        return _pdf_pages(data, scale, max_pages)
+
+
+def _pdf_pages(data: bytes, scale: float, max_pages: int) -> list[bytes]:
     import pypdfium2 as pdfium
 
     pdf = pdfium.PdfDocument(data)
