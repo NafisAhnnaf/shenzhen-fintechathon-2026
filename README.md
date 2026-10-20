@@ -124,8 +124,8 @@ per-action union bound in Chen (2026).
 <tr><td>
 
 **Conformal clarification for requests.** Plain-words requests map to a closed catalogue of actions. Conformal
-prediction sets over intents (α = 3%) and slots (α = 2%) mean the right reading is shown or asked about ≥ 95% of the
-time. One set member: run. Several: ask one question.
+prediction sets over intents (α = 3%) and details (α = 5%) mean the right reading is shown or asked about at least
+92% of the time (100% on 47 held-out requests). One set member: run. Several: ask one question.
 
 </td><td>
 
