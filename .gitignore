@@ -2,6 +2,7 @@ node_modules
 .venv
 **/*.env
 .env
+.env.backup*
 
 # macOS metadata files on the external drive
 ._*
