@@ -171,18 +171,22 @@ All numbers come from files in [`results/`](results) and [`evidence/`](evidence)
 
 <table>
 <tr>
-<td width="50%"><img src="docs/readme/shot-landing.png" alt="Landing page with the waving clerk"><br><sub><b>Landing</b>: the story, the proof, the dial. Then sign in.</sub></td>
-<td width="50%"><img src="docs/readme/shot-bill.png" alt="Bills: a padded copper bill with the agent's proposal to pay the justified price and hold $4,160.48"><br><sub><b>Bills</b>: invoice vs order vs goods received, every check, and the agent's proposal: pay the fair price, hold the excess, ask the supplier.</sub></td>
+<td width="50%"><img src="docs/readme/shot-landing.png" alt="Landing page with the waving clerk"><br><sub><b>Landing</b>: the story, the proof, the dial. Then sign in with a wallet.</sub></td>
+<td width="50%"><img src="docs/readme/shot-bill.png" alt="The desk: request bar, what needs you, the inbox, and a padded copper bill with the fair-price chart"><br><sub><b>Desk</b>: ask in plain words, see what needs you, open a bill. Copper rod +9.0% while the index moved +0.7%: pay the fair price, hold the rest.</sub></td>
 </tr>
 <tr>
-<td><img src="docs/readme/shot-reader.png" alt="Live reader: the poisoned invoice, every field with confidence, the hidden instruction shown as-is, decision on hold"><br><sub><b>Live reader</b>: upload a PDF or take a photo and watch every field arrive. The hidden instruction is shown, never followed.</sub></td>
-<td><img src="docs/readme/shot-risk.png" alt="Risk and reserve: the risk settings and the evidence behind them"><br><sub><b>Risk and reserve</b>: the owner picks a loss budget and signs the new limits on-chain.</sub></td>
+<td><img src="docs/readme/shot-reader.png" alt="Live reader: every field the vision model read with confidence, the hidden instruction shown as-is, decision held"><br><sub><b>Live reader</b>: upload a PDF or a phone photo and watch every field arrive. The hidden instruction is shown, never followed.</sub></td>
+<td><img src="docs/readme/shot-controls.png" alt="Security: the typical AI wallet's 13 of 14 attacks next to our agent holding the poisoned invoice"><br><sub><b>Security</b>: the same poisoned invoice, sent live to our agent; pause, resume and frozen payees.</sub></td>
+</tr>
+<tr>
+<td><img src="docs/readme/shot-risk.png" alt="Risk dial with four settings and the reserve chart"><br><sub><b>Risk dial</b>: the owner proposes a loss budget on-chain; in bank-funded mode the bank approves it from its wallet.</sub></td>
+<td><img src="docs/readme/shot-payments.png" alt="Payments register inside the purple shell"><br><sub><b>And the back office</b>: approvals, bills register, payments, suppliers, disputes, market prices, bank, mailbox and controls, under More.</sub></td>
 </tr>
 </table>
 
-Fourteen screens in all: Inbox, Bills, Approvals, Payments, Suppliers, Disputes, Activity, Risk and reserve, Market
-prices, Controls, Bank and Settings. People sign in with their **own wallet** (Sign-In with Ethereum) or by email; the
-server decides the role. The finance manager signs EIP-712 approvals; the owner signs settings, unpause and unfreeze
+People sign in with their **own wallet** (Sign-In with Ethereum), or by email when the login service runs; the server
+decides the role (owner, finance manager, accounts clerk, bank, arbiter, viewer). The finance manager signs EIP-712
+approvals, and above $25,000 the owner co-signs the same payment. The owner signs settings, unpause and unfreeze
 transactions. The server never holds a person's key.
 
 ## Quick start

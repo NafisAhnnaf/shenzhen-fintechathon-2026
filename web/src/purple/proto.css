@@ -258,4 +258,4 @@ main.app{padding-block:24px 64px}
 .app-h .wrap{gap:14px}
 .app-nav{gap:2px}
 .app-nav a,.app-more{padding:8px 10px}
-@media (max-width:1280px){.who .net{display:none}}
+@media (max-width:1500px){.who .net{display:none}}
