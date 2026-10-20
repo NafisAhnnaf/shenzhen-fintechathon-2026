@@ -10,6 +10,7 @@ import "./styles.css";
 import { SIGNED_OUT } from "./lib/api";
 import { useMe, usePublic } from "./lib/hooks";
 import { makeConfig } from "./lib/wallet";
+import { GlobalAlert } from "./components/GlobalAlert";
 import { Art, C } from "./purple/components/Characters";
 import { Shell } from "./purple/components/Shell";
 import Landing from "./pages/Landing";
@@ -88,31 +89,39 @@ function App() {
   const config = useMemo(() => (pub ? makeConfig(pub.chain_id, pub.rpc) : null), [pub?.chain_id, pub?.rpc]);
   if (error && !pub)
     return (
-      <Centered>
-        <Art html={C.clerk("think", 140)} />
-        <h1 style={{ fontSize: 30 }}>The desk can't reach the agent</h1>
-        <p className="muted" style={{ maxWidth: "60ch" }}>
-          Start the API with <span className="mono">uvicorn apagent.api:app --port 8000</span>, and a local chain if you use one.
-        </p>
-        <button className="btn btn-primary" onClick={() => refetch()}>
-          Try again
-        </button>
-      </Centered>
+      <>
+        <GlobalAlert />
+        <Centered>
+          <Art html={C.clerk("think", 140)} />
+          <h1 style={{ fontSize: 30 }}>The desk can't reach the agent</h1>
+          <p className="muted" style={{ maxWidth: "60ch" }}>
+            Start the API with <span className="mono">uvicorn apagent.api:app --port 8000</span>, and a local chain if you use one.
+          </p>
+          <button className="btn btn-primary" onClick={() => refetch()}>
+            Try again
+          </button>
+        </Centered>
+      </>
     );
   if (!config)
     return (
-      <Centered>
-        <span className="spin dark" />
-        <p className="muted">Connecting to the agent</p>
-      </Centered>
+      <>
+        <GlobalAlert />
+        <Centered>
+          <span className="spin dark" />
+          <p className="muted">Connecting to the agent</p>
+        </Centered>
+      </>
     );
   const app = (el: ReactNode) => <Gate>{el}</Gate>;
   const classic = (el: ReactNode) => <Gate><Classic>{el}</Classic></Gate>;
   const plain = (el: ReactNode) => <div className="classic">{el}</div>;
   return (
-    <WagmiProvider config={config}>
-      <BrowserRouter>
-        <Routes>
+    <>
+      <GlobalAlert />
+      <WagmiProvider config={config}>
+        <BrowserRouter>
+          <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={pub?.login === "accounts" ? plain(<ClassicLogin />) : <Login />} />
           <Route path="/welcome" element={plain(<Welcome />)} />
@@ -136,7 +145,8 @@ function App() {
         </Routes>
       </BrowserRouter>
     </WagmiProvider>
-  );
+  </>
+);
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

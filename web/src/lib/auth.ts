@@ -55,7 +55,13 @@ export const auth = {
   invite: (email: string, role: MemberRole) =>
     api.post<Invitation>("/auth/organization/invite-member", { email, role, resend: true }),
   cancelInvitation: (invitationId: string) => api.post("/auth/organization/cancel-invitation", { invitationId }),
-  myInvitations: () => api.get<Invitation[]>("/auth/organization/list-user-invitations"),
+  myInvitations: async () => {
+    try {
+      return await api.get<Invitation[]>("/auth/organization/list-user-invitations");
+    } catch {
+      return [] as Invitation[];
+    }
+  },
   getInvitation: (id: string) =>
     api.get<Invitation & { organizationName: string; inviterEmail: string }>(`/auth/organization/get-invitation?id=${encodeURIComponent(id)}`),
   acceptInvitation: (invitationId: string) =>
