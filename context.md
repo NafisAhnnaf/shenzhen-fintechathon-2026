@@ -77,8 +77,8 @@ Gaps found while writing the security self-assessment (section 10.4 there; none 
 - Live reader: `POST /api/documents/stream` (server-sent events) and `GET /api/bills/{id}/read`; the Inbox upload
   and phone photo open `components/ReaderPanel.tsx`; bills show "What the reader saw".
 - Reader eval on this code: 434/435 fields exact (99.8%), 29 documents, gemini-3.5-flash-lite, 3.7 s each.
-- With a model key, the request box defaults to the LLM (`decide.py`); FISCO task 3 and browser flow 3 then fail
-  because the model asks a question where the script expects a plan. Evidence runs use `DECIDER=rules`.
+- The request box now defaults to the rule decider even with a model key (`DECIDER=llm` opts in): with the model,
+  FISCO task 3 and browser flow 3 failed because it asked a question where the script expects a plan.
 
 ### 2026-10-19 · clickable prototype
 

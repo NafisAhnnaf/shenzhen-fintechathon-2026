@@ -375,10 +375,12 @@ class FallbackDecider:
 
 
 def default_decider():
-    """DECIDER=llm (the default when a model key is set), jev, or rules. A model decider falls back to the rules."""
+    """DECIDER=rules (the default), llm or jev. A model decider falls back to the rules.
+
+    The rules are the default even when a model key is set: on the demo requests the model sometimes asks a
+    clarifying question where the rules give a plan straight away (FISCO task 3, browser flow 3). Opt in with DECIDER=llm."""
     load_env()
-    has_key = bool(os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key"))
-    choice = os.environ.get("DECIDER") or ("llm" if has_key else "rules")
+    choice = os.environ.get("DECIDER") or "rules"
     for backend in (JevDecider, LLMDecider):
         if choice == backend.name and backend().available():
             return FallbackDecider(backend(), RuleDecider())

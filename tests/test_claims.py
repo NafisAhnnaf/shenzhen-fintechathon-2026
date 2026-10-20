@@ -43,7 +43,8 @@ def test_bank_disputes_and_arbiter_settles():
 
     # The bank disputes from its wallet; the contract refuses a dispute from anyone else.
     tx = s.agent.bank_tx_request("dispute", bill)["tx"]
-    with pytest.raises(Exception, match="NotAuthorized"):
+    # A node without our artifacts reports the error by selector only: 0xea8e4eb5 is NotAuthorized().
+    with pytest.raises(Exception, match="NotAuthorized|0xea8e4eb5"):
         _send(s.chain, keys[0], tx)  # the owner's key
     h = _send(s.chain, keys[4], tx)
     assert s.agent.bank_action("dispute", h, bill)["ok"]

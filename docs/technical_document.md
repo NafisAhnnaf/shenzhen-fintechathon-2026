@@ -30,7 +30,8 @@ public chain (Base Sepolia) are real. `docs/real_vs_simulated.md` lists every pa
 | Area | State | Where |
 | --- | --- | --- |
 | Bill pipeline: intake (e-invoice JSON, PDF and photo through Gemini, email attachments), injection flag, checker, governor, T1/T2 | Built | `apagent/intake.py`, `reader.py`, `injection.py`, `checker.py`, `governor.py`, `agent.py` |
-| Request layer: catalogue, `decide()` backends (rules, Gemini), conformal clarification, plan templates, preview / run / cancel; length cap, rate limit, instruction-like text refused | Built | `apagent/intent/`, `session.py`, `api.py` |
+| Live reader: upload or phone photo streams each stage and every extracted field with its confidence; the page's other text shown as-is (`POST /api/documents/stream`) | Built | `api.py`, `web/src/components/ReaderPanel.tsx` |
+| Request layer: catalogue, `decide()` backends (rules by default; Gemini or Jev opt-in), conformal clarification, plan templates, preview / run / cancel; length cap, rate limit, instruction-like text refused | Built | `apagent/intent/`, `session.py`, `api.py` |
 | Security layer: capability tags, policies S1–S11, sanctions screening (OFAC SDN), daily payment ceiling | Built, each with a refusing test | `apagent/tags.py`, `policies.py`, `sanctions.py` |
 | Risk core: score, conformal cut-offs, drift guard, probation, K(β), premium | Built | `apagent/risk/`, `governor.py` |
 | Fair-price check and market watch (adaptive conformal ranges, alerts, buy-ahead comparison, PO drafts) | Built | `checker.py`, `marketwatch.py` |
@@ -615,9 +616,10 @@ otherwise.
 - **The capital bound assumes independent errors.** The stress case covers one supplier failing on every bill;
   several suppliers failing together is not covered.
 - **Small groups get no autonomy.** At β = 1%, new-supplier and "other" bills always go to a person.
-- **The vision reader runs on Gemini's free tier**, which rate-limits; accuracy is measured only on the demo
-  documents (`reader_eval.py`).
-- **No Jev backend.** The router runs on the rule decider or Gemini through the same interface.
+- **The vision reader runs on Gemini's free tier**, which rate-limits. Accuracy is measured only on the 29 demo
+  documents: 434 of 435 fields exact (99.8%), 3.7 s each, the phone photo included (`results/reader.json`).
+- **Jev needs a paid key.** A `JevDecider` exists behind the same interface but was not used for the evidence; the
+  router runs on the rule decider by default, with Gemini as an opt-in (`DECIDER=llm`).
 - **Demo windows are compressed** (seconds instead of days) on every chain; K(β) and r use the real 30-day window.
 - **The hosted demo runs on a local chain inside its container**, with fresh contracts per company, because judges'
   companies must not share caps, a pause switch or test keys on one public deployment. Base Sepolia carries the

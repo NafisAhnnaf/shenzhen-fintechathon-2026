@@ -289,3 +289,12 @@ if __name__ == "__main__":
         doc_short="Execution Evidence (Base Sepolia)",
         checklist_num="06 (Execution Evidence)"
     )
+
+    # 4. Execution Evidence on WeBank's FISCO BCOS (Checklist 06, second chain)
+    build_pdf(
+        md_path=root / "evidence" / "evidence_fisco.md",
+        out_pdf_path=sub_dir / "06b_Execution_Evidence_FISCO_BCOS.pdf",
+        doc_title="Execution Evidence (FISCO BCOS Chain 20200)",
+        doc_short="Execution Evidence (FISCO BCOS)",
+        checklist_num="06 (Execution Evidence)"
+    )

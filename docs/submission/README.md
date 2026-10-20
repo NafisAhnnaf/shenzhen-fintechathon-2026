@@ -12,12 +12,13 @@
 
 | Checklist Item | Required Component | File in this Directory / Repository | Format |
 | :---: | :--- | :--- | :---: |
-| **01** | **Technical documentation** | [`01_Technical_Documentation_Bonded_Payables_Agent.pdf`](01_Technical_Documentation_Bonded_Payables_Agent.pdf) | PDF (19 pages) |
+| **01** | **Technical documentation** | [`01_Technical_Documentation_Bonded_Payables_Agent.pdf`](01_Technical_Documentation_Bonded_Payables_Agent.pdf) | PDF (20 pages) |
 | **02** | **Presentation deck** ($\le$ 10 mins) | Slides exported from [`pptx.md`](../../pptx.md) | PPTX / PDF |
 | **03** | **Demo video** (optional, $\le$ 5 mins) | Walkthrough script at [`docs/demo_video_script.md`](../demo_video_script.md) | MP4 / Web Link |
 | **04** | **Source code** | [GitHub Repository](https://github.com/NafisAhnnaf/shenzhen-fintechathon-2026) with [`README.md`](../../README.md), [`Dockerfile`](../../Dockerfile), and test suites | Git Repo & Zip |
-| **05** | **Security self-assessment report** | [`05_Security_Self_Assessment_Bonded_Payables_Agent.pdf`](05_Security_Self_Assessment_Bonded_Payables_Agent.pdf) | PDF (16 pages) |
+| **05** | **Security self-assessment report** | [`05_Security_Self_Assessment_Bonded_Payables_Agent.pdf`](05_Security_Self_Assessment_Bonded_Payables_Agent.pdf) | PDF (15 pages) |
 | **06** | **Execution evidence** | [`06_Execution_Evidence_BaseSepolia.pdf`](06_Execution_Evidence_BaseSepolia.pdf) & [`evidence/evidence_baseSepolia.md`](../../evidence/evidence_baseSepolia.md) | PDF (6 pages) |
+| **06** | **Execution evidence (FISCO BCOS)** | [`06b_Execution_Evidence_FISCO_BCOS.pdf`](06b_Execution_Evidence_FISCO_BCOS.pdf) & [`evidence/evidence_fisco.md`](../../evidence/evidence_fisco.md): 22/22 tasks on WeBank's chain, 20 Oct | PDF (9 pages) |
 
 ---
 

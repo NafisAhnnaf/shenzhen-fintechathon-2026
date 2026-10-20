@@ -292,7 +292,7 @@ figure uses the governor's rolling 7-day cap; the contract alone uses fixed week
 | R7 | Fixed: the deploy script refuses an arbiter equal to the owner, bank or agent | — | — |
 | R8 | The owner key is a single key with unrestricted vault `withdraw` and `addPayee` (cool-down only) | Owner compromise is total loss of the vault | Production: multisig or hardware key, longer cool-down |
 | R9 | A compromised approver key plus the agent key can pay any registered payee any amount (`payApproved` has no caps, by design) | T2 is uncapped | Payees still limited to the registry |
-| R10 | Fixed: contracts deployed and verified on Base Sepolia with a public evidence run. The FISCO evidence (17 Oct) predates later changes | — | Rerun on FISCO when a FISCO chain is up |
+| R10 | Fixed: contracts deployed and verified on Base Sepolia with a public evidence run, and the FISCO evidence rerun on 20 Oct with the final code (22/22) | — | — |
 | R11 | Web dependencies: moderate advisories in react-router 6, echarts 5, and libraries inside the wallet SDKs (one high, in a server-side websocket library the browser bundle does not use) | Fixes need major-version upgrades | Safe fixes applied; upgrades listed as future work |
 | R12 | The hosted demo chain uses public test keys | Anyone could sign for a demo role on that chain directly | The relay accepts transactions only from signed-in members to their own company's contracts; the chain is a sandbox |
 

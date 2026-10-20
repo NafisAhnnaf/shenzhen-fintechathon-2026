@@ -1,6 +1,6 @@
 """Calibrate the request router on the model (conformal thresholds for intent and slot sets).
 
-    python -m apagent.intent.calibrate_llm      # about 100 model calls on the 53 calibration requests, paced
+    DECIDER=llm python -m apagent.intent.calibrate_llm      # about 100 model calls on the 53 calibration requests, paced
 
 Writes data/intent_qhat_llm.json; until it exists the model router uses the rule decider's thresholds. The model is
 called directly here (no fallback to the rules), so the thresholds describe the model alone.
