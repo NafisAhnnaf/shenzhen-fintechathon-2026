@@ -78,7 +78,7 @@ test.describe.serial("purple desk", () => {
     const over = (await page.getByText("Over the fair price", { exact: true }).first().locator("..").textContent())!.match(/\$([\d,]+\.\d{2})/)![1];
     await page.getByLabel(/Paste their email/).fill(`From: Acme Accounts <accounts@acme-hk.com>\nSubject: Re: ${qid}\n\nCredit note CN-7781 for USD ${over} is attached.`);
     await page.getByRole("button", { name: "Record reply" }).click();
-    await expect(page.getByText("The supplier sent a credit note")).toBeVisible();
+    await expect(page.getByText("The supplier sent a credit note")).toBeVisible({ timeout: 30_000 }); // the reply goes through the model-backed instruction check
     await page.getByRole("button", { name: /Sign and pay/ }).click();
     // Above the two-signature threshold the owner signs too, from their own wallet.
     await expect(page.getByText(/the owner signs too/).first()).toBeVisible({ timeout: 30_000 });
