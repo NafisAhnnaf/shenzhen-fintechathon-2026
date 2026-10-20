@@ -24,14 +24,21 @@ They are listed in the table below. Use them on camera and say what they stand i
 
 ## 1. Prepare (30 minutes, before you record)
 
-1. Stop `./run_local.sh` with Ctrl+C. Start it again. The restart loads the Gemini 3.1 Flash-Lite setting and the
-   Odoo records.
-2. Open http://127.0.0.1:8000 in two browser profiles.
-   - Profile A: the owner, signed in with email.
-   - Profile B: the finance manager, signed in with email.
-3. In each profile, link the signing wallet: **Settings → My account → Link a wallet → Local test account**.
+1. Start the app: `./run_local.sh`. Wait for "Starting Payables Desk API & Web App".
+2. Create the demo sign-ins (one time; safe to run again): `.venv/bin/python scripts/demo_accounts.py`
+
+   | Person | Email | Password | Signs on-chain as |
+   | --- | --- | --- | --- |
+   | Owner | `demo.owner@harbour-demo.test` | `Harbour-Demo-Desk-2026` | Owner (`0xf39F…2266`) |
+   | Finance manager | `demo.finance@harbour-demo.test` | `Harbour-Demo-Desk-2026` | Finance manager (`0x90F7…b906`) |
+   | Bank | Sign-in page → **Sign in with your wallet** → Local test account: bank | no password | Bank |
+   | Arbiter | Sign-in page → **Sign in with your wallet** → Local test account: arbiter | no password | Arbiter |
+
+   Both email accounts are in the company "Harbour Precision Demo". The script links their wallets already.
+3. Open <http://127.0.0.1:8000/login> in two browser profiles: the owner in profile A, the finance manager in
+   profile B.
 4. Open a private window for the bank and the arbiter.
-5. Open Odoo (https://iut-dhonghorsho.odoo.com) in a tab. Go to **Purchase → Orders**.
+5. Open Odoo (<https://iut-dhonghorsho.odoo.com>) in a tab. Go to **Purchase → Orders**.
 6. Open the AgentMail console for `fin-suppliers@agentmail.to` in a tab. Supplier mail from the agent arrives there.
 7. Do a full practice run. Then reset: Settings → **Start the demo again** → **Yes, start again**. Then click
    **Skip the payee cool-down**.
