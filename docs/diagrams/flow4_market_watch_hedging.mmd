@@ -1,0 +1,52 @@
+flowchart TD
+    subgraph DATA_FEEDS["1. Market & Liability Feeds"]
+        WB_FEED["World Bank Commodity Indices:
+        Pink Sheet Monthly / Daily Price Feeds
+        (Copper, Fuel, Aluminum, Grains)"]
+        PENDING_BILLS["Enterprise Payables Ledger:
+        Maturities, Foreign Currency Bills,
+        Expected Net Outflows (30-Day Window)"]
+    end
+
+    subgraph CONFORMAL_ANALYSIS["2. Conformal Pricing & Volatility Core"]
+        VOLATILITY_EST["Rolling Historical Volatility &
+        Drift Estimation"]
+        ACI_ENGINE["Adaptive Conformal Inference (ACI):
+        Dynamic Coverage alpha = 0.10 (90% Band)"]
+        RISK_BOUND["Conformal Risk Bound K(beta):
+        Guaranteed Error Tolerance under Non-Stationary Shift"]
+        FAIR_BAND["Output: Fair Price Range [p_low, p_high]"]
+    end
+
+    subgraph MONTE_CARLO["3. Treasury Liquidity Simulation"]
+        MC_SIM["Monte Carlo Engine (10,000 Paths):
+        Simulate 30-Day Net Cash Flow & Commodity Spikes"]
+        VAR_CVAR["Risk Metrics:
+        - Value at Risk (VaR 95%)
+        - Conditional VaR (CVaR 95% Expected Shortfall)"]
+    end
+
+    subgraph ACTIONS["4. Automated Treasury & Hedging Policy"]
+        THRESHOLD_CHECK{"CVaR > Risk Limit OR
+        Invoice > p_high + 5%?"}
+        ALERT_HEDGE["Trigger Dynamic Hedging / Cash Buffer:
+        Increase BondPool Collateral Reserve r_buffer"]
+        FLAG_DISCOUNT["Flag Invoice for Price Negotiation:
+        Tier-2 CFO Review Required"]
+        AUTO_CLEAR["Market Clearance:
+        Proceed to Autonomous Settlement"]
+    end
+
+    WB_FEED --> VOLATILITY_EST
+    VOLATILITY_EST --> ACI_ENGINE
+    ACI_ENGINE --> RISK_BOUND
+    RISK_BOUND --> FAIR_BAND
+
+    PENDING_BILLS --> MC_SIM
+    FAIR_BAND --> MC_SIM
+    MC_SIM --> VAR_CVAR
+    VAR_CVAR --> THRESHOLD_CHECK
+
+    THRESHOLD_CHECK -->|Excess Tail Risk| ALERT_HEDGE
+    THRESHOLD_CHECK -->|Price Anomaly| FLAG_DISCOUNT
+    THRESHOLD_CHECK -->|Within Risk Envelope| AUTO_CLEAR

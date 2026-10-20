@@ -1,0 +1,86 @@
+flowchart TD
+    subgraph INTAKE["1. Ingestion Layer (Untrusted Inputs)"]
+        DOC_PDF["Vendor Invoice (PDF / Photo)"]
+        DOC_JSON["E-Invoice (JSON format)"]
+        DOC_MAIL["Supplier Email (AgentMail inbox)"]
+        USER_REQ["Plain Language Executive Request"]
+    end
+
+    subgraph PERCEPTION["2. Perception & Extraction Layer"]
+        VLM_PRIMARY["Gemini 3.6 Flash (Primary VLM)"]
+        VLM_FALLBACK["Gemini 3.5 Flash-Lite (Fallback)"]
+        SSE_STREAM["Live Stream Reader (SSE stream)"]
+        SCHEMA_VAL["Pydantic Schema Validator"]
+    end
+
+    subgraph SECURITY["3. Security & Policy Gateway (Deterministic)"]
+        INJ_GUARD["Injection Pre-Filter (Regex & Semantics)"]
+        OFAC_CHECK["OFAC SDN Sanctions Screening"]
+        POLICIES["Policy Gate S1 to S11 (Capability Tags)"]
+        DECIDER["Router & Intent Decider (Rules / LLM)"]
+    end
+
+    subgraph VERIFICATION["4. Verification & Risk Core"]
+        THREE_WAY["3-Way Match (Invoice vs PO vs Receipts)"]
+        MARKET_CHECK["Fair Price Check (World Bank Series)"]
+        ACI_RANGE["Adaptive Conformal Inference (90% Range)"]
+        RISK_CAL["Conformal Risk Bound K(beta) & Probations"]
+    end
+
+    subgraph GOVERNANCE["5. Governance & Authorization Engine"]
+        TIER_SPLIT{"Risk & Value Tier Check"}
+        T1_AUTO["Tier 1: Autonomous Path (<= $5,000)"]
+        T2_ESCALATE["Tier 2: Dual Approval (> $25,000 or Flags)"]
+        EIP712_SIGN["EIP-712 Multi-Sig (FM + Owner Wallets)"]
+    end
+
+    subgraph SETTLEMENT["6. Settlement & Blockchain Layer"]
+        subgraph SMART_CONTRACTS["Smart Contracts (Base Sepolia & FISCO BCOS)"]
+            VAULT["PaymentVault.sol (Whitelisted Payees, Caps)"]
+            POOL["BondPool.sol (Underwriter Collateral & Claims)"]
+            ANCHOR["EvidenceAnchor.sol (Hourly Merkle Roots)"]
+        end
+        subgraph BANK_RAIL["Traditional Banking Rail (ISO 20022)"]
+            PAIN001["pain.001 Credit Transfer Generation"]
+            CAMT053["camt.053 Statement Reconciliation"]
+        end
+    end
+
+    subgraph PERSISTENCE["7. Audit & Enterprise Integration"]
+        ODOO_SYNC["Live Odoo 20 SaaS (XML-RPC Sync)"]
+        PG_JOURNAL["Append-Only Hash-Chained Journal (Neon PG)"]
+        AUDIT_LOG["Public Verifiable Audit Trail (Basescan)"]
+    end
+
+    DOC_PDF & DOC_JSON & DOC_MAIL --> SSE_STREAM
+    SSE_STREAM --> VLM_PRIMARY
+    VLM_PRIMARY -.->|Fallback on error| VLM_FALLBACK
+    VLM_PRIMARY & VLM_FALLBACK --> SCHEMA_VAL
+    USER_REQ --> INJ_GUARD
+
+    SCHEMA_VAL --> INJ_GUARD
+    INJ_GUARD --> OFAC_CHECK
+    OFAC_CHECK --> POLICIES
+    POLICIES --> DECIDER
+
+    DECIDER --> THREE_WAY
+    THREE_WAY --> MARKET_CHECK
+    MARKET_CHECK --> ACI_RANGE
+    ACI_RANGE --> RISK_CAL
+
+    RISK_CAL --> TIER_SPLIT
+    TIER_SPLIT -->|Passes all checks & low value| T1_AUTO
+    TIER_SPLIT -->|High value or anomaly| T2_ESCALATE
+    T2_ESCALATE --> EIP712_SIGN
+
+    T1_AUTO --> VAULT
+    EIP712_SIGN --> VAULT
+    TIER_SPLIT -->|Bank rail supplier| PAIN001
+
+    VAULT --> POOL
+    PAIN001 --> CAMT053
+
+    VAULT & CAMT053 --> PG_JOURNAL
+    PG_JOURNAL --> ANCHOR
+    ANCHOR --> AUDIT_LOG
+    VAULT --> ODOO_SYNC
