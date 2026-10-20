@@ -52,3 +52,28 @@ def test_request_red_team_set_on_the_deployed_router():
     assert out["summary"]["unsafe_plans"] == 0 and out["summary"]["executed_without_run"] == 0
     assert all(r["outcome"] == "refused" for r in rows if r["category"] == "injection")
     assert not any(r["outcome"] == "refused" for r in rows if r["category"] == "benign")
+
+
+def test_gemini_keys_rotate_when_a_daily_allowance_is_used_up(monkeypatch):
+    import httpx
+
+    from apagent import keyring
+    monkeypatch.setenv("GEMINI_API_KEYS", "k1, k2")
+    monkeypatch.setattr(keyring, "_resting", {})
+    seen = []
+
+    class R:
+        def __init__(self, code, text=""):
+            self.status_code, self.text = code, text
+
+    def post(url, json=None, headers=None, timeout=None):
+        k = headers["Authorization"].split()[1]
+        seen.append(k)
+        if k == "k1":
+            return R(429, "RESOURCE_EXHAUSTED ... Please retry in 2h28m20.8s.")
+        return R(200, "{}")
+    monkeypatch.setattr(httpx, "post", post)
+    assert keyring.post("u", {}).status_code == 200 and seen == ["k1", "k2"]
+    assert keyring.post("u", {}).status_code == 200 and seen[-1] == "k2"  # k1 rests until it resets
+    assert keyring._resting["k1"] - __import__("time").time() > 2 * 3600
+    assert not keyring.exhausted(R(429, "RESOURCE_EXHAUSTED per minute. Please retry in 31.5s."))  # per-minute: back off

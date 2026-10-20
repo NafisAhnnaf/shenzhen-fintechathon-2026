@@ -164,7 +164,8 @@ class VLMReader:
 
     def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
         load_env()
-        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key", "")
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key", "") or \
+            next((k.strip() for k in os.environ.get("GEMINI_API_KEYS", "").split(",") if k.strip()), "")
         key = api_key if api_key is not None else (os.environ.get("VLM_API_KEY") or gemini_key or "")
         is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("VLM_API_KEY"))
         default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
@@ -173,6 +174,7 @@ class VLMReader:
         self.base_url = (base_url or os.environ.get("VLM_BASE_URL", default_base_url)).rstrip("/")
         self.model = model or os.environ.get("VLM_MODEL", default_model)
         self.api_key = key
+        self.rotate = is_gemini and api_key is None and not os.environ.get("VLM_API_KEY")
 
     def available(self) -> bool:
         return bool(self.api_key)
@@ -200,12 +202,18 @@ class VLMReader:
         def post():
             # Free tiers answer 429/503 when busy. A per-minute limit: back off, honouring Retry-After. A used-up
             # daily allowance: switch to the fallback model (its own allowance) instead of waiting hours.
+            def send():
+                if self.rotate:
+                    from . import keyring
+                    return keyring.post(url, body, timeout=90)
+                return httpx.post(url, json=body, headers=headers, timeout=90)
+
             for wait in (3, 10, 20, 0):
-                r = httpx.post(url, json=body, headers=headers, timeout=90)
+                r = send()
                 if r.status_code == 429 and fallback_model and body["model"] != fallback_model \
                         and ("RESOURCE_EXHAUSTED" in r.text or "per day" in r.text.lower()):
                     body["model"] = fallback_model
-                    r = httpx.post(url, json=body, headers=headers, timeout=90)
+                    r = send()
                 if r.status_code not in (429, 500, 503) or not wait:
                     return r
                 try:

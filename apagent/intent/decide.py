@@ -222,7 +222,8 @@ class LLMDecider:
 
     def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
         load_env()
-        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key", "")
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key", "") or \
+            next((k.strip() for k in os.environ.get("GEMINI_API_KEYS", "").split(",") if k.strip()), "")
         key = api_key if api_key is not None else (os.environ.get("LLM_API_KEY") or gemini_key or "")
         is_gemini = bool(gemini_key) and (key == gemini_key or not os.environ.get("LLM_API_KEY"))
         default_base_url = "https://generativelanguage.googleapis.com/v1beta/openai" if is_gemini else "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
@@ -233,6 +234,8 @@ class LLMDecider:
         self.base_url = (base_url or os.environ.get("LLM_BASE_URL", default_base_url)).rstrip("/")
         self.model = model or os.environ.get("LLM_MODEL", default_model)
         self.api_key = key
+        # Gemini keys rotate through apagent.keyring (GEMINI_API_KEYS); an explicit or non-Gemini key is used as is.
+        self.rotate = is_gemini and api_key is None and not os.environ.get("LLM_API_KEY")
 
     def available(self) -> bool:
         return bool(self.api_key)
@@ -248,10 +251,14 @@ class LLMDecider:
                   f"they must sum to 1.\nRequest: {state['text']}\nContext (trusted): {json.dumps(ctx)[:6000]}")
         import time as _t
         for wait in (2, 6, 0):  # a short back-off for per-minute limits; after that the rules answer (FallbackDecider)
-            r = httpx.post(f"{self.base_url}/chat/completions", timeout=60,
-                           headers={"Authorization": f"Bearer {self.api_key}"},
-                           json={"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": prompt}],
-                                 "response_format": {"type": "json_schema", "json_schema": {"name": schema.name, "schema": js, "strict": True}}})
+            body = {"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": prompt}],
+                    "response_format": {"type": "json_schema", "json_schema": {"name": schema.name, "schema": js, "strict": True}}}
+            if self.rotate:
+                from .. import keyring
+                r = keyring.post(f"{self.base_url}/chat/completions", body, timeout=60)
+            else:
+                r = httpx.post(f"{self.base_url}/chat/completions", timeout=60,
+                               headers={"Authorization": f"Bearer {self.api_key}"}, json=body)
             if r.status_code not in (429, 500, 503) or not wait:
                 break
             _t.sleep(wait)
