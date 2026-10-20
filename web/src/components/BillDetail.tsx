@@ -5,6 +5,7 @@ import { ACTOR, date, describe, money, pct, signedPct, time } from "../lib/forma
 import { useAction, useAppState, useCan, useSupplierName } from "../lib/hooks";
 import { ErrorLine, Hash, Modal, Money, PaidBy, StatusTag, useSignData } from "./ui";
 import { VerifyButton } from "./Verify";
+import { ReadView, type ReadFields } from "./ReaderPanel";
 
 export function BillDetail({ id }: { id: string }) {
   const { data: b, error } = useQuery({ queryKey: ["bill", id], queryFn: () => api.get<Bill>(`/bills/${id}`), refetchInterval: 4000 });
@@ -45,10 +46,23 @@ export function BillDetail({ id }: { id: string }) {
       <Actions b={b} />
       <Match b={b} />
       <Checks b={b} />
+      <ReaderSaw id={b.bill} />
       <Market b={b} />
       <BillEmails b={b} />
       <BillJournal id={b.bill} />
     </div>
+  );
+}
+
+/** What the reader took from the document, opened on demand. */
+function ReaderSaw({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
+  const { data, error } = useQuery({ queryKey: ["read", id], queryFn: () => api.get<ReadFields>(`/bills/${id}/read`), enabled: open });
+  return (
+    <details className="sect" onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+      <summary className="small muted" style={{ cursor: "pointer" }}>What the reader saw</summary>
+      {data ? <ReadView r={data} /> : <p className="note">{error ? String(error) : "Loading"}</p>}
+    </details>
   );
 }
 

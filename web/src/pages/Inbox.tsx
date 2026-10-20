@@ -5,6 +5,7 @@ import { api, type Email, type Inbox as InboxT } from "../lib/api";
 import { money } from "../lib/format";
 import { useAction, useCan } from "../lib/hooks";
 import { Empty, ErrorLine, Modal, PageHead, Tabs, Tag, useRemembered } from "../components/ui";
+import { ReaderPanel } from "../components/ReaderPanel";
 
 export default function Inbox() {
   const [tab, setTab] = useRemembered<"in" | "out">("inbox-tab", "in");
@@ -25,6 +26,7 @@ function Incoming() {
   const { data } = useQuery({ queryKey: ["inbox"], queryFn: () => api.get<InboxT>("/inbox"), refetchInterval: 6000 });
   const { data: mail } = useQuery({ queryKey: ["mail"], queryFn: () => api.get<any>("/mail") });
   const [result, setResult] = useState<any>(null);
+  const [reading, setReading] = useState<File | null>(null);
   const [paste, setPaste] = useState(false);
   const [raw, setRaw] = useState("");
   const done = (r: any) => {
@@ -51,11 +53,11 @@ function Incoming() {
           <>
             <label className="btn primary">
               Upload a bill
-              <input type="file" accept=".json,.pdf,image/*" hidden onChange={(e) => e.target.files?.[0] && upload.mutate(e.target.files[0])} />
+              <input type="file" accept=".json,.pdf,image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setReading(f); e.target.value = ""; }} />
             </label>
             <label className="btn">
               Take a photo
-              <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => e.target.files?.[0] && upload.mutate(e.target.files[0])} />
+              <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setReading(f); e.target.value = ""; }} />
             </label>
             <button className="btn" disabled={poll.isPending} onClick={() => poll.mutate(undefined)}>{poll.isPending ? "Checking" : "Check mail"}</button>
             <button className="btn" onClick={() => setPaste(true)}>Paste an email</button>
@@ -70,6 +72,17 @@ function Incoming() {
       {(upload.isPending || take.isPending) && <p className="row"><span className="spin" /> Reading and checking the bill</p>}
       <ErrorLine error={take.error || upload.error || email.error || stmt.error || poll.error || pasted.error} />
       {result && <ResultLine r={result} onClose={() => setResult(null)} />}
+      {reading && (
+        <div className="modal-back" onClick={() => setReading(null)}>
+          <div className="modal wide" role="dialog" aria-modal="true" aria-label="What the reader sees" onClick={(e) => e.stopPropagation()}>
+            <div className="between">
+              <h2>What the reader sees</h2>
+              <button className="btn small" onClick={() => setReading(null)}>Close</button>
+            </div>
+            <ReaderPanel file={reading} onBill={(id) => { setReading(null); nav(`/bills?bill=${id}`); }} />
+          </div>
+        </div>
+      )}
 
       <div className="split even">
         <div className="card">

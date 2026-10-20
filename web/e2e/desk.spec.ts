@@ -190,6 +190,31 @@ test.describe.serial("payables desk", () => {
     await page.screenshot({ path: `${SHOTS}/10-bank.png`, fullPage: true });
   });
 
+  test("landing page: the story, then into the desk", async ({ page }) => {
+    await page.context().clearCookies();
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("can't be conned");
+    await expect(page.getByText("We hired an AI clerk.")).toBeVisible();
+    await page.getByRole("link", { name: "Open the desk" }).first().click();
+    await page.waitForURL("**/login**");
+  });
+
+  test("upload: the live reader shows each stage, every field read, then the decision", async ({ page }) => {
+    await signIn(page, "finance manager");
+    await page.goto("/inbox");
+    // A JSON e-invoice runs the same live panel without spending vision-model quota.
+    await page.locator("input[type=file]").first().setInputFiles("../data/demo/documents/t13_net30.json");
+    const panel = page.getByRole("dialog", { name: "What the reader sees" });
+    await expect(panel).toBeVisible();
+    await expect(panel.getByText("HAR-2512011").first()).toBeVisible({ timeout: 30_000 });
+    await expect(panel.getByText("✓ Decision")).toBeVisible({ timeout: 30_000 });
+    await page.screenshot({ path: `${SHOTS}/11-reader.png`, fullPage: true });
+    await panel.getByRole("button", { name: "Open the bill" }).click();
+    await page.waitForURL("**/bills?bill=*");
+    await page.getByText("What the reader saw").click();
+    await expect(page.getByText("supplier says").first()).toBeVisible();
+  });
+
   test("phone width", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await signIn(page, "finance manager");

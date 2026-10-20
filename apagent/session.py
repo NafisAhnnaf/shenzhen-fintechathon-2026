@@ -214,6 +214,10 @@ class Session:
     def ingest_file(self, filename: str, data: bytes, process: bool = True, auto_pay: bool = True) -> dict:
         """A document as received (JSON e-invoice, PDF or image). Kept under data/state/uploads/."""
         read, kind = read_document(filename, data)
+        return self.ingest_read(filename, data, read, kind, process, auto_pay)
+
+    def ingest_read(self, filename: str, data: bytes, read, kind: str, process: bool = True, auto_pay: bool = True) -> dict:
+        """The rest of an upload once the reader has its fields (the streaming upload reads first, then calls this)."""
         self.sync_erp(max_age=30)  # check the bill against the ERP as it is now
         self.uploads += 1
         keep = STATE_DIR / "uploads" / f"{self.uploads:04d}-{Path(filename).name}"

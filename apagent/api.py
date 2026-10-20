@@ -23,7 +23,7 @@ from typing import Optional
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 import anyio
@@ -511,6 +511,75 @@ def upload_document(file: UploadFile = File(...), process: bool = Form(True)):
     """A supplier document as received: .json e-invoice, .pdf, or a photo (.png/.jpg). PDFs and photos need the
     vision reader (VLM_API_KEY); without it the API answers 503 and nothing is recorded."""
     return S().ingest_file(file.filename or "upload", file.file.read(), process=process)
+
+
+@app.post("/api/documents/stream", dependencies=[INTAKE])
+def upload_document_stream(file: UploadFile = File(...)):
+    """The same upload, reported as it happens (server-sent events): received, reading, read (every field the
+    reader extracted, with confidences and the page's other text), checking, then decided or error."""
+    import httpx
+
+    from .intake import read_document
+    from .reader import VLMReader
+
+    s = S()  # resolve the company now: the stream runs outside this request's context
+    name, data = file.filename or "upload", file.file.read()
+
+    def ev(stage: str, **d) -> str:
+        return f"data: {json.dumps({'stage': stage, **_ok(d)})}\n\n"
+
+    def gen():
+        yield ev("received", file=name, bytes=len(data))
+        is_json = name.lower().endswith(".json")
+        yield ev("reading", reader="e-invoice parser" if is_json else VLMReader().model)
+        t0 = time.time()
+        try:
+            read, kind = read_document(name, data)
+        except (BadDocument, ReaderUnavailable) as e:
+            yield ev("error", message=str(e))
+            return
+        except (httpx.HTTPStatusError, httpx.TransportError) as e:
+            yield ev("error", message=reader_error(e))
+            return
+        yield ev("read", kind=kind, seconds=round(time.time() - t0, 1), read=read_json(read))
+        yield ev("checking")
+        with _lock:
+            try:
+                out = s.ingest_read(name, data, read, kind)
+                s.save()
+            except Exception as e:  # noqa: BLE001 - reported to the page, not swallowed
+                yield ev("error", message=str(e))
+                return
+        yield ev("decided", result=out)
+
+    return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.get("/api/bills/{bill_id}/read", dependencies=[ANY])
+def bill_read(bill_id: str):
+    """What the reader extracted from this bill's document. Every value here is what the supplier's document says."""
+    s = S()
+    if bill_id not in s.led.bills:
+        raise HTTPException(404)
+    return read_json(s.led.bills[bill_id].read)
+
+
+def reader_error(e) -> str:
+    """A plain message for a failed call to the vision model. Nothing is recorded when the read fails."""
+    code = getattr(getattr(e, "response", None), "status_code", None)
+    if code == 429:
+        return "The vision model's quota is used up (429). Nothing was recorded. Wait for the quota to reset or set another VLM_MODEL."
+    if code in (401, 403):
+        return f"The vision model refused the API key ({code}). Nothing was recorded. Check the key."
+    return f"The vision reader is busy or unreachable ({code or type(e).__name__}). Nothing was recorded. Try again in a moment."
+
+
+def read_json(r) -> dict:
+    return {"inv_no": r.inv_no, "supplier_name": r.supplier_name, "tax_id": r.tax_id, "sender_domain": r.sender_domain,
+            "po_id": r.po_id, "date": r.date, "due_date": r.due_date, "terms": r.terms, "currency": r.currency,
+            "lines": [{"item": l.item, "desc": l.desc, "unit": l.unit, "qty": l.qty, "price": l.price} for l in r.lines],
+            "credit": r.credit, "total": r.total, "bank_account": r.bank_account, "confidence": r.confidence,
+            "text": r.raw_text}
 
 
 @app.get("/api/inbox", dependencies=[ANY])
