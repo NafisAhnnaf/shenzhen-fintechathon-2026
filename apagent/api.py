@@ -27,6 +27,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 import anyio
+from web3 import Web3
 
 from . import auth as A
 from . import demo
@@ -655,6 +656,27 @@ if float(os.environ.get("MAILBOX_POLL_SECONDS", "0") or 0) > 0:
     threading.Thread(target=_poll_forever, args=(float(os.environ["MAILBOX_POLL_SECONDS"]),), daemon=True).start()
 
 
+# ------------------------------------------------------------------ public anchors (spec E6)
+@app.get("/api/public-anchor", dependencies=[ANY])
+def public_anchor():
+    """The latest hourly anchor of every company's journal head on the public chain, and this company's proof."""
+    from . import public_anchor as P
+    st = state_store()
+    if st is None:
+        return {"enabled": False}
+    out = P.proof_for(st, _company.get()) or {}
+    net = os.environ.get("PUBLIC_ANCHOR_NETWORK", "")
+    tx = (out.get("anchor") or {}).get("tx_hash")
+    return _ok({"enabled": bool(net), "network": net, **out,
+                "explorer": f"https://sepolia.basescan.org/tx/{tx}" if tx and net == "baseSepolia" else None})
+
+
+if os.environ.get("PUBLIC_ANCHOR_NETWORK") and os.environ.get("STATE_STORE", "file").lower() == "postgres":
+    from . import public_anchor as _P
+    threading.Thread(target=_P.loop, args=(float(os.environ.get("PUBLIC_ANCHOR_SECONDS", "3600")),
+                                           os.environ["PUBLIC_ANCHOR_NETWORK"]), daemon=True).start()
+
+
 # ------------------------------------------------------------------ bank payment files and statements (spec M1, M2)
 def _bank():
     from .bankfiles import BankDesk
@@ -1099,11 +1121,38 @@ def advance(seconds: int = 121):
 
 
 # ------------------------------------------------------------------ chain relay for the browser wallet (FISCO)
+def _raw_tx_to(raw_hex: str) -> Optional[str]:
+    """The `to` address of a signed raw transaction (legacy or EIP-2718 typed)."""
+    import rlp
+    raw = bytes.fromhex(raw_hex.removeprefix("0x"))
+    if raw and raw[0] < 0x7f:  # typed: type byte, then the RLP payload
+        fields = rlp.decode(raw[1:])
+        to = fields[5] if raw[0] == 2 else fields[4] if raw[0] == 1 else None
+    else:
+        to = rlp.decode(raw)[3]
+    return Web3.to_checksum_address(to) if to else None
+
+
 @app.post("/api/rpc")
-def rpc_relay(body: dict):
-    """Forward a JSON-RPC call from the browser wallet to the connected chain. Reads and signed transactions only."""
+def rpc_relay(body: dict, request: Request):
+    """Forward a JSON-RPC call from the browser wallet to the connected chain. Reads for anyone (the sign-in page
+    needs the chain); a signed transaction only from someone signed in, and only to their own company's contracts:
+    on a demo chain the test keys are public, so the relay is what keeps one company's contracts from another."""
     if body.get("method") not in RPC_ALLOWED:
         return {"jsonrpc": "2.0", "id": body.get("id"), "error": {"code": -32601, "message": "method not allowed"}}
+    if body["method"] == "eth_sendRawTransaction":
+        u = getattr(request.state, "user", None)
+        if u is None or u.role == "none":
+            return {"jsonrpc": "2.0", "id": body.get("id"), "error": {"code": -32001, "message": "sign in first"}}
+        try:
+            to = _raw_tx_to((body.get("params") or [""])[0])
+        except Exception:  # noqa: BLE001 - not a transaction
+            return {"jsonrpc": "2.0", "id": body.get("id"), "error": {"code": -32602, "message": "not a signed transaction"}}
+        mine = {Web3.to_checksum_address(a) for a in S().chain.dep["contracts"].values()}
+        if to not in mine:
+            S().agent.log.add(u.role, "rpc_refused", {"to": to}, security=True)
+            return {"jsonrpc": "2.0", "id": body.get("id"),
+                    "error": {"code": -32003, "message": "transactions go only to your company's contracts"}}
     r = S().chain.w3.provider.make_request(body["method"], body.get("params", []))
     return {"jsonrpc": "2.0", "id": body.get("id"), **({"error": r["error"]} if "error" in r else {"result": r.get("result")})}
 

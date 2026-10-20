@@ -73,12 +73,14 @@ class TxResult:
 
 class Chain:
     def __init__(self, network: str = "localhost", rpc: Optional[str] = None, held_roles: Optional[set] = None,
+                 anchor_only: bool = False,
                  dep: Optional[dict] = None):
         """held_roles: the keys this process may use. In SIGNING=client mode the owner and the finance manager
         (approver) sign in their own wallets, so the server does not load their keys.
         dep: a company's own deployment record (contracts, roles); default: the network's deployment file."""
         self.dep = dep or json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text())
-        set_token_scale(self.dep)
+        if not anchor_only:  # a client used only to anchor must not change how amounts are read
+            set_token_scale(self.dep)
         rpc = rpc or {"localhost": "http://127.0.0.1:8545",
                       "fisco": os.environ.get("FISCO_RPC", "http://127.0.0.1:8546")}.get(
             network, os.environ.get("BASE_SEPOLIA_RPC", "https://sepolia.base.org"))
@@ -155,7 +157,19 @@ class Chain:
             raise
         rc = self.w3.eth.wait_for_transaction_receipt(h, timeout=180)
         hx = "0x" + h.hex().removeprefix("0x")
+        self._settle(rc.blockNumber)
         return TxResult(rc.status == 1, hx, None if rc.status == 1 else "reverted", rc.blockNumber)
+
+    def _settle(self, block: int) -> None:
+        """Public RPCs are load-balanced: the next read can land on a node a block behind the one that returned the
+        receipt. Wait until reads see the block, so the next step works on the state this transaction made."""
+        if self.network in ("localhost", "fisco"):
+            return
+        import time as _t
+        for _ in range(15):
+            if self.w3.eth.block_number >= block + 1:
+                return
+            _t.sleep(1)
 
     def _fees(self) -> dict:
         if self.network == "localhost":
@@ -414,6 +428,13 @@ class Chain:
 
     def anchor_root(self, day: int, root: bytes) -> TxResult:
         return self.send("agent", self.anchor.functions.anchor(day, root))
+
+    def has_code(self) -> bool:
+        """The deployment's vault exists on this chain (a restarted local chain has none)."""
+        try:
+            return len(self.w3.eth.get_code(self.vault.address)) > 0
+        except Exception:  # noqa: BLE001 - chain unreachable: do not treat as missing
+            return True
 
     def state(self) -> dict:
         v, p, t = self.vault.functions, self.pool.functions, self.token.functions

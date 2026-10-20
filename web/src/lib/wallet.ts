@@ -40,12 +40,14 @@ export function makeConfig(chainId: number, rpcIn: string) {
   const wcId = import.meta.env.VITE_WC_PROJECT_ID as string | undefined;
   const connectors = [injected({ shimDisconnect: true })];
   if (wcId) connectors.push(walletConnect({ projectId: wcId, showQrModal: true }) as any);
-  if (chainId === 31337) {
+  const relayed = rpcIn.startsWith("/");
+  if (chainId === 31337 && !relayed) {
     // Hardhat holds these test keys and signs for them.
     for (const [, a] of DEV_ACCOUNTS) connectors.push(mock({ accounts: [a as `0x${string}`], features: { reconnect: true } }) as any);
   }
-  if (chainId === 20200) {
-    // Local FISCO BCOS chain: its nodes hold no user keys, so the browser signs with the same public test keys.
+  if (chainId === 20200 || (chainId === 31337 && relayed)) {
+    // FISCO BCOS, or a hosted demo chain reached through the API's relay (which only forwards signed transactions):
+    // the browser signs with the same public test keys.
     for (const [r] of DEV_ACCOUNTS) connectors.push(localKey(DEV_KEYS[r], `Local test key: ${LABEL[r]}`, chain) as any);
   }
   return createConfig({ chains: [chain], connectors, transports: { [chain.id]: http(rpc) } as any });

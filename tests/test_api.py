@@ -256,3 +256,21 @@ def test_close_pack_and_schedule(client):
     r = c.post("/api/inbox/documents/t13_net30").json()
     assert r["tier"] == "T1" and r["scheduled"]  # cleared, paid on its date, not now
     assert c.post("/api/settings/pay-timing", json={"mode": "now"}).json()["pay_timing"] == "now"
+
+
+def test_rpc_relay_sends_only_to_the_companys_contracts(client):
+    c, api = client
+    from apagent.chain import hardhat_keys
+    acct = Account.from_key(hardhat_keys()[0])
+    def raw(to):
+        return "0x" + acct.sign_transaction({"to": to, "value": 0, "gas": 50_000, "gasPrice": 10**9, "nonce": 10**6,
+                                             "chainId": 31337}).raw_transaction.hex().removeprefix("0x")
+    anon = TestClient(api.app)
+    assert anon.post("/api/rpc", json={"jsonrpc": "2.0", "id": 1, "method": "eth_chainId"}).json()["result"]
+    r = anon.post("/api/rpc", json={"jsonrpc": "2.0", "id": 2, "method": "eth_sendRawTransaction", "params": [raw("0x" + "11" * 20)]})
+    assert r.json()["error"]["message"] == "sign in first"
+    r = c.post("/api/rpc", json={"jsonrpc": "2.0", "id": 3, "method": "eth_sendRawTransaction", "params": [raw("0x" + "11" * 20)]})
+    assert r.json()["error"]["code"] == -32003
+    vault = c.get("/api/state").json()["contracts"]["vault"]
+    r = c.post("/api/rpc", json={"jsonrpc": "2.0", "id": 4, "method": "eth_sendRawTransaction", "params": [raw(vault)]})
+    assert r.json().get("error", {}).get("code") != -32003  # forwarded (the node judges the nonce)

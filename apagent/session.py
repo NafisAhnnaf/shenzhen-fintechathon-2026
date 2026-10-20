@@ -135,6 +135,13 @@ class Session:
         st = store()
         if st is not None:
             co = st.company(company_id)
+            own = network in ("localhost", "fisco") and os.environ.get("PER_COMPANY_CONTRACTS", "off") == "on"
+            if co is None and own:  # a company of its own: fresh contracts, nothing shared with other companies
+                return reset(network, log_path, signing=signing, erp=erp, company_id=company_id)
+            if co is not None and own and not Chain(co["network"], held_roles=held_roles(signing), dep=co["deployment"]).has_code():
+                # The local chain started again and the company's contracts are gone: start it again from the
+                # sample records rather than show records the chain no longer agrees with.
+                return reset(network, log_path, signing=signing, erp=erp, company_id=company_id)
             if co is None:
                 dep = json.loads((CHAIN_DIR / "deployments" / f"{network}.json").read_text())
                 st.create_company(company_id, Ledger.load(demo.DEMO_DIR / "ledger.json").company, network, dep)

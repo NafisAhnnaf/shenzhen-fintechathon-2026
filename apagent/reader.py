@@ -196,11 +196,15 @@ class VLMReader:
         url, headers = f"{self.base_url}/chat/completions", {"Authorization": f"Bearer {self.api_key}"}
 
         def post():
-            # Free tiers answer 429/503 when busy; a short back-off usually gets through.
-            for wait in (2, 5, 10, 0):
+            # Free tiers answer 429/503 when busy (the limit is per minute); back off, honouring Retry-After.
+            for wait in (3, 10, 20, 30, 0):
                 r = httpx.post(url, json=body, headers=headers, timeout=90)
                 if r.status_code not in (429, 500, 503) or not wait:
                     return r
+                try:
+                    wait = max(wait, min(60, int(float(r.headers.get("retry-after", 0)))))
+                except ValueError:
+                    pass
                 time.sleep(wait)
 
         r = post()

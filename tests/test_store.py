@@ -143,3 +143,35 @@ def test_api_runs_on_the_database_and_survives_a_restart(store, monkeypatch):
     assert bill["status"] == "paid" and bill["tx_hash"] == paid["tx"]["tx_hash"]
     assert store.verify_journal("demo")["ok"]
     api._sessions.clear()
+
+
+def test_public_anchor_seals_every_company_and_gives_each_a_proof(store):
+    """One root per period over every company's journal head; each company gets a proof; an unchanged hour sends
+    nothing; an altered row no longer matches what was anchored."""
+    from tests.test_e2e_chain import _node_up
+    if not _node_up():
+        pytest.skip("local hardhat node not running")
+    from apagent import public_anchor as P
+    from apagent.chain import Chain
+
+    for cid, doc in (("co-a", "t01_routine"), ("co-b", "t13_net30")):
+        s = __import__("apagent.session", fromlist=["Session"]).Session(network=None, signing="server")
+        s.ingest(doc)
+        store.create_company(cid, s.led.company, "localhost", {"contracts": {}, "roles": {}})
+        store.save(cid, s)
+    ch = Chain("localhost", anchor_only=True)
+    import time as _t
+    period = int(_t.time())  # unique per run on the shared local chain
+    rec = P.anchor_once(store, ch, period=period)
+    assert rec and rec["tx_hash"] and [h["company"] for h in rec["leaves"]] == ["co-a", "co-b"]
+    assert P.anchor_once(store, ch, period=period + 1) is None  # nothing changed
+    for cid in ("co-a", "co-b"):
+        p = P.proof_for(store, cid)
+        assert p["included"] and p["proof_ok"] and p["rows_match"] and p["anchor"]["root"] == rec["root"]
+    on_chain = ch.anchor.functions.roots(period).call() if hasattr(ch.anchor.functions, "roots") else None
+    if on_chain is not None:
+        assert "0x" + on_chain.hex() == rec["root"]
+    with store.connect() as c:
+        c.execute("set local app.allow_purge = 'on'")
+        c.execute("update journal set leaf=%s where company_id='co-a' and seq=0", ("0x" + "cd" * 32,))
+    assert P.proof_for(store, "co-a")["rows_match"] is False
