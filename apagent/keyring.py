@@ -1,17 +1,40 @@
 """Gemini API keys: one (GEMINI_API_KEY) or several (GEMINI_API_KEYS=key1,key2). When a key's daily allowance is
 used up (429 RESOURCE_EXHAUSTED), it is set aside until Google says it resets and the next key is used, so a busy
-demo or a test run does not stop at the first limit. A per-minute limit is left to the caller's back-off.
+demo or a test run does not stop at the first limit. Calls are also spaced to the per-minute limit (GEMINI_RPM,
+15 by default, the free tier of Gemini 3.1 Flash-Lite), so a burst of bills waits briefly instead of being refused.
 """
 from __future__ import annotations
 
 import os
 import re
+import threading
 import time
+from collections import deque
 from typing import Optional
 
 from .config import load_env
 
 _resting: dict[str, float] = {}  # key -> time it can be used again
+_sent: dict[str, deque] = {}  # key -> times of the calls in the last minute
+_sent_lock = threading.Lock()
+
+
+def _slot(key: str, max_wait: float) -> None:
+    """Wait (at most max_wait seconds) until the key has made fewer than GEMINI_RPM calls in the last minute. Past
+    that the call goes out anyway, and the caller's back-off handles a refusal."""
+    rpm = max(1, int(os.environ.get("GEMINI_RPM", "15")))
+    give_up = time.time() + max_wait
+    while True:
+        with _sent_lock:
+            q = _sent.setdefault(key, deque())
+            now = time.time()
+            while q and q[0] <= now - 60:
+                q.popleft()
+            if len(q) < rpm or now >= give_up:
+                q.append(now)
+                return
+            pause = min(q[0] + 60 - now, give_up - now)
+        time.sleep(max(0.05, pause))
 
 
 def keys() -> list[str]:
@@ -57,6 +80,7 @@ def post(url: str, body: dict, timeout: float = 60, key: Optional[str] = None):
         if k is None or k in tried:
             return r
         tried.add(k)
+        _slot(k, max_wait=min(20.0, timeout / 2))
         r = httpx.post(url, json=body, headers={"Authorization": f"Bearer {k}"}, timeout=timeout)
         if key is not None or not exhausted(r):
             return r

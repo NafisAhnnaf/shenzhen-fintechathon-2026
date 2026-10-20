@@ -146,12 +146,15 @@ class ModelFlag:
         opts = ["instructions_to_the_system", "ordinary_business_text"]
         js = {"type": "object", "additionalProperties": False, "required": opts,
               "properties": {o: {"type": "number", "minimum": 0, "maximum": 1} for o in opts}}
-        r = httpx.post(f"{self.llm.base_url}/chat/completions", timeout=60,
-                       headers={"Authorization": f"Bearer {self.llm.api_key}"},
-                       json={"model": self.llm.model, "temperature": 0,
-                             "messages": [{"role": "user", "content": MODEL_PROMPT.format(text=text[:4000])}],
-                             "response_format": {"type": "json_schema",
-                                                 "json_schema": {"name": "instruction_check", "schema": js, "strict": True}}})
+        body = {"model": self.llm.model, "temperature": 0,
+                "messages": [{"role": "user", "content": MODEL_PROMPT.format(text=text[:4000])}],
+                "response_format": {"type": "json_schema", "json_schema": {"name": "instruction_check", "schema": js, "strict": True}}}
+        url = f"{self.llm.base_url}/chat/completions"
+        if getattr(self.llm, "rotate", False):  # Gemini keys: rotation and the per-minute spacing
+            from . import keyring
+            r = keyring.post(url, body, timeout=60)
+        else:
+            r = httpx.post(url, timeout=60, headers={"Authorization": f"Bearer {self.llm.api_key}"}, json=body)
         r.raise_for_status()
         out = json.loads(r.json()["choices"][0]["message"]["content"])
         a, b = max(0.0, float(out.get(opts[0], 0))), max(0.0, float(out.get(opts[1], 0)))
