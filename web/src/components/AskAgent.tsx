@@ -42,18 +42,19 @@ export function AskAgent() {
   };
 
   return (
-    <div className="search" onFocus={() => setOpen(true)}>
-      <span aria-hidden="true">⌕</span>
+    <div className="search ask" onFocus={() => setOpen(true)}>
+      <label htmlFor="ask" className="ask-label">Ask the agent</label>
       <input
         id="ask"
         aria-label="Ask the agent"
-        placeholder={can.staff ? "Ask the agent, e.g. “Pay Acme's bills due this week except the disputed one”" : "Ask the agent (sign in as owner or finance manager)"}
+        placeholder={can.staff ? "Type a request, e.g. “Pay Acme's bills due this week except the disputed one”" : "Only the owner and the finance manager can give the agent requests"}
         value={text}
         disabled={!can.staff}
         maxLength={500}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && submit()}
       />
+      {can.staff && <button className="btn small primary" disabled={!text.trim() || ask.isPending} onClick={submit}>Ask</button>}
       {open && (ask.isPending || reply || ask.error) && (
         <div className="popover">
           <div className="between">

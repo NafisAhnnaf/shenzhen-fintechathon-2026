@@ -84,7 +84,16 @@ class Chain:
         rpc = rpc or {"localhost": "http://127.0.0.1:8545",
                       "fisco": os.environ.get("FISCO_RPC", "http://127.0.0.1:8546")}.get(
             network, os.environ.get("BASE_SEPOLIA_RPC", "https://sepolia.base.org"))
-        self.w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={"timeout": 60}))
+        if network in ("localhost", "fisco"):
+            self.w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={"timeout": 60}))
+        else:
+            # Public RPCs drop connections now and then: retry every call, including sending a signed transaction
+            # (sending the same signed bytes twice is harmless: the node answers "already known").
+            import requests
+            from web3.providers.rpc.utils import ExceptionRetryConfiguration
+            retry = ExceptionRetryConfiguration(errors=(ConnectionError, requests.ConnectionError, requests.Timeout),
+                                                retries=6, backoff_factor=1.0, method_allowlist=["eth", "net", "web3"])
+            self.w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={"timeout": 60}, exception_retry_configuration=retry))
         self.network = network
         self.keys = load_keys(network)
         if held_roles is not None:

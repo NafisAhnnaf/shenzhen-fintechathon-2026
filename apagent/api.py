@@ -58,6 +58,8 @@ _lock = threading.RLock()
 _sessions: dict[str, Session] = {}  # one desk per company, opened on first use
 # The company of the person making the request; set by the `who` middleware before the endpoint runs.
 _company: contextvars.ContextVar[str] = contextvars.ContextVar("company", default=DEFAULT_COMPANY)
+# The company's own name from the login service (a new company starts from the sample records but keeps its name).
+_company_name: contextvars.ContextVar[str] = contextvars.ContextVar("company_name", default="")
 
 # ------------------------------------------------------------------ sign-in and roles (spec X2)
 # Company staff sign in with email and password through the login service (auth/, Better Auth); the API reads the
@@ -97,8 +99,10 @@ def _resolve(request: Request) -> Optional[A.User]:
     if d is not None:
         p = d.person(request.cookies)
         if p is not None:
-            return A.User(p.wallet or "", p.role, p.expires, company=p.company_id or "", user_id=p.user_id,
-                          name=p.name, email=p.email, kind="account")
+            u = A.User(p.wallet or "", p.role, p.expires, company=p.company_id or "", user_id=p.user_id,
+                       name=p.name, email=p.email, kind="account")
+            u.company_name = p.company_name or ""
+            return u
     h = request.headers.get("authorization", "")
     token = h[7:].strip() if h.lower().startswith("bearer ") else request.cookies.get(COOKIE)
     return AUTH.user(token)
@@ -114,6 +118,7 @@ async def who(request: Request, call_next):
     request.state.user = u
     if u is not None and u.company and state_store() is not None:
         _company.set(u.company)
+        _company_name.set(getattr(u, "company_name", ""))
     return await call_next(request)
 
 
@@ -162,6 +167,11 @@ def S() -> Session:
             if s is None:
                 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
                 s = _sessions[cid] = Session.open(NETWORK, log_path=LOG_PATH, signing=SIGNING, erp=ERP, company_id=cid)
+    name = _company_name.get()
+    if name and s.led.company != name:
+        with _lock:
+            s.led.company = name
+            s.save()
     if s.clock() == "real" and s.led.today < time.strftime("%Y-%m-%d"):
         with _lock:
             if s.sync_clock():
