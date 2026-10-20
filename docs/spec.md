@@ -152,7 +152,7 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | ID | Feature | Status | Code | Test |
 | --- | --- | --- | --- | --- |
 | V1 | Supplier query and reply classification (credit note, bank-detail request, other) | Built | `agent.draft_query`, `receive_reply` | task 16 |
-| V2 | The agent sends emails itself: payment notices, price queries, duplicate notices, bank-change alerts (SMTP or outbox) | Built | `mail.py`, `agent.send_email` | `test_mail.py` |
+| V2 | The agent sends emails itself: payment notices, price queries, duplicate notices, bank-change alerts (AgentMail, SMTP or outbox; supplier mail to a sandbox unless `MAIL_LIVE=on`) | Built | `mail.py`, `agent.send_email` | `test_mail.py` |
 | V3 | Statement reconciliation, receivable, reserve claim, recovery from the next bill | Built | `agent.reconcile` … | tasks 4, 5 |
 | V4 | Claim dispute by the bank and decision by the arbiter, each from its own wallet | Built | `agent.bank_action`, `BondPool.sol` | `test_claims.py` |
 | V5 | Refund request drafted after a confirmed missed credit; the finance manager sends it | Built | `agent.confirm_case`, `release_email` | `test_mail.py` |
@@ -167,12 +167,27 @@ Status: **Built** (in code, tested), **To build** (in scope, not done), **Roadma
 | E3 | Payments register: who paid, rail, transaction, filter by period and payer, ERP history | Built | `views.payments` | `test_api.py` |
 | E4 | Verify: Merkle proof of a journal line against the root stored on-chain | Built | `audit.merkle_proof`, `views.verify` | `test_api.py` |
 | E5 | Month-end close pack | Built | `views.close_pack` | `test_api.py` |
-| E6 | Evidence on a public testnet (Base Sepolia) and FISCO BCOS | Needs keys | `tasks.py` | |
+| E6 | Evidence on a public testnet (Base Sepolia, contracts source-verified) and FISCO BCOS; hourly public anchor of every company's journal head | Built | `tasks.py`, `public_anchor.py` | `evidence/evidence_baseSepolia.md`, `test_store.py` |
 | E7 | Bank console: pool, locks, premiums, claims to review; the bank approves settings from its own wallet | Built | `views.bank`, `session.held_roles` | `test_api.py`, `test_claims.py` |
 | E8 | Notifications when someone must act: in the app, and on a WeCom, Slack or Teams webhook | Built | `notify.py`, `views.notifications` | `test_mail.py` |
 
-Roadmap (not in this release): one agent serving several companies; CBDC rails such as e-HKD or mBridge;
-automatic buying from market watch.
+### 5.8 Money out of the bank, sign-in, storage
+
+| ID | Feature | Status | Code | Test |
+| --- | --- | --- | --- | --- |
+| M1 | Bank-rail payments written to ISO 20022 pain.001 files (hash in the journal) | Built | `bankfiles.py` | `test_bankfiles.py`, e2e |
+| M2 | Bank statements (camt.053) matched to approved payments; alert for debits nobody approved | Built | `bankfiles.py` | `test_bankfiles.py`, e2e |
+| M3 | Settlement token at face value (1 token = $1); scale recorded in the deployment | Built | `config.py`, `deploy.js` | `test_e2e_chain.py` |
+| A1 | Email sign-in, two-step sign-in, companies, roles (owner, finance manager, accounts clerk, viewer), invitations | Built | `auth/`, `identity.py` | `test_identity.py`, `accounts.spec.ts` |
+| A2 | Wallet linking for people who sign; wallet sign-in for the bank and arbiter | Built | `api.py`, `auth.py` | `test_identity.py` |
+| A3 | Postgres storage per company, append-only hash-chained journal, signed working memory | Built | `store.py` | `test_store.py` |
+| A4 | Hosting in one container; fresh contracts per company on the demo chain | Built | `Dockerfile`, `session.py` | — |
+| X10 | Sanctions screening (OFAC SDN, names and aliases) of suppliers and new payees | Built | `sanctions.py` | `test_hardening.py` |
+| X11 | Daily ceiling on all payments; request box limits; relay restricted to the company's contracts | Built | `agent.py`, `api.py` | `test_hardening.py`, `test_api.py` |
+| C11 | Exchange rate of the invoice date from the ECB, with its source on the bill | Built | `fx.py` | `test_checker.py` |
+
+Roadmap (not in this release): a direct bank connection (host-to-host) instead of files; a bank's tokenised deposit
+in place of the settlement token; CBDC rails such as e-HKD or mBridge; automatic buying from market watch.
 
 ## 6. User flows
 
@@ -196,7 +211,7 @@ Each flow names its actor, what starts it, what it changes on-chain, and the tes
 
 ## 7. Policies
 
-S1–S10 are in `docs/plan.md` section 5 and enforced in `apagent/policies.py`, each with a refusing test.
+S1–S11 are enforced in `apagent/policies.py`, each with a refusing test; the Controls page lists them.
 New in this release:
 
 | ID | Rule |
@@ -218,7 +233,7 @@ New in this release:
 
 ## 9. Screens
 
-Built in `web/src/pages/`, one file per screen, and covered by 10 browser flows in `web/e2e/desk.spec.ts`. The layout follows common accounting tools: left sidebar, tables with status tabs, a detail panel. Approved mockup:
+Built in `web/src/pages/`, one file per screen, and covered by 15 browser flows in `web/e2e/` (11 desk flows, 4 sign-in flows). The layout follows common accounting tools: left sidebar, tables with status tabs, a detail panel. Approved mockup:
 https://claude.ai/artifact/Qtxk5zanrCQcpJKZfr5oAT
 
 | Screen | Contents | Features |
@@ -226,14 +241,15 @@ https://claude.ai/artifact/Qtxk5zanrCQcpJKZfr5oAT
 | Inbox | New bills, emails and statements; upload and camera | R3, R4, R5 |
 | Bills | Tabs by status; detail panel with three-way match, checks and proposal | C1–C10, D1 |
 | Approvals | Queue of bills that need a signature, with the agent's proposal | UF2, D4 |
-| Payments | Period selector, totals by payer, register with verify | E3, E4 |
+| Payments | Period selector, totals by payer, register with verify; bank transfers (payment files, statements) | E3, E4, M1, M2 |
 | Suppliers | Registry, frozen state, onboarding and bank-change flow | X7, C9 |
 | Disputes | Cases with timelines, claims, refunds | V3–V6 |
-| Activity | Journal with filters and period | E1, E2 |
+| Activity | Journal with filters and period; public anchor | E1, E2, E6 |
 | Risk | Risk setting, reserve, guarantee figures | D2, UF8 |
-| Security | Pause, frozen payees, attack demo, try-your-own | X1, X8 |
+| Controls | Pause, chain limits, the rules S1–S11, frozen payees, security events | X1, X8, X10 |
 | Bank | Exposure, premiums, approvals, disputes (bank wallet only) | E7 |
-| Settings | ERP, mailbox, team wallets, demo clock | R1, R4 |
+| Settings | General (ERP, mailbox, payment timing, daily limit, keys, demo clock), Team (members, roles, invitations, signers), My account (password, two-step sign-in, signing wallet) | R1, R4, A1, A2 |
+| Sign-in, welcome, invitation, reset | Email sign-in with two-step code; create or join a company | A1 |
 
 Visual rules: neutral greys, system font, one ink colour for primary buttons, colour only for status. No
 illustrations, gradients or "AI" badges. Every number on screen comes from the API.

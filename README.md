@@ -1,31 +1,48 @@
 # Bonded payables agent
 
 An AI accounts-payable agent for Hong Kong manufacturers (FinTechathon 2026, International Track, Topic F: Agent Wallet).
-It reads supplier bills, checks them against the company's own records and public market prices, and pays routine bills
-on its own. A smart contract enforces every payment rule, even if the agent's server is hacked. The owner sets a loss
-budget; conformal risk control turns it into how much the agent may pay alone, and a certified bound sizes the reserve
-that backs those payments.
+It reads supplier bills and emails, checks them against the company's own records (ERP) and public market prices, pays
+routine bills on its own and sends the rest to the finance manager with a proposed resolution. It writes and sends its
+own supplier emails, reconciles supplier and bank statements, and recovers money it overpaid. A smart contract enforces
+every payment rule even if the agent's server is taken over. The owner sets a loss budget; conformal risk control turns
+it into how much the agent may pay alone, and a certified bound sizes the reserve behind those payments.
 
-The full design is in [`docs/plan.md`](docs/plan.md). All company and supplier names in the demo are invented.
+Documents: [`docs/technical_document.md`](docs/technical_document.md),
+[`docs/security_self_assessment.md`](docs/security_self_assessment.md),
+[`docs/real_vs_simulated.md`](docs/real_vs_simulated.md), [`docs/spec.md`](docs/spec.md) (every feature and its
+status), [`evidence/`](evidence/) (every transaction, on Base Sepolia, FISCO BCOS and a local chain),
+[`docker/README.md`](docker/README.md) (hosting). The demo company is invented; prices, exchange rates, the sanctions
+list, email, storage and the public chain are real.
+
+**Base Sepolia** (source verified on Basescan): see `chain/deployments/baseSepolia.json` for the addresses and
+`evidence/evidence_baseSepolia.md` for the public run.
 
 ## What is in the repo
 
 | Path | What |
 | --- | --- |
-| `chain/contracts/` | `PaymentVault`, `BondPool`, `EvidenceAnchor`, `NaiveWallet` (demo baseline), `MockUSDC` (tUSDC) |
+| `chain/contracts/` | `PaymentVault`, `BondPool`, `EvidenceAnchor`, `MockUSDC` (settlement token, 1 token = $1) |
 | `chain/test/` | Contract tests, one per invariant B1-B13 plus payment, reserve and claim rules |
 | `apagent/checker.py` | Deterministic checker: supplier, order, lines, quantity, price, totals, credits, duplicates, fair price |
-| `apagent/tags.py`, `policies.py` | Capability tags on every value and policies S1-S10 (CaMeL-style) |
+| `apagent/tags.py`, `policies.py` | Capability tags on every value and policies S1-S11 (CaMeL-style) |
 | `apagent/injection.py` | Injection flag; decodes base64, Morse and look-alike characters first |
+| `apagent/sanctions.py` | OFAC SDN screening of suppliers and new payees |
 | `apagent/risk/` | Score, conformal risk control cut-offs, betting confidence bounds, Bernstein capital bound K(beta) |
-| `apagent/governor.py` | Risk service that decides the tier and co-signs autonomous payments (EIP-712) |
-| `apagent/agent.py` | The agent: process bills, pay, approve, reconcile statements, claims, recovery, supplier query, protective actions |
+| `apagent/governor.py`, `governor_service.py` | Risk service that decides the tier and co-signs autonomous payments (EIP-712), optionally as its own service |
+| `apagent/agent.py` | The agent: process bills, pay, approve, reconcile statements, claims, recovery, emails, protective actions |
 | `apagent/intent/` | Requests in plain words: intent catalogue, `decide(schema, state)` backends, conformal clarification, plan templates |
+| `apagent/bankfiles.py` | ISO 20022 pain.001 payment files and camt.053 statement matching |
+| `apagent/mail.py` | The agent's mailbox (AgentMail, or SMTP/IMAP) and fixed email templates |
+| `apagent/store.py`, `identity.py` | Postgres storage (rows per company, hash-chained journal) and who is signed in |
+| `apagent/public_anchor.py` | Hourly Merkle root of every company's journal on Base Sepolia |
+| `apagent/fx.py`, `marketwatch.py` | ECB exchange rates; metal price ranges and buy-ahead comparison |
 | `apagent/sim.py`, `demo.py` | Simulated company (2025, real World Bank metal prices) and the curated December demo documents |
-| `apagent/tasks.py` | Scripted tasks; writes the execution evidence |
-| `apagent/experiments.py` | AC-8, CAPITAL, FAIR, RED |
-| `apagent/api.py` | HTTP API for the UI |
-| `evidence/`, `results/` | Execution evidence (hashes) and experiment results |
+| `apagent/tasks.py`, `experiments.py` | Scripted tasks (execution evidence); AC-8, CAPITAL, FAIR, RED |
+| `apagent/api.py` | HTTP API for the desk |
+| `auth/` | Login service: Better Auth (email, two-step sign-in, companies, roles, invitations) |
+| `web/` | The desk (React, TypeScript, Vite, wagmi/viem, ECharts); browser flows in `web/e2e/` |
+| `Dockerfile`, `docker/` | One container for hosting |
+| `evidence/`, `results/` | Execution evidence (hashes) and experiment results (including the Slither report) |
 
 ## Setup
 
@@ -62,11 +79,21 @@ NETWORK=localhost SIGNING=client GOVERNOR_URL=http://127.0.0.1:8001 .venv/bin/uv
 ```
 
 Open http://127.0.0.1:8000, pick a local test account (owner, finance manager, bank or arbiter) and sign the
-sign-in message. As the owner, Settings › "Start the demo again" gives fresh contracts and the demo company's
+sign-in message. (This is wallet sign-in, used when there is no database. With email sign-in, see below.) As the owner, Settings › "Start the demo again" gives fresh contracts and the demo company's
 records. Bills arrive from Inbox ("Process"), an upload, a phone photo, or the mailbox.
 
 Optional: `GEMINI_API_KEY` in `.env` to read PDFs and photos (and for the request and instruction models),
 `SMTP_*`/`IMAP_*` for a real mailbox, `NOTIFY_WEBHOOK_URL` for WeCom, Slack or Teams alerts. See `.env.example`.
+
+**Email sign-in, companies and Neon.** Set `DATABASE_URL`, `BETTER_AUTH_SECRET` and `APP_SECRET` in `.env`, then:
+
+```bash
+(cd auth && npm ci && npm run migrate && npm start)                # login service on :3001
+STATE_STORE=postgres NETWORK=localhost SIGNING=client PER_COMPANY_CONTRACTS=on .venv/bin/uvicorn apagent.api:app --port 8000
+```
+
+Create an account, create a company (it starts from the sample records), invite colleagues in Settings › Team, and
+link your signing wallet in Settings › My account (pick a local test account).
 
 Scripted runs (no browser): `.venv/bin/python -m apagent.tasks --network localhost` writes
 `evidence/evidence_localhost.md`; `.venv/bin/python -m apagent.experiments --red` writes `results/summary.md`

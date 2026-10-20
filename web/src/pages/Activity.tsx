@@ -15,8 +15,33 @@ export default function Activity() {
     <>
       <PageHead title="Activity" sub="Everything the agent and people did, who did it, and the on-chain record behind it." />
       <Tabs value={tab} onChange={setTab} items={[["journal", "Journal"], ["close", "Month-end"]]} />
-      {tab === "journal" ? <Journal /> : <ClosePack />}
+      {tab === "journal" ? <><PublicAnchor /><Journal /></> : <ClosePack />}
     </>
+  );
+}
+
+/** The latest hourly anchor of every company's journal on the public chain, and whether ours still matches it. */
+function PublicAnchor() {
+  const { data } = useQuery({ queryKey: ["public-anchor"], queryFn: () => api.get<any>("/public-anchor"), refetchInterval: 60_000 });
+  if (!data?.enabled) return null;
+  const a = data.anchor;
+  return (
+    <div className="card pad between">
+      <div className="stack" style={{ gap: 4 }}>
+        <b>Public anchor</b>
+        {!a ? (
+          <span className="muted small">The first hourly anchor on {data.network} has not been written yet.</span>
+        ) : !data.included ? (
+          <span className="muted small">Anchor {a.period} on {a.network} was written before this company's first journal line.</span>
+        ) : (
+          <span className="small">
+            The journal's first {data.rows} lines are sealed in anchor {a.period} on {a.network}: root <span className="mono">{a.root.slice(0, 14)}…</span>.{" "}
+            {data.rows_match && data.proof_ok ? <span className="ok">The rows still produce the anchored head.</span> : <span className="bad">The rows no longer match the anchor.</span>}
+          </span>
+        )}
+      </div>
+      {data.explorer && <a className="btn small" href={data.explorer} target="_blank" rel="noreferrer">View on Basescan</a>}
+    </div>
   );
 }
 

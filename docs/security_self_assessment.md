@@ -1,14 +1,15 @@
 # Security self-assessment
 
 **Bonded Payables Agent** · FinTechathon 2026, International Track, Topic F (Agent Wallet)
-Branch `fix/plan-gaps`, 18 Oct 2026. Design reference: `docs/plan.md` (v3), sections 3.4, 5, 7 and 15.
+20 Oct 2026. Design reference: `docs/spec.md`, `docs/plan.md` (v3), sections 3.4, 5, 7 and 15.
 
 This document states what the code enforces, where, and which test or piece of evidence shows it. Where the code
 does less than the plan, we say so. Every number here comes from `results/` or `evidence/` in the repo.
 
 Compliance words: the reserve is a **performance reserve** (or **bond**), not an insurance policy. Everything runs
-on test chains with a mock stablecoin (**tUSDC**, 1 tUSDC stands for $1,000). All companies, suppliers and
-documents are invented demo data.
+on test chains with a settlement token at face value (**tUSDC**, 1 token = $1) standing in for a bank's tokenised
+deposit; bank-rail payments end in ISO 20022 files. The company, suppliers and documents are invented
+(`docs/real_vs_simulated.md`).
 
 ---
 
@@ -20,8 +21,9 @@ documents are invented demo data.
 | What if the agent's server is hacked? | An autonomous payment still needs the governor's EIP-712 signature, a registered payee, every cap and an unused bill ID. Task 10 (`BadSignature`), task 9 (`NotAuthorized`), invariant B9. See risk R4 for the case where governor and agent keys sit on the same server. |
 | What can the agent key do on-chain? | Pay inside the rules, freeze a payee, pause itself, record offsets. It cannot add payees, unfreeze, unpause, change settings, withdraw or file a claim alone. Invariants B6 and B13. |
 | Red-team result | 14 attacks. Naive agent: 13 succeed. Policies only: 2 succeed. Policies + contract: **0 succeed** (`results/red.json`). |
-| Tests | 28 contract tests (`chain/test/invariants.test.js`), 88 Python tests pass (4 Odoo tests skip without a live Odoo). 22 of 22 scripted tasks pass on a local Hardhat chain (`evidence/evidence_localhost.md`). |
-| Biggest open risks | Policy and contract both trust the ERP and the payee registry; the server in the demo holds the agent and governor keys together; the 99% reserve bound assumes independent errors. Section 9 lists all of them. |
+| Tests | 29 contract tests; 155+ Python tests; 15 browser flows; the scripted tasks on local Hardhat, local FISCO BCOS and Base Sepolia (`evidence/`). Slither: no high-impact findings (`results/slither.json`). |
+| Who can use the desk? | Only signed-in members of a company, with the role the database gives them (owner, finance manager, accounts clerk, viewer); two-step sign-in available; the bank and arbiter by wallet. Section 7. |
+| Biggest open risks | Policy and contract both trust the ERP and the payee registry; in the default setup the governor key runs beside the agent; the 99% reserve bound assumes independent errors; some web dependencies have moderate advisories. Section 10. |
 
 ---
 
@@ -39,7 +41,7 @@ can be wrong, so they need a confirmed preview).
 | Agent | API server | `payAutonomous`, `payApproved`, `openReceivable`, `recordOffset`, `freezePayee`, `pauseAgent`, `anchor` |
 | Governor | API server (same process as the agent) | Signs T1 approvals; can freeze and pause |
 | Underwriter service | API server | Approves bonded settings, funds and withdraws its own pool deposit, disputes claims |
-| Arbiter | Defaults to the owner address (`ARBITER_ADDRESS` overrides) | Resolves disputed claims |
+| Arbiter | Its own key, refused by the deploy script if it equals the owner, bank or agent | Resolves disputed claims |
 
 With `SIGNING=server` (task runner and tests) the server holds every key. The API checks that people's signatures
 come from the right address before it sends anything (`Agent.approve`, `Agent.confirm_case`, `Agent._owner_tx` →
@@ -85,7 +87,7 @@ smaller. Tests: `test_bounded_can_only_shrink`, `test_bounded_rejects_untrusted_
 
 ---
 
-## 5. Policies S1–S10
+## 5. Policies S1–S11
 
 All policies are checked by `policies.check(ToolCall)` before every tool call with an effect, through
 `Agent._gate`. A refusal raises `PolicyViolation`, writes a security log line with the policy ID, counts toward
@@ -110,7 +112,7 @@ the circuit breaker, and leaves the bill held.
 
 The contracts are a second layer: they hold the rules even if someone bypasses the application. Each invariant has
 one test in `chain/test/invariants.test.js` (13 tests); 15 more tests cover payment rules, reserve and claims,
-`EvidenceAnchor` and the naive baseline. All 28 pass.
+and `EvidenceAnchor`. All 29 pass; constructors refuse zero addresses.
 
 | ID | Invariant | How the contract enforces it | Test |
 | --- | --- | --- | --- |
@@ -149,7 +151,14 @@ owed and pauses; the anchor is append-only.
 | Payee cool-down | `addPayee` sets `activeAt = now + P-COOL` (300 s locally, 60 s on FISCO; 24 h intended for real use) | Contract test "changing a payee's bank details restarts the cool-down" |
 | Probation and drift guard | A confirmed error puts the supplier's next 5 bills on T2 and lowers the group's cut-off (`Governor.outcome`) | Task 4: routine cut-off 0.8715 → 0.8426, probation 5 |
 | Evidence anchoring | Each decision-log line is hashed; the day's Merkle root goes to `EvidenceAnchor` (append-only, one root per day) | Task "anchor", tx `0x9d07…0fc0` |
-| Browser RPC relay | `/api/rpc` forwards only read methods and `eth_sendRawTransaction` (already signed) | `RPC_ALLOWED` in `apagent/api.py` |
+| Browser RPC relay | `/api/rpc` forwards read methods to anyone, and an already-signed transaction only from a signed-in person and only to their own company's contracts (the demo chain's test keys are public) | `test_rpc_relay_sends_only_to_the_companys_contracts` |
+| Sign-in and roles | Better Auth sessions; the API checks the cookie's HMAC and reads membership and role from the database; nothing about the role comes from the request. Clerks bring documents in but cannot approve, pay or run requests | `tests/test_identity.py`, `web/e2e/accounts.spec.ts` |
+| Request box | 500-character cap, 6 requests a minute per person and 200 a day per company, instruction-like text refused before any model sees it; each refusal is a security event | `tests/test_hardening.py` |
+| Sanctions screening | Supplier names (and new payees) checked against the OFAC SDN list and its aliases; a match holds the bill for a person | `tests/test_hardening.py` |
+| Daily ceiling | One ceiling on everything paid in a day, signatures or not (owner setting, default $250,000) | `test_daily_cap_refuses_approvals_past_it` |
+| Bank statements | camt.053 import refuses DTDs and entity declarations and files over 5 MB; every debit must match an approved payment or it becomes an owner alert | `tests/test_bankfiles.py` |
+| Journal integrity | Append-only (database trigger), hash-chained, hourly public anchor of every company's head | `tests/test_store.py` |
+| Login-service mail hook | Only from this machine and with the shared secret; header injection refused | `test_login_service_mail_needs_the_shared_secret` |
 
 ---
 
@@ -182,9 +191,9 @@ UNSUPPORTED requests refused, intent-set and slot-set coverage 100%. Normal bill
 
 **How to read this table (method notes).**
 1. *Naive agent.* For the three injected-invoice attacks, the naive column runs `naive.plan_from_text` (a
-   deterministic stand-in for a tool-calling agent with no rules: if the text names a wallet, it pays there). Task 8
-   shows the same logic draining the on-chain `NaiveWallet` ($50,000, tx `0xe425…549f`). For the other rows the naive
-   result is set by construction in `experiments.red`, not run.
+   deterministic stand-in for a tool-calling agent with no rules: if the text names a wallet, it pays there). It is
+   a baseline column only; nothing of it is deployed or shown in the product. For the other rows the naive result is
+   set by construction in `experiments.red`, not run.
 2. *Policies + contract.* Only two rows (direct call, no governor signature) send a transaction the contract refuses.
    For the other twelve the application blocks the attack before any contract call, so this column equals the
    policies-only result. The contract would add the payee and cap checks behind them (task 8 shows a forced payment to
@@ -279,11 +288,13 @@ figure uses the governor's rolling 7-day cap; the contract alone uses fixed week
 | R3 | The injection flag is a pattern scorer, not a model | Paraphrased instructions can evade it | It only escalates; S1, S2 and the contract do not depend on it |
 | R4 | With `SIGNING=client`, the agent, governor and underwriter-service keys are on one server | A full server compromise is the "both keys" case: T1 payments to registered payees inside the caps, and withdrawal of the underwriter's free pool deposit | Production: governor run by the company's risk function or the underwriter on separate infrastructure |
 | R5 | The contract's supplier cap uses fixed 7-day buckets; the governor uses a rolling 7 days | Contract-only, one supplier can get up to 2 × P-SUPWEEK across a bucket boundary, and up to 5 × P-SUPWEEK ($25,000) in a 30-day window | The governor's rolling check applies on the normal path |
-| R6 | The API has no authentication and allows any origin; the request role is self-declared; "confirmed preview" means the `/run` endpoint was called | Anyone who can reach the API can drive the agent key (process bills, run plans) | Not people's keys: T2 needs the manager's signature, T3 the owner's transaction; T1 stays inside governor rules and caps. Production needs authenticated sessions |
-| R7 | The arbiter defaults to the owner address | In bonded mode the company would resolve its own disputed claims | Set `ARBITER_ADDRESS` to an independent key |
+| R6 | Fixed: every endpoint needs a signed-in member with the right role (section 7) | — | — |
+| R7 | Fixed: the deploy script refuses an arbiter equal to the owner, bank or agent | — | — |
 | R8 | The owner key is a single key with unrestricted vault `withdraw` and `addPayee` (cool-down only) | Owner compromise is total loss of the vault | Production: multisig or hardware key, longer cool-down |
 | R9 | A compromised approver key plus the agent key can pay any registered payee any amount (`payApproved` has no caps, by design) | T2 is uncapped | Payees still limited to the registry |
-| R10 | Evidence so far is on a local Hardhat chain and a local four-node FISCO BCOS chain; FISCO evidence (17 Oct) predates the 18 Oct policy commits; the vision reader has not been measured | Hashes are not publicly checkable yet | Base Sepolia deployment steps are in the README; rerun planned |
+| R10 | Fixed: contracts deployed and verified on Base Sepolia with a public evidence run. The FISCO evidence (17 Oct) predates later changes | — | Rerun on FISCO when a FISCO chain is up |
+| R11 | Web dependencies: moderate advisories in react-router 6, echarts 5, and libraries inside the wallet SDKs (one high, in a server-side websocket library the browser bundle does not use) | Fixes need major-version upgrades | Safe fixes applied; upgrades listed as future work |
+| R12 | The hosted demo chain uses public test keys | Anyone could sign for a demo role on that chain directly | The relay accepts transactions only from signed-in members to their own company's contracts; the chain is a sandbox |
 
 ### 10.5 Plan section 15 risks: status
 
@@ -292,7 +303,7 @@ figure uses the governor's rolling 7-day cap; the contract alone uses fixed week
 | No Jev access | Realised: Jev-ready interface with rule and LLM backends |
 | A request is misread | Conformal sets: 100% intent and slot coverage on 47 held-out requests, question rate 2%; preview before any effect |
 | Policies block normal bills or requests | 22/22 tasks pass; 100% accuracy without a question on held-out requests. No policy was loosened |
-| Testnet problems | Local Hardhat and FISCO runs; public testnet not yet run (R10) |
+| Testnet problems | Base Sepolia run done; public RPC lag handled by waiting for the next block after each transaction |
 | "Insurance" or stablecoin concerns | Performance reserve wording, tUSDC on test chains only, bank rail for mainland payees (task 15), standard mode needs no bank (task 18) |
 | Correlated errors | Stress case reported (10.3); several suppliers failing together is not covered |
 | Maths error | Unit tests for the cut-off, betting bound coverage and Bernstein formula (`tests/test_risk.py`); AC-8 and CAPITAL simulations |
@@ -302,8 +313,8 @@ figure uses the governor's rolling 7-day cap; the contract alone uses fixed week
 ## 11. How to reproduce
 
 ```bash
-(cd chain && npx hardhat test)                         # 28 contract tests
-.venv/bin/python -m pytest tests                       # 88 pass, 4 Odoo tests skip without Odoo
+(cd chain && npx hardhat test)                         # 29 contract tests
+.venv/bin/python -m pytest tests                       # Postgres, chain and Odoo tests skip without them
 (cd chain && npx hardhat node)                         # separate terminal
 (cd chain && npx hardhat run scripts/deploy.js --network localhost)
 .venv/bin/python -m apagent.tasks --network localhost  # evidence/evidence_localhost.md

@@ -1,19 +1,27 @@
 # Technical document
 
 **Bonded Payables Agent** · FinTechathon 2026, International Track, Topic F (Agent Wallet)
-Branch `fix/plan-gaps`, 18 Oct 2026. Companion documents: `docs/security_self_assessment.md` (tiers, policies,
-red team, risks), `docs/plan.md` (design, v3), `docs/erp-adapters.md`, `results/summary.md`, `evidence/`.
+20 Oct 2026. Companion documents: `docs/security_self_assessment.md` (tiers, policies, red team, risks),
+`docs/spec.md` (every feature with its status), `docs/real_vs_simulated.md`, `docs/erp-adapters.md`,
+`results/summary.md`, `evidence/`.
 
-An AI accounts-payable agent for Hong Kong manufacturers with 50 to 250 staff. It reads supplier bills, checks them
-against the company's own records and public metal prices, and pays routine bills on its own. Every other bill goes
-to the finance manager with a proposed resolution. The owner and the finance manager can give it requests in plain
-words; it shows a plan, asks one question when a request has more than one reading, and runs the plan under the same
-rules. A smart contract enforces every payment rule, even if the agent's server is hacked. The owner sets a loss
-budget β; conformal risk control turns it into how much the agent may pay alone, and a certified bound K(β) sizes the
-performance reserve (bond) behind those payments.
+An AI accounts-payable agent for Hong Kong manufacturers with 50 to 250 staff. It reads supplier bills and emails,
+checks them against the company's own records (ERP) and public metal prices, pays routine bills on its own and sends
+every other bill to the finance manager with a proposed resolution. It writes and sends its own supplier emails,
+reconciles supplier and bank statements, opens disputes and recovers money it overpaid. The owner and the finance
+manager can give it requests in plain words; it shows a plan, asks one question when a request has more than one
+reading, and runs the plan under the same rules. A smart contract enforces every payment rule even if the agent's
+server is taken over. The owner sets a loss budget β; conformal risk control turns it into how much the agent may pay
+alone, and a certified bound K(β) sizes the performance reserve behind those payments.
 
-Everything runs on test chains with a mock stablecoin (tUSDC; 1 tUSDC stands for $1,000). The company, suppliers
-and documents are invented; metal prices are real (World Bank Commodity Price Data, monthly).
+Money moves two ways. Suppliers on the token rail are paid in a settlement token from the company's vault (it stands
+in for a bank's tokenised deposit, at face value: 1 token is $1). Suppliers on the bank rail are approved and
+recorded on chain the same way, and paid by bank transfer: the desk writes ISO 20022 pain.001 files for the bank and
+matches the bank's camt.053 statements, flagging any debit nobody approved.
+
+The company and its documents are invented (no real company's books are available to a hackathon); metal prices
+(World Bank), exchange rates (ECB), the sanctions list (OFAC), email (AgentMail), storage (Neon Postgres) and the
+public chain (Base Sepolia) are real. `docs/real_vs_simulated.md` lists every part.
 
 ---
 
@@ -21,22 +29,27 @@ and documents are invented; metal prices are real (World Bank Commodity Price Da
 
 | Area | State | Where |
 | --- | --- | --- |
-| Bill pipeline: intake, reader, injection flag, checker, governor, T1/T2 | Built | `apagent/intake.py`, `reader.py`, `injection.py`, `checker.py`, `governor.py`, `agent.py` |
-| Request layer: catalogue, `decide()` backends, conformal clarification, plan templates, preview / run / cancel | Built | `apagent/intent/` |
-| Security layer: capability tags, policies S1–S10 | Built, each policy with a refusing test | `apagent/tags.py`, `policies.py` |
+| Bill pipeline: intake (e-invoice JSON, PDF and photo through Gemini, email attachments), injection flag, checker, governor, T1/T2 | Built | `apagent/intake.py`, `reader.py`, `injection.py`, `checker.py`, `governor.py`, `agent.py` |
+| Request layer: catalogue, `decide()` backends (rules, Gemini), conformal clarification, plan templates, preview / run / cancel; length cap, rate limit, instruction-like text refused | Built | `apagent/intent/`, `session.py`, `api.py` |
+| Security layer: capability tags, policies S1–S11, sanctions screening (OFAC SDN), daily payment ceiling | Built, each with a refusing test | `apagent/tags.py`, `policies.py`, `sanctions.py` |
 | Risk core: score, conformal cut-offs, drift guard, probation, K(β), premium | Built | `apagent/risk/`, `governor.py` |
-| Fair-price check with drafted supplier query and one canned reply (credit note) | Built | `checker.py`, `agent.py` |
-| Agent actions: statement reconciliation, claims, self-recovery, protective actions, payment-date planner | Built | `agent.py` |
-| Contracts: `PaymentVault`, `BondPool`, `EvidenceAnchor`, plus `NaiveWallet` and `MockUSDC` | Built; 28 tests | `chain/contracts/`, `chain/test/` |
+| Fair-price check and market watch (adaptive conformal ranges, alerts, buy-ahead comparison, PO drafts) | Built | `checker.py`, `marketwatch.py` |
+| Agent actions: emails it sends itself, statement reconciliation, disputes, claims, self-recovery, protective actions, payment-date planner, early-payment offers, budgets, three-way match | Built | `agent.py`, `mail.py`, `views.py`, `budgets.py` |
+| Bank rail: pain.001 payment files, camt.053 statement import and matching, "paid outside the system" alert | Built | `bankfiles.py` |
+| Contracts: `PaymentVault`, `BondPool`, `EvidenceAnchor`, `MockUSDC` | Built; 29 tests; Slither: no high findings | `chain/contracts/`, `chain/test/`, `results/slither.json` |
+| Chains: local Hardhat, local four-node FISCO BCOS, Base Sepolia (deployed and source-verified) | Built | `chain/`, `chain/deployments/` |
+| Public anchoring: every company's journal head, hourly, one Merkle root on Base Sepolia | Built | `public_anchor.py` |
+| Sign-in: email and password, two-step sign-in, companies, roles (owner, finance manager, accounts clerk, viewer), invitations; wallet sign-in for the bank and the arbiter; wallet linking | Built | `auth/` (Better Auth), `identity.py`, `auth.py` |
+| Storage: Postgres (Neon), rows per company, hash-chained append-only journal, signed working memory | Built | `store.py` |
+| Email: AgentMail inbox for the agent (send, read, label), supplier sandbox | Built | `mail.py` |
 | ERP adapters: demo file, CSV/Excel with column mapping, live Odoo 17 | Built | `apagent/erp/` |
-| Web desk | Built | `web/` (React, TypeScript, Vite, Tailwind, wagmi/viem, ECharts) |
-| Jev decision model | **Not built.** Jev-ready interface only (section 4.2) | `apagent/intent/decide.py` |
-| Vision reader | Built; **accuracy not yet measured** (no API key during the build) | `reader.py`, `reader_eval.py` |
-| Market watch (price-range forecast, alerts, buy-ahead PO draft), BUY-AHEAD intent, task 17 | **Cut** (section 12) | — |
+| Web desk | Built; 15 browser flows | `web/` (React, TypeScript, Vite, wagmi/viem, ECharts) |
+| Hosting: one container (API, web app, login service, demo chain) | Built | `Dockerfile`, `docker/` |
+| Jev decision model | Interface only (section 4.2) | `apagent/intent/decide.py` |
+| Hosted FISCO with WeBASE, hosted Odoo | Not hosted (no server); both run locally | `chain/fisco/`, `erp/odoo/` |
 
-Evidence: 22 of 22 scripted tasks pass on a local Hardhat chain (`evidence/evidence_localhost.md`, 18 Oct) and on a
-local four-node FISCO BCOS chain (`evidence/evidence_fisco.md`, 17 Oct). Tests: 28 contract tests; 88 Python tests
-pass and 4 Odoo tests skip without a live Odoo.
+Evidence: the scripted tasks run on a local Hardhat chain, a local FISCO BCOS chain and Base Sepolia
+(`evidence/evidence_*.md`, every transaction linked). Tests: 155+ Python tests, 29 contract tests, 15 browser flows.
 
 ---
 
@@ -68,7 +81,7 @@ pass and 4 Odoo tests skip without a live Odoo.
    │ caps, probation, reserve │   T1 ─► governor co-signs (EIP-712)
    └────────────┬─────────────┘
                 ▼
-   ┌──────────────────────────┐   every effect: policy gate S1–S10 first
+   ┌──────────────────────────┐   every effect: policy gate S1–S11 first
    │ Agent (executor)         │──────────────────────────────────────────────┐
    └──────────────────────────┘                                              ▼
                                    ┌───────────────────────────────────────────────────────┐
@@ -78,10 +91,13 @@ pass and 4 Odoo tests skip without a live Odoo.
                                    └───────────────────────────────────────────────────────┘
 ```
 
-**Processes.** One FastAPI server (`apagent/api.py`) hosts the agent, the governor and the request layer, and
-serves the desk. With `SIGNING=client` it holds the agent, governor and underwriter-service keys; the owner and the
-finance manager sign in their own wallets and the server checks each signature or mined transaction before acting.
-State is saved to `data/state/<network>.pkl` after every change and reloaded only if it belongs to the deployed vault.
+**Processes.** The FastAPI server (`apagent/api.py`) hosts the agent, the governor and the request layer, and
+serves the desk; it keeps one desk per company, chosen from the signed-in person's membership. The login service
+(`auth/`, Better Auth on Node) handles email sign-in, two-step sign-in, companies and invitations; the API forwards
+`/api/auth/*` to it and reads the session from the shared database. The governor can run as its own service with its
+own key (`governor_service.py`). With `SIGNING=client` the owner and the finance manager sign in their own wallets
+and the server checks each signature or mined transaction before acting. State is kept in Postgres (one set of rows
+per company, the journal hash-chained and append-only); without a database it falls back to a local file.
 
 ### 2.1 Flow 1: every bill
 
@@ -241,7 +257,7 @@ In short:
   three makes it untrusted.
 - **One endorsement**: `bounded(x, erp_bound) = min(x, erp_bound)`, tagged `computed:erp_bounded`; `erp_bound` must
   be trusted. A supplier can make an amount smaller, never larger.
-- **Policies S1–S10** checked before every effect (`policies.check`): payee only from the registry (S1), amount only
+- **Policies S1–S11** checked before every effect (`policies.check`): payee only from the registry (S1), amount only
   ERP-bounded (S2), untrusted values only escalate (S3), no payee-changing tool (S4), every card number tagged (S5),
   no free supplier text in outgoing messages (S6), market values never set payee, amount or quantity (S7), router
   sees trusted state only (S8), catalogue plans with closed slots and a confirmed preview (S9), protective actions
@@ -520,15 +536,16 @@ Only T1 payments create locks, so T2 payments (approved by a person) are not cov
 
 ### 9.3 EvidenceAnchor and baselines
 
-`EvidenceAnchor.anchor(day, root)`: the agent key only, one non-zero root per day, append-only. `NaiveWallet`: an
-agent wallet with no rules, used only for the side-by-side demo (task 8: drained of $50,000 by a poisoned invoice).
-`MockUSDC`: tUSDC, 6 decimals.
+`EvidenceAnchor.anchor(period, root)`: the agent key only, one non-zero root per period, append-only. It carries
+each company's daily decision-log root and, on Base Sepolia, the hourly root over every company's journal head
+(section 16). `MockUSDC`: the settlement token, 6 decimals, at face value (1 token is $1); it stands in for a bank's
+tokenised deposit. The no-rules baseline of the RED experiment is a plan in `apagent/naive.py`; it is not deployed.
 
 ### 9.4 Parameters
 
 | Name | Demo value | Meaning |
 | --- | --- | --- |
-| P-CAP | $5,000 (5 tUSDC) | Per-payment T1 cap, fixed across bundles |
+| P-CAP | $5,000 | Per-payment T1 cap, fixed across bundles |
 | P-DAY, P-NDAY | careful $10,000 / 3; standard $15,000 / 5; more $20,000 / 8; most $25,000 / 10 | Daily T1 amount and count caps |
 | P-SUPWEEK | $5,000 | T1 total per supplier per week |
 | r | K(β)/N per bundle; $414.94 in the deployed standard bonded bundle | Reserve per T1 payment |
@@ -536,13 +553,16 @@ agent wallet with no rules, used only for the side-by-side demo (task 8: drained
 | P-DISPUTE | 120 s (5 business days intended) | Underwriter's dispute time |
 | P-COOL | 300 s locally, 60 s on FISCO (24 h intended) | Payee cool-down |
 | P-BREAK | 3 blocked attempts in 600 s | Circuit breaker |
-| Funding | vault $500,000, pool $72,000, naive wallet $50,000 | `data/demo/deploy_params.json` |
+| Funding | vault $500,000, pool $72,000 | `data/demo/deploy_params.json` |
+| Co-sign line | $25,000 | Above it the owner signs too (`DUAL_ABOVE_USD`) |
 
 ### 9.5 Invariants
 
 B1–B13 each have one test (`chain/test/invariants.test.js`); 15 further tests cover caps, settings binding, bank
 rail, standard mode, cool-down, the claim and recovery story, dispute and arbiter, pool too small, shortfall, the
-anchor and the naive wallet. 28 tests pass. The table is in the security self-assessment, section 6.
+and the anchor. 29 tests pass; constructors refuse zero addresses. Slither (0.10.4) reports no high-impact findings;
+the one medium is an enum comparison it misreads, and the lows are the intended time windows and event order after
+transfers of our own token (`results/slither.json`). The table is in the security self-assessment, section 6.
 
 ---
 
@@ -595,30 +615,28 @@ otherwise.
 - **The capital bound assumes independent errors.** The stress case covers one supplier failing on every bill;
   several suppliers failing together is not covered.
 - **Small groups get no autonomy.** At β = 1%, new-supplier and "other" bills always go to a person.
-- **The vision reader is unmeasured.** No API key was available; the demo uses JSON e-invoices, and task 2 uses a
-  re-issued e-invoice rather than the phone photo. `reader_eval.py` is ready to measure it.
-- **No Jev backend.** The router runs on the rule decider (or an LLM through the same interface).
-- **Evidence chains.** Local Hardhat and local FISCO BCOS; no public testnet hashes yet. Demo windows are
-  compressed (seconds instead of days); K(β) and r use the real 30-day window.
-- **Security limits** (ERP trust, the S3 exception, keys on one server, no API authentication, owner key as a
-  single point of failure, contract weekly buckets) are listed in the security self-assessment, section 10.
+- **The vision reader runs on Gemini's free tier**, which rate-limits; accuracy is measured only on the demo
+  documents (`reader_eval.py`).
+- **No Jev backend.** The router runs on the rule decider or Gemini through the same interface.
+- **Demo windows are compressed** (seconds instead of days) on every chain; K(β) and r use the real 30-day window.
+- **The hosted demo runs on a local chain inside its container**, with fresh contracts per company, because judges'
+  companies must not share caps, a pause switch or test keys on one public deployment. Base Sepolia carries the
+  hourly public anchors and the public evidence run; FISCO BCOS runs locally (no server to host it).
+- **The bank rail ends at files.** No bank connection: the company uploads pain.001 to its portal and imports the
+  bank's camt.053. The demo bank on local chains books a file the way a statement would.
+- **Security limits** (ERP trust, the S3 exception, the owner key as a single point of failure, contract weekly
+  buckets, older web dependencies) are listed in the security self-assessment, section 10.
 
 ### 12.2 Future work
 
-1. **Market watch** (cut from this build, plan 9.3): a 90% price range for the next 1–3 months per metal with
-   adaptive conformal inference around the no-change forecast; alerts when at least two of recent volatility in the
-   top 10% of its history, a CUSUM change point, and an unusually wide range fire; a buy-now / buy-half / wait card
-   ranked by worst-10% cost within the owner's hedge budget; and a BUY-AHEAD intent that drafts a purchase order for
-   a person to post. It would never trade or buy alone. Task 17 depends on it.
-2. **Jev backend** behind `decide()`, with a data agreement or self-hosted model; route the injection flag and the
-   reply classifier through it; rerun the request-set calibration.
-3. **Measure the vision reader** on labelled documents and feed its error rates into the simulated error model.
-4. **Public testnet run** (Base Sepolia, five separate keys) and a FISCO rerun with the 18 Oct changes.
-5. **Separate the governor** onto its own infrastructure (company risk function or underwriter); multisig owner
-   key; authenticated API sessions; rolling weekly cap on-chain.
-6. **Correlated capital**: treat each supplier-week as one unit in K(β), as the plan's correlated version suggests.
-7. Full supplier dispute loop (revised invoices, disputes, reminders), live email connectors, federated calibration
-   across companies.
+1. **A bank connection** (host-to-host or a bank API) instead of file upload, and a real tokenised deposit (HKMA
+   Project Ensemble) in place of the settlement token.
+2. **Jev backend** behind `decide()`, with a data agreement or self-hosted model.
+3. **Hosted FISCO BCOS with WeBASE** as the company's main chain, anchored to Base Sepolia as now.
+4. **Separate the governor** onto the bank's or the company's risk infrastructure, one per company; multisig owner.
+5. **Correlated capital**: treat each supplier-week as one unit in K(β).
+6. Supplier portal for revised invoices, federated calibration across companies, an official fapiao verification
+   provider, persistent chain state for the hosted demo.
 
 ---
 
@@ -626,18 +644,59 @@ otherwise.
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
-(cd chain && npm install --legacy-peer-deps && npx hardhat compile)
-.venv/bin/python -m apagent.risk.calibrate        # data/calibration.json
-.venv/bin/python -m apagent.demo                  # December demo world
-(cd chain && npx hardhat test)                    # 28 contract tests
-.venv/bin/python -m pytest tests                  # 88 pass, 4 Odoo tests skip without Odoo
-(cd chain && npx hardhat node)                    # separate terminal
+(cd chain && npm ci && npx hardhat compile && npx hardhat test)      # 29 contract tests
+(cd auth && npm ci) && (cd web && npm ci && npm run build)
+.venv/bin/python -m pytest tests                                    # Postgres, chain and Odoo tests skip without them
+(cd chain && npx hardhat node)                                      # separate terminal
 (cd chain && npx hardhat run scripts/deploy.js --network localhost)
-.venv/bin/python -m apagent.tasks --network localhost        # evidence/
-(cd chain && npx hardhat run scripts/deploy.js --network localhost)
-.venv/bin/python -m apagent.experiments --red                # results/
+.venv/bin/python -m apagent.tasks --network localhost               # evidence/
+.venv/bin/python -m apagent.experiments --red                       # results/
 NETWORK=localhost SIGNING=client .venv/bin/uvicorn apagent.api:app --port 8000
 ```
+
+With a database and the login service (email sign-in): set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `APP_SECRET`,
+run `(cd auth && npm run migrate && npm start)` and start the API with `STATE_STORE=postgres`. The container
+(`docker build -t payables-desk .`) runs all of it; `docker/README.md` lists its settings.
+
+## 14. Sign-in and companies
+
+Company staff sign in with email and password through the login service (Better Auth 1.7, `auth/`), with optional
+two-step sign-in (TOTP, backup codes) and passwords checked against known breaches. A company is a Better Auth
+organisation; a member's role is owner, finance manager, accounts clerk or viewer, and the owner invites people by
+email. The API never trusts a role in a request: it checks the session cookie's HMAC with the shared secret, reads
+the session, membership and role from the database (`identity.py`) and opens that company's desk. A person links
+the wallet they sign with by signing a one-time message; signatures are still checked by the contract. The bank
+and the arbiter are outside the company and sign in with their wallets only.
+
+## 15. Storage
+
+Postgres (Neon in production). Business records are rows per company (bills, suppliers, cases, receivables,
+emails, anchors, ERP snapshots); a save sends only the rows that changed. The journal is append-only (a database
+trigger refuses updates and deletes) and hash-chained: each row stores keccak(previous hash ‖ leaf), so
+`verify_journal` finds any altered, removed or reordered row. The agent's working memory is one blob signed with an
+HMAC; an altered blob is refused on load.
+
+## 16. Public anchors
+
+Once an hour every company's journal head goes into one Merkle root, written to `EvidenceAnchor` on Base Sepolia by
+the agent key (`public_anchor.py`). The Activity page shows the latest anchor, a Basescan link, and whether the
+company's rows still produce the anchored head (Merkle proof checked). An hour with no new lines sends nothing.
+
+## 17. Bank rail
+
+Approved bank-rail payments become an ISO 20022 pain.001.001.09 credit-transfer file (end-to-end id = bill id,
+creditor account from the registry, SHA-256 of the file in the journal). The bank's camt.053.001.08 statement is
+matched by end-to-end id, or by amount and creditor when the bank drops the reference. A debit that matches nothing
+the desk approved is a security event and an owner alert ("paid outside the system"). Statements with a DTD or
+entity declarations are refused.
+
+## 18. Hosting
+
+One container (`Dockerfile`): the API with the built web app, the login service, and a local demo chain. Each
+company gets its own contracts on that chain; after a restart a company whose contracts are gone starts again from
+the sample records. The browser signs with the public test keys through the API's relay, which forwards a signed
+transaction only from a signed-in person and only to their own company's contracts. State is in Neon, mail in
+AgentMail, the hourly anchors on Base Sepolia.
 
 ## References
 
