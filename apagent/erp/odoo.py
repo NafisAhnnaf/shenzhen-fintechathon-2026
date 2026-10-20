@@ -183,24 +183,54 @@ class OdooAdapter:
         """Demo reset only: delete the supplier bills and payments the agent posted, so Odoo matches a fresh agent
         ledger. The agent's bills carry payment reference "agent:<bill id>" and its payments a memo starting with
         "<network> tx " or "bill B-". Anything people entered in Odoo is not touched. Safe to repeat."""
-        bills = self.x("account.move", "search", [["move_type", "=", "in_invoice"], ["payment_reference", "ilike", AGENT_TAG]])
-        pays = set(self.x("account.payment", "search", [["reconciled_bill_ids", "in", bills]])) if bills else set()
-        # The payment's reference field is "ref" up to Odoo 17 and "memo" from Odoo 18.
-        memo_field = "ref" if "ref" in self.x("account.payment", "fields_get", [], {"attributes": ["type"]}) else "memo"
-        pays |= set(self.x("account.payment", "search", [["partner_type", "=", "supplier"], "|",
-                                                          [memo_field, "ilike", " tx 0x"], [memo_field, "=like", "bill B-%"]]))
-        pays_l = sorted(pays)
-        posted = self.x("account.payment", "search", [["id", "in", pays_l], ["state", "=", "posted"]])
-        if posted:
-            self.x_void("account.payment", "action_draft", posted)
-        if pays_l:
-            self.x_void("account.payment", "unlink", pays_l)
-        if bills:
-            posted_bills = self.x("account.move", "search", [["id", "in", bills], ["state", "=", "posted"]])
-            if posted_bills:
-                self.x_void("account.move", "button_draft", posted_bills)
-            self.x_void("account.move", "unlink", bills)
-        return len(bills)
+        try:
+            bills = []
+            try:
+                bills = self.x("account.move", "search", [["move_type", "=", "in_invoice"], ["payment_reference", "ilike", AGENT_TAG]])
+            except Exception:
+                pass
+
+            pays = set()
+            if bills:
+                for bill_field in ("reconciled_bill_ids", "reconciled_invoice_ids"):
+                    try:
+                        p = self.x("account.payment", "search", [[bill_field, "in", bills]])
+                        pays |= set(p)
+                        break
+                    except Exception:
+                        continue
+
+            for memo_field in ("memo", "ref", "payment_reference"):
+                try:
+                    p = self.x("account.payment", "search", [["partner_type", "=", "supplier"], "|",
+                                                             [memo_field, "ilike", " tx 0x"], [memo_field, "=like", "bill B-%"]])
+                    pays |= set(p)
+                    break
+                except Exception:
+                    continue
+
+            pays_l = sorted(pays)
+            if pays_l:
+                try:
+                    posted = self.x("account.payment", "search", [["id", "in", pays_l], ["state", "=", "posted"]])
+                    if posted:
+                        self.x_void("account.payment", "action_draft", posted)
+                    self.x_void("account.payment", "unlink", pays_l)
+                except Exception:
+                    pass
+
+            if bills:
+                try:
+                    posted_bills = self.x("account.move", "search", [["id", "in", bills], ["state", "=", "posted"]])
+                    if posted_bills:
+                        self.x_void("account.move", "button_draft", posted_bills)
+                    self.x_void("account.move", "unlink", bills)
+                except Exception:
+                    pass
+
+            return len(bills)
+        except Exception:
+            return 0
 
     def describe(self) -> dict:
         return {"adapter": "odoo", "url": self.url, "database": self.db, "user": self.user}

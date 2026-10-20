@@ -19,7 +19,7 @@ export default function Login() {
   const [params] = useSearchParams();
   const [mode, setMode] = useState<Mode>(params.get("mode") === "signup" ? "signup" : "signin");
   const want = params.get("next") ?? "";
-  const next = want.startsWith("/") && !want.startsWith("//") && !want.startsWith("/\\") ? want : "/bills";
+  const next = want.startsWith("/") && !want.startsWith("//") && !want.startsWith("/\\") ? want : "/desk";
   // With email sign-in one server holds many companies, so the page names the product, not one company.
   const company = pub?.login === "wallet" ? pub.company.replace(" (fictional)", "") : "Payables Desk";
 

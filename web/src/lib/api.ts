@@ -9,6 +9,22 @@ export class ApiError extends Error {
 /** Raised on 401 so the app can send the person to the sign-in page. */
 export const SIGNED_OUT = "desk:signed-out";
 
+export interface ApiAlertEvent {
+  title: string;
+  message: string;
+  status?: number;
+  path?: string;
+  variant?: "destructive" | "warning";
+}
+
+export const API_ALERT_EVENT = "desk:api-alert";
+
+export function emitApiAlert(alert: ApiAlertEvent) {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(API_ALERT_EVENT, { detail: alert }));
+  }
+}
+
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   const init: RequestInit = { method, headers: {}, credentials: "same-origin" };
   if (body instanceof FormData) init.body = body;
@@ -16,17 +32,67 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
     init.body = JSON.stringify(body);
     (init.headers as Record<string, string>)["content-type"] = "application/json";
   }
-  const r = await fetch(`/api${path}`, init);
-  const text = await r.text();
-  let data: any = null;
+
+  let response: Response | null = null;
+  let parsedData: any = null;
+  let rawText = "";
+
   try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = { detail: text };
+    response = await fetch(`/api${path}`, init);
+    rawText = await response.text();
+
+    try {
+      parsedData = rawText ? JSON.parse(rawText) : null;
+    } catch {
+      parsedData = { detail: rawText };
+    }
+
+    if (response.status === 401 && !path.startsWith("/auth/") && path !== "/me") {
+      window.dispatchEvent(new Event(SIGNED_OUT));
+    }
+
+    if (!response.ok) {
+      const msg =
+        (parsedData && (parsedData.detail || parsedData.message || parsedData.error)) ||
+        response.statusText ||
+        `Request failed with status ${response.status}`;
+      const err = new ApiError(response.status, msg);
+
+      // Do not popup error alert for expected unauthenticated probes
+      const isExpectedAuthProbe =
+        (response.status === 401 || response.status === 403) &&
+        (path === "/me" || path === "/public" || path.startsWith("/auth/session") || path.startsWith("/auth/get-session"));
+
+      if (!isExpectedAuthProbe) {
+        emitApiAlert({
+          title: response.status >= 500 ? `Server Error (${response.status})` : `Request Failed (${response.status})`,
+          message: msg,
+          status: response.status,
+          path: `${method} /api${path}`,
+          variant: "destructive",
+        });
+      }
+
+      throw err;
+    }
+
+    return parsedData as T;
+  } catch (err: unknown) {
+    if (err instanceof ApiError) {
+      throw err;
+    }
+    // Network failures, CORS issues, offline, connection refused
+    const netMsg = err instanceof Error ? err.message : String(err);
+    emitApiAlert({
+      title: "Network Connection Error",
+      message: `${netMsg}. Unable to reach ${path}. Please check your connection and ensure the server is running.`,
+      path: `${method} /api${path}`,
+      variant: "destructive",
+    });
+    throw err;
+  } finally {
+    // Operation completed
   }
-  if (r.status === 401 && !path.startsWith("/auth/") && path !== "/me") window.dispatchEvent(new Event(SIGNED_OUT));
-  if (!r.ok) throw new ApiError(r.status, (data && (data.detail || data.message || data.error)) || r.statusText);
-  return data as T;
 }
 
 export const api = {

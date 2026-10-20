@@ -24,7 +24,7 @@ export default function Welcome() {
   const { data: me } = useMe();
   const qc = useQueryClient();
   const nav = useNavigate();
-  const { data: invites } = useQuery({ queryKey: ["my-invitations"], queryFn: auth.myInvitations });
+  const { data: invites } = useQuery({ queryKey: ["my-invitations"], queryFn: auth.myInvitations, retry: false });
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<unknown>(null);
@@ -36,7 +36,7 @@ export default function Welcome() {
     try {
       await fn();
       await qc.invalidateQueries();
-      nav("/bills", { replace: true });
+      nav("/desk", { replace: true });
     } catch (e) {
       setErr(e);
     } finally {

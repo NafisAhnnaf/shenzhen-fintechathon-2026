@@ -4,6 +4,9 @@ import { api, type PreparedTx, type Stage, type TypedData } from "../lib/api";
 import { PAYER, STAGE, money, shortHash } from "../lib/format";
 import { useAppState, useMe } from "../lib/hooks";
 import { DEV_ACCOUNTS, forViem, txFor } from "../lib/wallet";
+import { Alert, AlertDescription, AlertTitle, AlertTriangleIcon } from "./Alert";
+
+export { Alert, AlertTitle, AlertDescription, AlertCircleIcon, AlertTriangleIcon } from "./Alert";
 
 export function StatusTag({ stage }: { stage: Stage | string }) {
   const [label, cls] = STAGE[stage] ?? [stage, "st-idle"];
@@ -41,10 +44,19 @@ export function Money({ v, className = "" }: { v: number | null | undefined; cla
   return <span className={`amt ${className}`}>{money(v)}</span>;
 }
 
-export function ErrorLine({ error }: { error: unknown }) {
+export function ErrorLine({ error, title = "Error" }: { error: unknown; title?: string }) {
   if (!error) return null;
-  const msg = error instanceof Error ? error.message : String(error);
-  return <p className="err">{msg.replace(/^User rejected.*$/s, "You cancelled the request in your wallet.")}</p>;
+  const raw = error instanceof Error ? error.message : String(error);
+  const msg = raw.replace(/^User rejected.*$/s, "You cancelled the request in your wallet.");
+  return (
+    <Alert variant="destructive" className="my-2">
+      <AlertTriangleIcon />
+      <div className="shadcn-alert-content">
+        <AlertTitle>{title}</AlertTitle>
+        <AlertDescription>{msg}</AlertDescription>
+      </div>
+    </Alert>
+  );
 }
 
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
