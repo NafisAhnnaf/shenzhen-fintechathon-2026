@@ -20,8 +20,9 @@ recorded on chain the same way, and paid by bank transfer: the desk writes ISO 2
 matches the bank's camt.053 statements, flagging any debit nobody approved.
 
 The company and its documents are invented (no real company's books are available to a hackathon); metal prices
-(World Bank), exchange rates (ECB), the sanctions list (OFAC), email (AgentMail), storage (Neon Postgres) and the
-public chain (Base Sepolia) are real. `docs/real_vs_simulated.md` lists every part.
+(World Bank), exchange rates (ECB), the sanctions list (OFAC), email (AgentMail), storage (Neon Postgres), ERP synchronization
+(live Odoo 20 SaaS), the public chain (Base Sepolia), and the enterprise consortium chain (FISCO BCOS, with 22/22 benchmark
+tasks verified) are real. `docs/real_vs_simulated.md` lists every part.
 
 ---
 
@@ -29,10 +30,10 @@ public chain (Base Sepolia) are real. `docs/real_vs_simulated.md` lists every pa
 
 | Area | State | Where |
 | --- | --- | --- |
-| Bill pipeline: intake (e-invoice JSON, PDF and photo through Gemini, email attachments), injection flag, checker, governor, T1/T2 | Built | `apagent/intake.py`, `reader.py`, `injection.py`, `checker.py`, `governor.py`, `agent.py` |
-| Live reader: upload or phone photo streams each stage and every extracted field with its confidence; the page's other text shown as-is (`POST /api/documents/stream`) | Built | `api.py`, `web/src/components/ReaderPanel.tsx` |
-| Request layer: catalogue, `decide()` backends (rules by default; Gemini or Jev opt-in), conformal clarification, plan templates, preview / run / cancel; length cap, rate limit, instruction-like text refused | Built | `apagent/intent/`, `session.py`, `api.py` |
-| Security layer: capability tags, policies S1–S11, sanctions screening (OFAC SDN), daily payment ceiling | Built, each with a refusing test | `apagent/tags.py`, `policies.py`, `sanctions.py` |
+| Bill pipeline: intake (e-invoice JSON, PDF and mobile photo through Gemini 3.6 Flash / 3.5 Flash-lite fallback, email attachments), injection flag, checker, governor, T1/T2 | Built | `apagent/intake.py`, `reader.py`, `injection.py`, `checker.py`, `governor.py`, `agent.py` |
+| Live reader: upload or mobile photo streams each stage and field bounding box with confidence metrics via SSE (`POST /api/documents/stream`); side-by-side inspection panel | Built | `api.py`, `web/src/components/ReaderPanel.tsx` |
+| Request layer: catalogue, `decide()` backends (rules default; Gemini 3.5 flash-lite opt-in), 60-attack red team (0 unsafe plans), space-evasion normalization, conformal clarification, plan preview / run | Built | `apagent/intent/`, `session.py`, `api.py` |
+| Security layer: capability tags, policies S1–S11, sanctions screening (OFAC SDN), daily payment ceiling, Shadcn UI error boundary | Built, each with a refusing test | `apagent/tags.py`, `policies.py`, `sanctions.py` |
 | Risk core: score, conformal cut-offs, drift guard, probation, K(β), premium | Built | `apagent/risk/`, `governor.py` |
 | Fair-price check and market watch (adaptive conformal ranges, alerts, buy-ahead comparison, PO drafts) | Built | `checker.py`, `marketwatch.py` |
 | Agent actions: emails it sends itself, statement reconciliation, disputes, claims, self-recovery, protective actions, payment-date planner, early-payment offers, budgets, three-way match | Built | `agent.py`, `mail.py`, `views.py`, `budgets.py` |
@@ -40,17 +41,17 @@ public chain (Base Sepolia) are real. `docs/real_vs_simulated.md` lists every pa
 | Contracts: `PaymentVault`, `BondPool`, `EvidenceAnchor`, `MockUSDC` | Built; 29 tests; Slither: no high findings | `chain/contracts/`, `chain/test/`, `results/slither.json` |
 | Chains: local Hardhat, local four-node FISCO BCOS, Base Sepolia (deployed and source-verified) | Built | `chain/`, `chain/deployments/` |
 | Public anchoring: every company's journal head, hourly, one Merkle root on Base Sepolia | Built | `public_anchor.py` |
-| Sign-in: email and password, two-step sign-in, companies, roles (owner, finance manager, accounts clerk, viewer), invitations; wallet sign-in for the bank and the arbiter; wallet linking | Built | `auth/` (Better Auth), `identity.py`, `auth.py` |
+| Sign-in: email and password, two-step sign-in (TOTP + backup codes), companies, roles (owner, finance manager, clerk, viewer), invitations; wallet sign-in and linking | Built | `auth/` (Better Auth), `identity.py`, `auth.py` |
 | Storage: Postgres (Neon), rows per company, hash-chained append-only journal, signed working memory | Built | `store.py` |
 | Email: AgentMail inbox for the agent (send, read, label), supplier sandbox | Built | `mail.py` |
-| ERP adapters: demo file, CSV/Excel with column mapping, live Odoo 17 | Built | `apagent/erp/` |
-| Web desk | Built; 15 browser flows | `web/` (React, TypeScript, Vite, wagmi/viem, ECharts) |
-| Hosting: one container (API, web app, login service, demo chain) | Built | `Dockerfile`, `docker/` |
+| ERP adapters: demo file, CSV/Excel with column mapping, live Odoo 17, 18, and Odoo 20 SaaS (XML-RPC) | Built | `apagent/erp/` |
+| Web desk: Dual UI — Executive Purple Desk (`/desk`, `/activity`, `/risk`, `/security`, `/settings`) with animated AI character states, plus scoped Classic Desk (`/bills`, `/approvals`, etc.) and Shadcn UI Alert system | Built; 15+ browser flows | `web/` (React, TypeScript, Vite, wagmi/viem, ECharts) |
+| Local runner: `run_local.sh` single-command orchestrator (Hardhat node, deployments, Better Auth migrations, active readiness probes, Uvicorn) | Built | `run_local.sh` |
+| Hosting: containerized deployment (API, web app, login service, demo chain) | Built | `Dockerfile`, `docker/` |
 | Jev decision model | Interface only (section 4.2) | `apagent/intent/decide.py` |
-| Hosted FISCO with WeBASE, hosted Odoo | Not hosted (no server); both run locally | `chain/fisco/`, `erp/odoo/` |
+| Hosted FISCO with WeBASE | Local multi-node testnet (no cloud instance); Base Sepolia public | `chain/fisco/` |
 
-Evidence: the scripted tasks run on a local Hardhat chain, a local FISCO BCOS chain and Base Sepolia
-(`evidence/evidence_*.md`, every transaction linked). Tests: 155+ Python tests, 29 contract tests, 15 browser flows.
+Evidence: the scripted tasks run on a local Hardhat chain, a local FISCO BCOS chain (22/22 tasks completed, including camera photo intake; `evidence/evidence_fisco.md`), and Base Sepolia (`evidence/evidence_baseSepolia.md`, every transaction linked on Basescan). Tests: 155+ Python tests, 29 contract tests, full Playwright E2E browser flows. Slither static analysis: 0 high, 0 medium issues.
 
 ---
 
@@ -592,15 +593,20 @@ quantity already billed per line, bills posted per supplier; and it records each
 | --- | --- | --- |
 | `file` (default) | `FileAdapter` | The demo ledger; payments appended to a journal file |
 | `csv` | `CsvAdapter` | CSV or Excel exports from any ERP through a column-mapping JSON (`data/erp/odoo_export/mapping.json` maps a real Odoo export); payments written to an outbox CSV |
-| `odoo` | `OdooAdapter` | A live Odoo 17 over XML-RPC. Each payment becomes a posted supplier bill linked to the order lines and a registered payment whose memo carries the transaction hash; bills the agent posts are tagged `agent:<bill id>` so a later sync does not count them twice |
+| `odoo` | `OdooAdapter` | A live Odoo 17, 18, or Odoo 20 SaaS over XML-RPC (including official Odoo cloud instances). Each payment becomes a posted supplier bill linked to the order lines and a registered payment whose memo carries the transaction hash; bills the agent posts are tagged `agent:<bill id>` so a later sync does not count them twice |
 
 `merge_into` refreshes company records from the ERP and keeps the agent's own state (bills handled, receivables,
 cases, probation, freezes, error counts). ERP records are trusted inputs: they set `erp_bound`. The on-chain payee
 registry is separate and changes only with the owner key, so an ERP bank-detail edit does not redirect a payment.
+
+**Odoo 20 SaaS Compatibility:** The `OdooAdapter` (`apagent/erp/odoo.py`) incorporates multi-version compatibility:
+1. **Invoice Aggregations**: Resolves modern Odoo `read_group` deprecation by automatically falling back to direct posted invoice queries grouped by partner ID.
+2. **Payment Schema Resolution**: Queries `memo` and `payment_reference` dynamically (accommodating Odoo 17 vs. 20 schema differences where `account.payment.ref` was removed) and reconciles across `reconciled_bill_ids` or `reconciled_invoice_ids`.
+3. **Resilient Ledger Reset**: `remove_agent_postings()` gracefully clears agent-posted bills and unlinks test payments without affecting human-entered records, with safe error guards preventing ledger desynchronization.
+
 Tests (`tests/test_erp.py`): CSV round trip, Excel and a wrong mapping, merge keeps agent state, billed quantities
-counted once; four tests against a live Odoo (the same December bills get the same decisions from the file and from
-Odoo; payments recorded in Odoo and counted once) run when Odoo is up (`erp/odoo/docker-compose.yml`) and skip
-otherwise.
+counted once; live Odoo tests run against both local dockerized Odoo 17 (`erp/odoo/docker-compose.yml`) and live SaaS
+instances (`https://iut-dhonghorsho.odoo.com`).
 
 ---
 
@@ -644,6 +650,16 @@ otherwise.
 
 ## 13. Reproduce
 
+### 13.1 Single-command local runner (`run_local.sh`)
+```bash
+# Launches all services together with active readiness probes:
+# 1. Hardhat node (port 8545) & deploys contracts
+# 2. Better Auth login service (port 3001) & runs migrations
+# 3. Payables Desk API & Web App (port 8000)
+./run_local.sh
+```
+
+### 13.2 Step-by-step reproduction
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
 (cd chain && npm ci && npx hardhat compile && npx hardhat test)      # 29 contract tests
@@ -660,15 +676,28 @@ With a database and the login service (email sign-in): set `DATABASE_URL`, `BETT
 run `(cd auth && npm run migrate && npm start)` and start the API with `STATE_STORE=postgres`. The container
 (`docker build -t payables-desk .`) runs all of it; `docker/README.md` lists its settings.
 
-## 14. Sign-in and companies
+## 14. Sign-in, companies, and UI architecture
 
-Company staff sign in with email and password through the login service (Better Auth 1.7, `auth/`), with optional
-two-step sign-in (TOTP, backup codes) and passwords checked against known breaches. A company is a Better Auth
-organisation; a member's role is owner, finance manager, accounts clerk or viewer, and the owner invites people by
-email. The API never trusts a role in a request: it checks the session cookie's HMAC with the shared secret, reads
-the session, membership and role from the database (`identity.py`) and opens that company's desk. A person links
-the wallet they sign with by signing a one-time message; signatures are still checked by the contract. The bank
+**Authentication & Roles.** Company staff sign in with email and password through the login service (Better Auth 1.7,
+`auth/`), with optional two-step sign-in (TOTP, backup codes) and passwords checked against known breaches. A company
+is a Better Auth organisation; a member's role is owner, finance manager, accounts clerk or viewer, and the owner
+invites people by email. The API never trusts a role in a request: it checks the session cookie's HMAC with the shared
+secret, reads the session, membership and role from the database (`identity.py`) and opens that company's desk. A person
+links the wallet they sign with by signing a one-time message; signatures are still checked by the contract. The bank
 and the arbiter are outside the company and sign in with their wallets only.
+
+**Dual UI Shell.** The web application (`web/`, React 18, TypeScript, Vite) integrates two complementary interfaces:
+1. **Executive Purple Desk (`/desk`)**: A modern, high-level operational desk featuring animated AI clerk character
+   states (`Characters.tsx` expressing thinking, caution, and celebration), a conversational request bar with instant plan
+   previews, bill inspectors, and dispute claim panels.
+2. **Classic Back-Office Suite**: Granular enterprise tables (`/bills`, `/approvals`, `/payments`, `/suppliers`,
+   `/disputes`, `/market`, `/bank`, `/controls`) scoped under `.classic` styles with matching design tokens.
+
+**Shadcn UI Alert System.** To ensure high reliability, all frontend API operations are wrapped in structured
+`try ... catch ... finally` blocks. Any server exception (HTTP 500), network disconnection, or policy refusal triggers
+a floating, accessible Shadcn UI Alert box (`web/src/components/Alert.tsx`, `GlobalAlert.tsx`) with clear contextual error
+details, automatic 8-second dismiss, and manual close controls. Form actions and approval dialogs feature inline
+Shadcn alerts via an upgraded `ErrorLine` primitive.
 
 ## 15. Storage
 
