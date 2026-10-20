@@ -188,6 +188,18 @@ export function describe(l: LogLine, supplierName: (id?: string) => string): str
       return `Paused: ${d.reason}`;
     case "case_dismiss":
       return "Dismissed the case";
+    case "request_refused":
+      return `Typed request refused: ${d.reason}`;
+    case "paid_outside_system":
+      return `${money(d.amount)} left the bank account to ${d.supplier === "unknown" ? "an unknown payee" : supplierName(d.supplier)} with no approval in the desk`;
+    case "bank_file":
+      return `Bank payment file ${d.file}: ${d.count} transfer(s), ${money(d.total)}`;
+    case "bank_booked":
+      return `The bank booked ${money(d.amount)} on ${d.booked}`;
+    case "bank_statement":
+      return `Bank statement read: ${d.matched} matched, ${d.outside} outside the desk, ${d.outstanding} waiting`;
+    case "sanctions_hit":
+      return `Sanctions list match for ${supplierName(d.supplier)}: ${d.listed} (${d.list}, score ${d.score})`;
     default:
       return l.kind.replace(/_/g, " ");
   }

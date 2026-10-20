@@ -132,6 +132,12 @@ class Agent:
         over = budgets.check(self.led, self.budgets, bill, d.amount) if d.tier == "T1" else None
         if over:  # spec D5: a budget only adds scrutiny
             d.tier, d.reasons = "T2", [f"Over budget: {over}"]
+        hit = self.sanctions_hit(res.supplier.name) if res.supplier and d.tier in ("T1", "T2") else None
+        if hit:  # spec X10: never pay a listed party; a person checks the listing
+            d.tier, d.reasons = "hold", [f"Supplier name matches the {hit['list']} sanctions list: {hit['listed']} "
+                                         f"({hit['program']}, score {hit['score']})"] + d.reasons
+            self.log.add("agent", "sanctions_hit", {"supplier": res.supplier.id, **hit}, bill_id=bill_id,
+                         decision="hold", security=True)
         self.decisions[bill_id] = d
         bill.tier, bill.score, bill.reasons = d.tier, d.score, d.reasons
         self.log.add("governor", "decision", {"tier": d.tier, "score": d.score, "cutoff": d.cutoff, "group": d.group,
@@ -255,6 +261,24 @@ class Agent:
         return self.approve(bill_id, pend["amount"], actor="owner", signature=pend["signature"], expiry=pend["expiry"],
                             owner_signature=owner_signature)
 
+    def sanctions_hit(self, name: str) -> Optional[dict]:
+        from . import sanctions
+        return sanctions.screen(name)
+
+    def daily_cap(self) -> float:
+        """Most the company pays in one day, all payments together (0: no ceiling). Owner setting; default from
+        DAILY_PAYMENT_CAP_USD."""
+        if "daily_cap_usd" in self.__dict__:
+            return self.__dict__["daily_cap_usd"]
+        return float(os.environ.get("DAILY_PAYMENT_CAP_USD", "250000"))
+
+    def set_daily_cap(self, usd: float, actor: str = "owner") -> dict:
+        if usd < 0:
+            raise ValueError("the limit cannot be negative")
+        self.__dict__["daily_cap_usd"] = round(usd, 2)
+        self.log.add(actor, "daily_cap_set", {"cap": round(usd, 2)})
+        return {"daily_cap_usd": round(usd, 2)}
+
     def approve(self, bill_id: str, amount: Optional[float] = None, actor: str = "finance_manager",
                 plan_id: Optional[str] = None, signature: Optional[bytes] = None, expiry: Optional[int] = None,
                 owner_signature: Optional[bytes] = None) -> dict:
@@ -269,6 +293,14 @@ class Agent:
         if not bill.supplier_id:
             return {"bill": bill_id, "error": "no registered supplier"}
         usd = self.approval_amount(bill_id, amount)
+        cap = self.daily_cap()
+        paid_today = round(sum(b.amount_usd for b in self.led.bills.values()
+                               if b.status in ("paid", "partial") and b.paid_on == self.led.today), 2)
+        if cap and paid_today + usd > cap:  # a ceiling on everything paid in a day, signatures or not
+            self.log.add(actor, "daily_cap", {"amount": usd, "paid_today": paid_today, "cap": cap}, bill_id=bill_id,
+                         decision="refused", security=True)
+            return {"bill": bill_id, "error": f"today's payment limit of ${cap:,.0f} would be passed "
+                                              f"(${paid_today:,.2f} paid already); the owner can raise it in Settings"}
         amt = T.of(usd, Src.ERP_BOUNDED)
         call = ToolCall("pay_approved", {"payee": T.of(bill.supplier_id, Src.REGISTRY), "amount": amt})
         if self._gate(call, bill_id, plan_id):
@@ -432,6 +464,11 @@ class Agent:
             return {"supplier": supplier_id, "error": "Do the call-back first: phone the number in the registry, not one from the message"}
         if not existing and not new:
             return {"supplier": supplier_id, "error": "A new supplier needs a name, tax ID, email domain and contact"}
+        hit = self.sanctions_hit(existing.name if existing else new.get("name", ""))
+        if hit:
+            self.log.add("owner", "sanctions_hit", {"supplier": supplier_id, **hit}, decision="refused", security=True)
+            return {"supplier": supplier_id, "error": f"The name matches the {hit['list']} sanctions list ({hit['listed']}, "
+                                                      f"{hit['program']}). The payee was not added."}
         w = Web3.to_checksum_address(wallet) if rail == "token" else "0x0000000000000000000000000000000000000000"
         tx = None
         if self.chain:

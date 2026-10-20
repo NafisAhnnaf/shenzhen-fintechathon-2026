@@ -50,13 +50,14 @@ export function AskAgent() {
         placeholder={can.staff ? "Ask the agent, e.g. “Pay Acme's bills due this week except the disputed one”" : "Ask the agent (sign in as owner or finance manager)"}
         value={text}
         disabled={!can.staff}
+        maxLength={500}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && submit()}
       />
       {open && (ask.isPending || reply || ask.error) && (
         <div className="popover">
           <div className="between">
-            <span className="muted small">“{reply?.route.text ?? text}”</span>
+            <span className="muted small">“{reply?.route?.text ?? text}”</span>
             <button className="btn small" onClick={() => { setOpen(false); setReply(null); setText(""); }}>
               Close
             </button>
@@ -64,6 +65,7 @@ export function AskAgent() {
           {ask.isPending && <p className="row"><span className="spin" /> Reading your request</p>}
           {reply?.kind === "question" && <QuestionView reply={reply} onChoose={(c) => answer.mutate(c)} busy={answer.isPending} onExample={(t) => { setText(t); ask.mutate(t); }} />}
           {reply?.kind === "plan" && reply.plan && <PlanView initial={reply.plan} onDone={() => undefined} />}
+          {reply?.kind === "refused" && <p className="warn" style={{ marginTop: 10 }}>{reply.reason}</p>}
           <ErrorLine error={ask.error || answer.error} />
         </div>
       )}
@@ -72,7 +74,7 @@ export function AskAgent() {
 }
 
 function QuestionView({ reply, onChoose, busy, onExample }: { reply: RouteReply; onChoose: (c: string) => void; busy: boolean; onExample: (t: string) => void }) {
-  const q = reply.route.question!;
+  const q = reply.route!.question!;
   const name = useSupplierName();
   const label = (o: any) => (typeof o === "string" ? (q.slot === "supplier" ? name(o) : q.slot === "bill" ? `Bill ${o}` : o) : o.label);
   return (

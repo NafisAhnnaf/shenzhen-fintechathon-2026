@@ -28,11 +28,13 @@ function General() {
   const { data: st } = useAppState();
   const can = useCan();
   const { data: mail } = useQuery({ queryKey: ["mail"], queryFn: () => api.get<any>("/mail") });
-  const { data: sched } = useQuery({ queryKey: ["schedule"], queryFn: () => api.get<{ pay_timing: string }>("/schedule") });
+  const { data: sched } = useQuery({ queryKey: ["schedule"], queryFn: () => api.get<{ pay_timing: string; daily_cap_usd: number }>("/schedule") });
   const [msg, setMsg] = useState("");
   const sync = useAction(async () => { const r = await api.post<any>("/erp/sync"); setMsg(r.note ?? `Read ${r.orders ?? "the"} orders from the ERP.`); return r; });
   const poll = useAction(async () => { const r = await api.post<any[]>("/mailbox/poll"); setMsg(r.length ? `Read ${r.length} item(s) from the mailbox.` : "No new mail."); return r; });
   const timing = useAction((mode: string) => api.post("/settings/pay-timing", { mode }));
+  const [cap, setCap] = useState("");
+  const saveCap = useAction(async () => { await api.post("/settings/daily-cap", { usd: Number(cap) }); setMsg(Number(cap) ? `Daily payment limit set to $${Number(cap).toLocaleString()}.` : "Daily payment limit turned off."); setCap(""); });
   const nextDay = useAction(async () => { const r = await api.post<any>("/demo/next-day"); setMsg(`The demo date is now ${date(r.today)}. Yesterday's journal was anchored on-chain.`); return r; });
   const skip = useAction(async () => { await api.post("/demo/advance?seconds=301"); setMsg("Moved the chain clock 5 minutes: new payees are past their cool-down."); });
   const reset = useAction(async () => { await api.post("/admin/reset"); setMsg("Fresh contracts and the demo company's records are loaded."); });
@@ -42,7 +44,7 @@ function General() {
   return (
     <>
       {msg && <div className="card pad between"><span>{msg}</span><button className="btn small" onClick={() => setMsg("")}>OK</button></div>}
-      <ErrorLine error={sync.error || poll.error || timing.error || nextDay.error || skip.error || reset.error} />
+      <ErrorLine error={saveCap.error || sync.error || poll.error || timing.error || nextDay.error || skip.error || reset.error} />
       <div className="split even">
         <div className="card pad stack">
           <h2>ERP</h2>
@@ -78,7 +80,15 @@ function General() {
               </label>
             ))}
           </div>
-          {!can.owner && <p className="note">The owner changes this.</p>}
+          <h3>Daily payment limit</h3>
+          <p className="note">The most paid in one day, by the agent and with signatures together: now {sched?.daily_cap_usd ? `$${sched.daily_cap_usd.toLocaleString()}` : "off"}. Past it, approvals are refused until tomorrow.</p>
+          {can.owner && (
+            <div className="row">
+              <input className="field" type="number" min="0" step="1000" aria-label="Daily payment limit in USD" placeholder="New limit in USD (0 = off)" value={cap} onChange={(e) => setCap(e.target.value)} />
+              <button className="btn" disabled={cap === "" || saveCap.isPending} onClick={() => saveCap.mutate(undefined)}>Save</button>
+            </div>
+          )}
+          {!can.owner && <p className="note">The owner changes these.</p>}
         </div>
         <div className="card pad stack">
           <h2>Who holds which key</h2>

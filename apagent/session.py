@@ -292,7 +292,25 @@ class Session:
     def alias(self) -> dict:
         return {b.bill_id[-4:]: b.bill_id for b in self.led.bills.values() if not b.bill_id.startswith("H")}
 
+    REQUEST_MAX_CHARS = 500
+
     def request(self, text: str, role: str = "owner") -> dict:
+        """A typed request. Too long, or written as instructions to the AI (the same patterns as on invoices), it is
+        refused before any model sees it, and the refusal is a security event."""
+        from . import injection
+
+        text = (text or "").strip()
+        if not text:
+            raise ValueError("Type what you want done")
+        if len(text) > self.REQUEST_MAX_CHARS:
+            self.agent.log.add(role, "request_refused", {"reason": "too long", "chars": len(text)}, security=True)
+            raise ValueError(f"Keep requests under {self.REQUEST_MAX_CHARS} characters")
+        inj = injection.score(text)
+        if inj["p"] >= self.agent.cfg.injection_threshold:
+            self.agent.log.add(role, "request_refused", {"reason": "reads as instructions to the AI", "p": inj["p"],
+                                                         "chars": len(text)}, security=True)
+            return {"kind": "refused", "reason": "This reads like instructions to the AI rather than a task. Say what "
+                    "you want done, for example \"pay Acme's bills due this week\".", "p": inj["p"]}
         self.agent.log.add(role, "request", {"text": text})
         r = self.router.route(text, self.request_state(), role)
         self.agent.log.add("agent", "route", {"outcome": r.outcome, "intent_set": r.intent_set, "slot_set": r.slot_set,

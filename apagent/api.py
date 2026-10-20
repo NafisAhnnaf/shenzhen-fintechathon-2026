@@ -768,10 +768,35 @@ def execute_claim(bill_id: str):
 
 
 # ------------------------------------------------------------------ requests and plans
+# Typed requests can reach a paid model: a per-person rate and a per-company daily allowance (REQUEST_PER_MINUTE,
+# REQUEST_PER_DAY). Counted in memory; a restart starts the counts again.
+_request_times: dict[str, list[float]] = {}
+
+
+def _request_allowance(u: A.User) -> None:
+    now = time.time()
+    per_min = int(os.environ.get("REQUEST_PER_MINUTE", "6"))
+    per_day = int(os.environ.get("REQUEST_PER_DAY", "200"))
+    me = f"{u.company}:{u.user_id or u.address}"
+    mine = _request_times.setdefault(me, [])
+    mine[:] = [t for t in mine if now - t < 60]
+    co = _request_times.setdefault(f"{u.company}:*", [])
+    co[:] = [t for t in co if now - t < 86400]
+    if len(mine) >= per_min or len(co) >= per_day:
+        S().agent.log.add(ROUTER_ROLE.get(u.role, u.role), "request_refused",
+                          {"reason": "rate limit" if len(mine) >= per_min else "daily allowance"}, security=True)
+        S().save()
+        raise HTTPException(429, "Too many requests: wait a minute" if len(mine) >= per_min
+                            else "Today's allowance of typed requests for this company is used up")
+    mine.append(now)
+    co.append(now)
+
+
 @app.post("/api/request")
 @mutating
 def request(body: Req, u: A.User = STAFF):
-    """The role comes from the signed-in wallet, not from the request body (spec X2)."""
+    """The role comes from the signed-in person, not from the request body (spec X2)."""
+    _request_allowance(u)
     return S().request(body.text, ROUTER_ROLE.get(u.role, body.role))
 
 
@@ -923,6 +948,17 @@ class Timing(BaseModel):
     mode: str
 
 
+class Cap(BaseModel):
+    usd: float
+
+
+@app.post("/api/settings/daily-cap", dependencies=[OWNER])
+@mutating
+def set_daily_cap(body: Cap):
+    """The most the company pays in one day, all payments together (0 turns the ceiling off)."""
+    return S().agent.set_daily_cap(body.usd)
+
+
 @app.get("/api/payments", dependencies=[ANY])
 def payments_register(start: Optional[str] = None, end: Optional[str] = None, by: Optional[str] = None,
                       supplier: Optional[str] = None):
@@ -961,7 +997,7 @@ def disputes():
 def schedule():
     from . import views
     with _lock:
-        return _ok({"pay_timing": S().pay_timing, "rows": views.schedule(S())})
+        return _ok({"pay_timing": S().pay_timing, "daily_cap_usd": S().agent.daily_cap(), "rows": views.schedule(S())})
 
 
 @app.post("/api/settings/pay-timing", dependencies=[OWNER])
