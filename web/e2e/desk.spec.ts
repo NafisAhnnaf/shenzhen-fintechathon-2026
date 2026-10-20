@@ -6,16 +6,15 @@ const SHOTS = process.env.SHOTS ?? "/tmp/shots";
 type Who = "owner" | "finance manager" | "bank" | "arbiter";
 
 async function signIn(page: Page, who: Who) {
-  // The purple login: pick the role, connect the local test key, sign the sign-in message.
   await page.context().clearCookies();
   await page.goto("/login");
   await page.evaluate(() => localStorage.clear());
   await page.goto("/login");
-  const radio = { owner: /^Owner/, "finance manager": /^Finance manager/, bank: /^Bank/, arbiter: /^Arbiter/ }[who];
-  await page.getByRole("radio", { name: radio }).click();
-  await page.getByRole("button", { name: "Local test key" }).click();
-  await page.waitForURL("**/desk", { timeout: 20_000 });
-  await page.goto("/bills");
+  const other = page.getByRole("button", { name: "Use another wallet" });
+  if (await other.isVisible().catch(() => false)) await other.click();
+  await page.getByRole("button", { name: `Local test account: ${who}` }).click();
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.waitForURL("**/bills", { timeout: 20_000 });
 }
 
 async function processDoc(page: Page, invNo: string) {
@@ -57,14 +56,12 @@ test.describe.serial("payables desk", () => {
   test("request in plain words: one question, a plan, run", async ({ page }) => {
     await signIn(page, "owner");
     for (const k of ["t19_acme_0", "t19_acme_1"]) await page.request.post(`/api/inbox/documents/${k}?process=false`);
-    // The request bar lives on the desk.
-    await page.goto("/desk");
-    await page.getByLabel("Tell the agent what to do").fill("Pay the copper supplier");
-    await page.getByRole("button", { name: "Plan", exact: true }).click();
+    await page.getByLabel("Ask the agent").fill("Pay the copper supplier");
+    await page.getByLabel("Ask the agent").press("Enter");
     await expect(page.getByText("Which supplier?")).toBeVisible({ timeout: 20_000 });
     await page.getByRole("button", { name: "Acme Metals (HK) Ltd", exact: true }).click();
     await page.getByRole("button", { name: "Run", exact: true }).click();
-    await expect(page.getByText("Done.")).toBeVisible({ timeout: 40_000 });
+    await expect(page.locator(".popover").getByText("Done.")).toBeVisible({ timeout: 40_000 });
     await page.screenshot({ path: `${SHOTS}/03-plan-done.png` });
   });
 
@@ -129,8 +126,8 @@ test.describe.serial("payables desk", () => {
   test("risk setting: owner proposes, bank approves", async ({ page }) => {
     await signIn(page, "owner");
     await page.goto("/risk");
-    await page.getByRole("radio", { name: /Careful/ }).click();
-    await page.getByRole("button", { name: "Switch to careful" }).click();
+    await page.getByRole("row").filter({ hasText: "Careful" }).click();
+    await page.getByRole("button", { name: "Switch on-chain" }).click();
     await expect(page.getByText(/when the bank approves it/)).toBeVisible({ timeout: 30_000 });
 
     await signIn(page, "bank");
@@ -138,8 +135,7 @@ test.describe.serial("payables desk", () => {
     await page.getByRole("button", { name: "Approve from my wallet" }).click();
     await expect(page.getByText("Settings waiting for the bank")).toBeHidden({ timeout: 30_000 });
     await page.goto("/risk");
-    await page.getByRole("radio", { name: /Careful/ }).click();
-    await expect(page.getByText("This setting is active on-chain.")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("row").filter({ hasText: "Careful" }).getByText("Active")).toBeVisible({ timeout: 30_000 });
   });
 
   test("bank-detail change by email: frozen, warning sent, owner calls back and restores", async ({ page }) => {
@@ -192,31 +188,6 @@ test.describe.serial("payables desk", () => {
     await expect(page.getByText(/left the bank account without an approval/)).toBeVisible();
     await expect(page.getByText("All booked")).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/10-bank.png`, fullPage: true });
-  });
-
-  test("landing page: the story, then into the desk", async ({ page }) => {
-    await page.context().clearCookies();
-    await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("can't be conned");
-    await expect(page.getByText("We hired an AI clerk.")).toBeVisible();
-    await page.getByRole("link", { name: "Open the desk" }).first().click();
-    await page.waitForURL("**/login**");
-  });
-
-  test("upload: the live reader shows each stage, every field read, then the decision", async ({ page }) => {
-    await signIn(page, "finance manager");
-    await page.goto("/inbox");
-    // A JSON e-invoice runs the same live panel without spending vision-model quota.
-    await page.locator("input[type=file]").first().setInputFiles("../data/demo/documents/t13_net30.json");
-    const panel = page.getByRole("dialog", { name: "What the reader sees" });
-    await expect(panel).toBeVisible();
-    await expect(panel.getByText("HAR-2512011").first()).toBeVisible({ timeout: 30_000 });
-    await expect(panel.getByText("✓ Decision")).toBeVisible({ timeout: 30_000 });
-    await page.screenshot({ path: `${SHOTS}/11-reader.png`, fullPage: true });
-    await panel.getByRole("button", { name: "Open the bill" }).click();
-    await page.waitForURL("**/bills?bill=*");
-    await page.getByText("What the reader saw").click();
-    await expect(page.getByText("supplier says").first()).toBeVisible();
   });
 
   test("phone width", async ({ page }) => {

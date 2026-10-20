@@ -168,11 +168,24 @@ def assess(text: str, model: "ModelFlag | None" = None) -> dict:
     m = model if model is not None else ModelFlag()
     if not m.available():
         return out
+    import os
+    from concurrent.futures import ThreadPoolExecutor, wait
+
+    # The views are checked side by side, within one time budget: intake holds the desk's lock, so a slow model
+    # must not stall every other request. Past the budget the patterns decide, as in an outage.
+    budget = float(os.environ.get("INJECTION_MODEL_TIMEOUT", "10"))
+    pool = ThreadPoolExecutor(max_workers=3)
     try:
-        mp = round(max(m.p(v) for v in decoded_views(text)[:3]), 4)
+        futs = [pool.submit(m.p, v) for v in decoded_views(text)[:3]]
+        done, late = wait(futs, timeout=budget)
+        if late:
+            raise TimeoutError(f"no answer within {budget:g} s")
+        mp = round(max(f.result() for f in futs), 4)
     except Exception as e:  # noqa: BLE001 - a model outage never blocks intake
         out["model"] = f"unavailable: {type(e).__name__}"
         return out
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
     out["model_p"], out["model"] = mp, "llm"
     out["p"] = max(out["p"], mp)
     return out
