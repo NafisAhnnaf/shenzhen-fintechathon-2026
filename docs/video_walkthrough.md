@@ -1,72 +1,172 @@
-# Recording the demo video
+# Demo video plan (5 minutes)
 
-A path through every feature on the desk, in five short clips. Each clip says who to be, what to click, and what
-the viewer should see. For a full check of every case, see `manual_testing.md`; this file is only the recording path.
+This plan records one video of 5 minutes or less. The video shows each main feature once. Each scene gives:
 
-## Before you record (10 minutes)
+- the time slot,
+- who is signed in,
+- the steps,
+- the "real-world event" and the in-app control that stands in for it,
+- the words for the voice-over.
 
-1. Restart the stack so it has the latest code and the Odoo records: stop `./run_local.sh` (Ctrl+C), then run it
-   again. Open http://127.0.0.1:8000.
-2. Two browser profiles, side by side: **owner** in one, **finance manager** in the other. Both signed in with
-   email, both with a linked wallet (**Settings → My account → Link a wallet → Local test account**).
-3. A third private window for the **bank** and the **arbiter** (they use **Sign in with your wallet**).
-4. In a fourth tab, open Odoo (https://iut-dhonghorsho.odoo.com) on **Purchase → Orders**, then **Accounting →
-   Payments**.
-5. Do one dry run of clip 2, then reset: **Settings → Start the demo again → Yes, start again**, and **Skip the payee cool-down**. Odoo payments posted by the agent are
-   removed by the reset too.
-6. Screen: 1080p, browser zoom 110–125 %, notifications off.
+The app has demo controls for events that a demo cannot wait for. Those controls are the scripts for the video.
+They are listed in the table below. Use them on camera and say what they stand in for.
 
-The vision reader (PDFs and photos) and the request box use Gemini on the free tier: an answer can take 10–30 s.
-Process the sample invoices from the **Inbox** (they are e-invoices and need no model). Upload one PDF only in
-clip 2, and cut the wait in editing.
-
-## Clip 1: sign-in and the team (owner, about 45 s)
-
-| Do | The viewer sees |
+| Real-world event | Stand-in control in the app |
 | --- | --- |
-| Landing page at `/` → **Open the desk** → sign in with email | The desk opens on **Bills** |
-| **Settings → Team** | Owner and finance manager with their roles and wallets; the on-chain signers table |
-| **Settings → My account** | Two-step sign-in and the linked signing wallet |
+| A supplier sends a PDF invoice | Inbox → **Upload a bill** → a file from `data/demo/documents/` |
+| A supplier sends an e-invoice | Inbox → **Process** next to the invoice |
+| A supplier emails new bank details | Inbox → **Process** next to `lionrock_bank_change.eml` |
+| A supplier replies to a query | Inbox → **Paste an email**, with `Subject: Re: Q-001` (not used in the 5-minute cut) |
+| A supplier sends a monthly statement | Inbox → **Reconcile** next to `SHATINPCB-2025-12.csv` |
+| The bank sends a statement | Payments → Bank transfers → **…with an unapproved debit** |
+| Days go by | Settings → **Next day**, **Skip the payee cool-down** |
+| The bank and the arbiter sign | Sign-in page → **Sign in with your wallet** → Local test account: bank / arbiter |
 
-## Clip 2: a routine bill paid by the agent, from Odoo (owner, about 90 s)
+## 1. Prepare (30 minutes, before you record)
 
-| Do | The viewer sees |
+1. Stop `./run_local.sh` with Ctrl+C. Start it again. The restart loads the Gemini 3.1 Flash-Lite setting and the
+   Odoo records.
+2. Open http://127.0.0.1:8000 in two browser profiles.
+   - Profile A: the owner, signed in with email.
+   - Profile B: the finance manager, signed in with email.
+3. In each profile, link the signing wallet: **Settings → My account → Link a wallet → Local test account**.
+4. Open a private window for the bank and the arbiter.
+5. Open Odoo (https://iut-dhonghorsho.odoo.com) in a tab. Go to **Purchase → Orders**.
+6. Open the AgentMail console for `fin-suppliers@agentmail.to` in a tab. Supplier mail from the agent arrives there.
+7. Do a full practice run. Then reset: Settings → **Start the demo again** → **Yes, start again**. Then click
+   **Skip the payee cool-down**.
+8. Set the screen to 1080p, the browser zoom to 110–125 %, and turn notifications off.
+
+Note: Gemini (free tier) can take 10–30 s for one answer. Record each scene as a separate clip. Cut the waits
+in editing. The video uses Gemini two times only: the two PDF uploads in scenes 2 and 3.
+
+## 2. Scenes
+
+### Scene 1 — The problem (0:00–0:20)
+
+Show: the landing page at `/`.
+
+Voice-over: "Companies want AI agents to pay their bills. But an agent that reads supplier documents can also take
+orders from them. One hidden line in an invoice can send the money to a criminal. We built an agent that pays
+routine bills alone, and no text it reads can change who gets paid."
+
+### Scene 2 — A routine bill, from Odoo to payment (0:20–1:10)
+
+Who: owner (profile A).
+
+1. Show the Odoo tab: the Kai Tak Fasteners purchase order and its receipt.
+2. Go to the desk. Click **Inbox → Upload a bill**. Choose `data/demo/documents/t01_routine.pdf`.
+3. Show the reader panel: the page, each field, the confidence, and the decision.
+4. Show the bill: **Paid**, "Paid by: Agent", and the table **Invoice vs order vs goods received**.
+5. Click **Verify** next to the payment. Show the on-chain confirmation.
+6. Show the Odoo tab: **Accounting → Payments**. The memo holds the transaction hash.
+
+Stand-in: the upload stands in for a supplier invoice that arrives by email.
+
+Voice-over: "The purchase order and the goods receipt come live from Odoo. The AI reads the PDF into fixed fields
+only. Then nine fixed checks compare the bill with the order and the receipt. The risk is low, so the agent pays
+alone from a smart-contract vault. The payment goes back into Odoo with its transaction hash."
+
+### Scene 3 — The poisoned invoice (1:10–1:50)
+
+Who: owner.
+
+1. Click **Inbox → Upload a bill**. Choose `data/demo/documents/t07_poisoned.pdf`.
+2. Show the reader panel: the hidden instruction appears as plain text. The decision is **held**.
+3. Go to **Controls**. Show the security event and the frozen payee.
+
+Stand-in: the PDF stands in for a fraudulent invoice with an instruction in small grey print.
+
+Voice-over: "This invoice hides an order: send the full balance to another wallet. The reader shows the text but
+cannot act on it. The payee does not match the registry, so the agent holds the bill and freezes the payee. If
+someone forces a payment, the smart contract refuses it."
+
+### Scene 4 — A padded bill and two signatures (1:50–2:40)
+
+Who: owner, then finance manager (profile B), then owner.
+
+1. Owner: **Inbox → Process** next to `ACM-2512412`. The bill needs approval.
+2. Show **Market check**: copper rod +9.0 %, the World Bank index justifies +0.6 %, $4,160.48 over the market.
+3. Show the AgentMail tab: the query Q-001 that the agent sent to the supplier.
+4. Finance manager: **Approvals** → the bill → **Approve and sign**. The wallet signs.
+5. Owner: **Approvals** → sign the second signature. Show **Payments** and the "Paid by" column.
+
+Stand-in: the sandbox inbox stands in for the supplier's real address.
+
+Voice-over: "Copper went up less than one percent, but the supplier raised the price by nine percent. The agent
+uses real World Bank prices to find the fair price. It holds the excess and emails the supplier itself. Above the
+limit, a person must sign in their own wallet. Above twenty-five thousand dollars, the owner signs too."
+
+### Scene 5 — A fake bank-detail change (2:40–3:15)
+
+Who: finance manager, then owner.
+
+1. Finance manager: **Inbox → Process** next to `lionrock_bank_change.eml`.
+2. Show the message: "Payments to this supplier are frozen and the real supplier has been warned."
+3. Show **Inbox → Outbox**: the bank-change warning.
+4. Owner: **Suppliers → Lion Rock → Change payment details**. Fill in the call-back number from the records, and
+   who confirmed. Click **Sign the change**, then **Unfreeze**. Show "Cool-down".
+
+Stand-in: the `.eml` file stands in for an email from a look-alike address.
+
+Voice-over: "Most payment fraud starts with one email: 'we changed our bank.' The agent never accepts new bank
+details from an email. It freezes the supplier and warns the real one. Only the owner can change the details,
+after a call to the number in our own records. Then a cool-down starts before the first payment."
+
+### Scene 6 — A request in plain words (3:15–3:45)
+
+Who: owner.
+
+1. Type in **Ask the agent**: "Pay the copper supplier".
+2. The agent asks one question: "Which supplier?" Choose **Acme Metals (HK) Ltd**.
+3. Show the plan. Click **Run**. Show "Done."
+
+Voice-over: "You can give the agent orders in plain words. When a request has two readings, it asks one question.
+It shows a plan first. Nothing runs until a person clicks Run."
+
+### Scene 7 — The bond pays back a mistake (3:45–4:25)
+
+Who: finance manager, bank, arbiter, finance manager.
+
+1. Finance manager: **Inbox → Process** next to `SHA-2512015`. Then **Reconcile** next to `SHATINPCB-2025-12.csv`.
+2. **Disputes** → the missed credit → **Confirm and sign**.
+3. Bank (private window, wallet sign-in): **Bank → Dispute**.
+4. Arbiter (wallet sign-in): **Bank** → enter the amount → **Decide**.
+5. Finance manager: **Disputes → Pay out the claim**. Show "Paid to the company".
+
+Stand-in: the CSV stands in for the supplier's monthly statement. The test wallets stand in for a partner bank
+and an independent arbiter.
+
+Voice-over: "When the agent makes a mistake, a bond pays the company back. Here the supplier's statement shows a
+credit that the agent missed. The bank can dispute the claim, and an arbiter decides. The bond pays out on-chain."
+
+### Scene 8 — Risk and records (4:25–5:00)
+
+Who: owner, then bank.
+
+1. **Risk and reserve** → **Careful** → **Switch on-chain**.
+2. Bank: **Bank → Approve from my wallet**.
+3. Owner: **Payments → Bank transfers → Make payment file**, then **…with an unapproved debit**. Show the alert.
+4. **Activity**: the journal and the on-chain anchor.
+
+Stand-in: the button stands in for the bank's statement file (camt.053).
+
+Voice-over: "The owner chooses how much risk the agent may take alone. The bank approves it, because the bank
+holds the bond. Payments also leave as standard bank files, and a debit that nobody approved raises an alert.
+Every action goes into a journal that is anchored on-chain. Thank you."
+
+## 3. Edit
+
+1. Cut every wait for Gemini, a wallet signature or a page load.
+2. Put a title card of 2 seconds before each scene.
+3. Check the total time. If it is more than 5:00, cut scene 8 step 3 first, then scene 6.
+4. End on one card: the GitHub link, the Base Sepolia contract links from the README, and the team names.
+
+## 4. If something fails during recording
+
+| Problem | Do this |
 | --- | --- |
-| Odoo tab: **Purchase → Orders**, open the Kai Tak Fasteners order | The order and its goods receipt, in Odoo |
-| Desk: **Inbox → Upload a bill** → a sample PDF (or **Process** next to `KAI-2512001`) | "What the reader sees": the page, each field with its confidence, then the decision |
-| The bill opens | **Paid**, "Paid by: Agent"; **Invoice vs order vs goods received** matches Odoo's numbers; the checks list |
-| **Verify** next to the payment in "What happened" | The transaction confirmed on-chain |
-| Odoo tab: **Accounting → Payments** | A new payment, its memo holds the transaction hash |
-
-## Clip 3: the attacks it stops (owner, about 90 s)
-
-| Do | The viewer sees |
-| --- | --- |
-| **Inbox → Process** next to `TSU-2512019` (poisoned invoice) | Held; the hidden instruction is shown as text; the payee is frozen |
-| **Inbox → Process** next to `lionrock_bank_change.eml` | "Payments to this supplier are frozen and the real supplier has been warned" |
-| **Inbox → Outbox** | The bank-change warning the agent sent |
-| **Controls** | The rules, the chain limits, frozen payees, and the security events from the two steps above |
-
-## Clip 4: a padded bill and two signatures (finance manager, then owner, about 90 s)
-
-| Do | The viewer sees |
-| --- | --- |
-| Owner: **Inbox → Process** next to `ACM-2512412` | **Needs approval**: copper rod +9.0 % while the World Bank index justifies +0.6 % |
-| Finance manager: **Approvals** → the bill | **Market check**: $4,160.48 over the market; the query the agent sent (Q-001) |
-| **Approve and sign** (wallet) | "The owner signs too" (above the two-signature threshold) |
-| Owner: **Approvals** → sign | Paid; **Payments** shows "Paid by" for each payment |
-
-## Clip 5: plain-words request, risk and the bond (about 90 s)
-
-| Do | The viewer sees |
-| --- | --- |
-| Owner: **Ask the agent**: "Pay the copper supplier" | One question ("Which supplier?"), then a plan; nothing runs before **Run** |
-| **Run** | "Done." and the payments |
-| **Risk and reserve** → choose **Careful** → switch on-chain | Waiting for the bank |
-| Bank window: **Bank → Approve from my wallet** | The setting is active; the reserve, locks and premiums |
-| **Activity** | The journal: every action, who did it, the on-chain anchor |
-
-## Joining the clips
-
-Cut the waits for a model or a wallet signature. Put a title card before each clip ("The routine bill", "The
-attacks", ...). End on the Odoo payment and the Basescan-verified contracts (README links).
+| The PDF upload waits more than 30 s | Use **Process** next to the same invoice in the Inbox. It needs no AI. |
+| The request box gives an error | The rule router answers. Record again, or keep the rule-router answer. |
+| A signature fails | Check that the profile has its wallet linked (Settings → My account). |
+| The state is wrong | Settings → **Start the demo again**, then **Skip the payee cool-down**. |
