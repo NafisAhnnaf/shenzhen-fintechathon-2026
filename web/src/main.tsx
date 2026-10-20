@@ -1,15 +1,24 @@
 import React, { useEffect, useMemo, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
+// Our app (purple design, Tailwind) and, scoped under .classic, the team's other screens.
+import "./purple/index.css";
+import "./purple/proto.css";
 import "./styles.css";
 import { SIGNED_OUT } from "./lib/api";
 import { useMe, usePublic } from "./lib/hooks";
 import { makeConfig } from "./lib/wallet";
-import { Shell } from "./components/Shell";
-import Login from "./pages/Login";
+import { Art, C } from "./purple/components/Characters";
+import { Shell } from "./purple/components/Shell";
 import Landing from "./pages/Landing";
+import Login from "./purple/pages/Login";
+import Desk from "./purple/pages/desk/Desk";
+import Risk from "./purple/pages/Risk";
+import Security from "./purple/pages/Security";
+import Activity from "./purple/pages/Activity";
+import Settings from "./purple/pages/Settings";
 import Welcome, { AcceptInvitation, ResetPassword } from "./pages/Welcome";
 import Inbox from "./pages/Inbox";
 import Bills from "./pages/Bills";
@@ -17,33 +26,54 @@ import Approvals from "./pages/Approvals";
 import Payments from "./pages/Payments";
 import Suppliers from "./pages/Suppliers";
 import Disputes from "./pages/Disputes";
-import Activity from "./pages/Activity";
-import Risk from "./pages/Risk";
 import Market from "./pages/Market";
 import Controls from "./pages/Controls";
 import Bank from "./pages/Bank";
-import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } } });
 
 function Centered({ children }: { children: ReactNode }) {
-  return <div className="center"><div className="stack">{children}</div></div>;
+  return (
+    <div className="wrap" style={{ minHeight: "80vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, textAlign: "center" }}>
+      {children}
+    </div>
+  );
+}
+
+/** The team's screens: their markup and stylesheet, inside our shell. */
+function Classic({ children }: { children: ReactNode }) {
+  return (
+    <div className="classic classic-in-shell">
+      <div className="page">{children}</div>
+    </div>
+  );
 }
 
 /** Signed in with a company open: the desk. Signed in without one: the welcome page. Otherwise: sign-in. */
 function Gate({ children }: { children: ReactNode }) {
   const { data: me, isLoading } = useMe();
-  if (isLoading) return <Centered><span className="spin" /></Centered>;
+  if (isLoading)
+    return (
+      <Centered>
+        <span className="spin dark" />
+      </Centered>
+    );
   if (!me) return <Navigate to={`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`} replace />;
   if (me.role === "none") return <Navigate to="/welcome" replace />;
   return <Shell>{children}</Shell>;
 }
 
-function SignedIn({ children }: { children: ReactNode }) {
-  const { data: me, isLoading } = useMe();
-  if (isLoading) return <Centered><span className="spin" /></Centered>;
-  if (!me) return <Navigate to="/login" replace />;
-  return <>{children}</>;
+function NotFound() {
+  return (
+    <Centered>
+      <Art html={C.clerk("sheepish", 140)} />
+      <h1 style={{ fontSize: 34 }}>Page not found</h1>
+      <p className="muted">That page doesn't exist on the desk.</p>
+      <Link className="btn btn-primary" to="/desk">
+        Back to the desk
+      </Link>
+    </Centered>
+  );
 }
 
 function App() {
@@ -58,38 +88,50 @@ function App() {
   if (error && !pub)
     return (
       <Centered>
-        <h1>The desk cannot reach the agent</h1>
-        <p className="muted">
-          Start the API with <span className="mono">uvicorn apagent.api:app --port 8000</span> and the local chain.
+        <Art html={C.clerk("think", 140)} />
+        <h1 style={{ fontSize: 30 }}>The desk can't reach the agent</h1>
+        <p className="muted" style={{ maxWidth: "60ch" }}>
+          Start the API with <span className="mono">uvicorn apagent.api:app --port 8000</span>, and a local chain if you use one.
         </p>
-        <button className="btn primary" onClick={() => refetch()}>Try again</button>
+        <button className="btn btn-primary" onClick={() => refetch()}>
+          Try again
+        </button>
       </Centered>
     );
-  if (!config) return <Centered><span className="spin" /><p className="muted">Connecting</p></Centered>;
-  const g = (el: ReactNode) => <Gate>{el}</Gate>;
+  if (!config)
+    return (
+      <Centered>
+        <span className="spin dark" />
+        <p className="muted">Connecting to the agent</p>
+      </Centered>
+    );
+  const app = (el: ReactNode) => <Gate>{el}</Gate>;
+  const classic = (el: ReactNode) => <Gate><Classic>{el}</Classic></Gate>;
+  const plain = (el: ReactNode) => <div className="classic">{el}</div>;
   return (
     <WagmiProvider config={config}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/welcome" element={<SignedIn><Welcome /></SignedIn>} />
-          <Route path="/accept-invitation/:id" element={<AcceptInvitation />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/" element={<Landing />} />
-          <Route path="/inbox" element={g(<Inbox />)} />
-          <Route path="/bills" element={g(<Bills />)} />
-          <Route path="/approvals" element={g(<Approvals />)} />
-          <Route path="/payments" element={g(<Payments />)} />
-          <Route path="/suppliers" element={g(<Suppliers />)} />
-          <Route path="/disputes" element={g(<Disputes />)} />
-          <Route path="/activity" element={g(<Activity />)} />
-          <Route path="/risk" element={g(<Risk />)} />
-          <Route path="/market" element={g(<Market />)} />
-          <Route path="/controls" element={g(<Controls />)} />
-          <Route path="/security" element={<Navigate to="/controls" replace />} />
-          <Route path="/bank" element={g(<Bank />)} />
-          <Route path="/settings" element={g(<Settings />)} />
-          <Route path="*" element={g(<Centered><h1>Page not found</h1></Centered>)} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/welcome" element={plain(<Welcome />)} />
+          <Route path="/accept-invitation/:id" element={plain(<AcceptInvitation />)} />
+          <Route path="/reset-password" element={plain(<ResetPassword />)} />
+          <Route path="/desk" element={app(<Desk />)} />
+          <Route path="/activity" element={app(<Activity />)} />
+          <Route path="/risk" element={app(<Risk />)} />
+          <Route path="/security" element={app(<Security />)} />
+          <Route path="/settings" element={app(<Settings />)} />
+          <Route path="/approvals" element={classic(<Approvals />)} />
+          <Route path="/bills" element={classic(<Bills />)} />
+          <Route path="/payments" element={classic(<Payments />)} />
+          <Route path="/suppliers" element={classic(<Suppliers />)} />
+          <Route path="/disputes" element={classic(<Disputes />)} />
+          <Route path="/market" element={classic(<Market />)} />
+          <Route path="/bank" element={classic(<Bank />)} />
+          <Route path="/inbox" element={classic(<Inbox />)} />
+          <Route path="/controls" element={classic(<Controls />)} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </WagmiProvider>
